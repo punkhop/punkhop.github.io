@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jetpack Comedy</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="./swiper-element-bundle.min.js"></script>
 
 </head>
 <body>
     <header class="carousel">
-        <swiper-container autoplay = "true" class = 'carousel-inner'>
+        <img id = 'holderImg' src="andy.jpg" alt="Andy">
+        <swiper-container autoplay = "true" class = 'carousel-inner' style = 'display:none;'>
             <swiper-slide><img src="andy.jpg" alt="Andy"></swiper-slide>
             <swiper-slide><img src="kevin.jpg" alt="Kevin"></swiper-slide>
             <swiper-slide><img src="fran.jpg" alt="Fran"></swiper-slide>
@@ -21,7 +23,7 @@
             <swiper-slide><img src="moses.jpg" alt="Moses"></swiper-slide>
             <swiper-slide><img src="moseslogan.jpg" alt="Moses logistics"></swiper-slide>
             <swiper-slide><img src="peet.jpg" alt="Peet"></swiper-slide>
-          </swiper-container>
+        </swiper-container>
     </header>
     <main>
         <div class="content-container">
@@ -51,7 +53,6 @@
             </address>
         </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
     <script src="scripts.js"></script>
 </body>
 </html>
