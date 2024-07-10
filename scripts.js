@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Change image every 5 seconds
     setInterval(showNextItem, 5000);
 
-    console.log('Carousel initialized');
+    console.log('Carousel initialized with ' + itemCount + ' items');
 });
 
 // Stripe footer code

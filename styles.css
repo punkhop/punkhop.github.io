@@ -1,34 +1,98 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const carousel = document.querySelector('.carousel-inner');
-    const items = document.querySelectorAll('.carousel-item');
-    const itemCount = items.length;
-    let currentIndex = 0;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1E1E1E;
+    color: white;
+}
 
-    function showNextItem() {
-        currentIndex = (currentIndex + 1) % itemCount;
-        updateCarousel();
-    }
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
 
-    function updateCarousel() {
-        const offset = -currentIndex * 100;
-        carousel.style.transform = `translateX(${offset}%)`;
-    }
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    height: 100%;
+}
 
-    // Initialize the carousel
-    updateCarousel();
+.carousel-item {
+    min-width: 100%;
+    flex-shrink: 0;
+}
 
-    // Change image every 2 seconds
-    setInterval(showNextItem, 2000);
-});
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-// Stripe footer code
-if (document.getElementById('jetbookiframe')) {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const order = urlParams.get('order')
-    if (order) {
-        var url = new URL(document.getElementById('jetbookiframe').src);
-        url.searchParams.append('order', order);
-        document.getElementById('jetbookiframe').src = url.href;
+main {
+    padding: 0;
+    text-align: center;
+}
+
+.content-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin: 0 0 20px;
+}
+
+h2 {
+    font-size: 2em;
+    margin: 40px 0 20px;
+}
+
+p {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.highlight {
+    color: #E60A0C;
+    font-weight: bold;
+}
+
+.iframe-container {
+    width: 100%;
+    height: 1500px; /* Increased height */
+    margin-bottom: 20px;
+}
+
+#jetbookiframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+footer address {
+    font-style: normal;
+    line-height: 1.5;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .iframe-container {
+        height: 1000px; /* Adjusted for mobile */
     }
 }
