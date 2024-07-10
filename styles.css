@@ -2,6 +2,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #111;
+    color: #fff;
 }
 
 .carousel {
@@ -24,19 +26,20 @@ body {
     height: auto;
 }
 
-main {
-    padding: 20px;
+.content-container {
     text-align: center;
+    padding: 20px;
 }
 
-main h1 {
-    font-size: 2em;
-    margin-bottom: 10px;
+.content-container h1 {
+    font-size: 2.5em;
+    margin: 20px 0;
 }
 
-main p {
+.content-container .highlight {
+    color: #f00;
     font-size: 1.2em;
-    margin-bottom: 20px;
+    margin: 10px 0;
 }
 
 .iframe-container {
