@@ -2,8 +2,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #111;
-    color: #fff;
+    background-color: #1E1E1E;
+    color: white;
 }
 
 .carousel {
@@ -19,27 +19,32 @@ body {
 
 .carousel-item {
     min-width: 100%;
+    flex-shrink: 0;
 }
 
 .carousel-item img {
     width: 100%;
     height: auto;
+    display: block;
 }
 
-.content-container {
-    text-align: center;
+main {
     padding: 20px;
+    text-align: center;
 }
 
-.content-container h1 {
-    font-size: 2.5em;
-    margin: 20px 0;
+main h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
 }
 
-.content-container .highlight {
-    color: #f00;
+main p {
     font-size: 1.2em;
-    margin: 10px 0;
+    margin-bottom: 20px;
+}
+
+.highlight {
+    color: #E60A0C;
 }
 
 .iframe-container {
