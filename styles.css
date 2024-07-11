@@ -166,6 +166,26 @@ footer a {
     max-width: 200px; /* Ensures the image does not get too large */
 }
 
+.testimonials {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns grid */
+    gap: 48px; /* Space between grid items */
+    justify-items: center; /* Center items horizontally */
+    margin: 24px 0;
+}
+
+.testimonial-image {
+    width: 100%; /* Make images responsive */
+    max-width: 320px; /* Adjust max-width as needed */
+}
+
+@media (max-width: 480px) {
+    .testimonials {
+        grid-template-columns: 1fr; /* 1 column grid for mobile */
+    }
+}
+
+
 /* Ensure headings and other text elements use Inter as well */
 h1, h2, h3, h4, h5, h6, p, a, span {
     font-family: 'Inter', sans-serif;
