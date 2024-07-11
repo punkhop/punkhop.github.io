@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #1E1E1E;
@@ -60,8 +60,8 @@ main {
 
 h1 {
     font-size: 2.5em;
-    margin: 0 0 20px;
-    line-height: 1.25; /* Reduce line spacing by 50% */
+    margin: 0 0 5px; /* Reduced padding bottom by 75% */
+    line-height: 1; /* Reduced line spacing by 50% */
     letter-spacing: -0.02em; /* Reduce kerning by 20% */
 }
 
@@ -71,7 +71,7 @@ h2 {
 }
 
 p {
-    font-size: 1.1em; /* Decrease font size for specific paragraph */
+    font-size: 1em; /* Decreased font size for specific paragraph */
     margin-bottom: 15px;
     line-height: 1.25; /* Reduce line spacing by 50% */
     letter-spacing: -0.02em; /* Reduce kerning by 20% */
@@ -80,6 +80,46 @@ p {
 .highlight {
     color: #E60A0C;
     font-weight: bold;
+}
+
+.smaller-text {
+    font-size: 0.9em; /* Smaller font size for specific paragraph */
+    margin-left: 25px; /* Adjust the value as needed */
+    margin-right: 25px; /* Adjust the value as needed */
+}
+
+.featured-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Adjust the gap as needed */
+    margin-bottom: 20px; /* Add some space below the images */
+}
+
+.featured-logo {
+    width: 50px; /* Default size */
+    height: auto;
+}
+
+/* Mobile View */
+@media (max-width: 480px) {
+    .featured-logo {
+        width: 100px; /* Increased size for mobile */
+    }
+}
+
+/* Tablet View */
+@media (min-width: 481px) and (max-width: 768px) {
+    .featured-logo {
+        width: 150px; /* 2 times bigger for tablet */
+    }
+}
+
+/* Desktop View */
+@media (min-width: 769px) {
+    .featured-logo {
+        width: 200px; /* 2 times bigger for desktop */
+    }
 }
 
 .iframe-container {
@@ -119,4 +159,9 @@ footer a {
     .iframe-container {
         height: 1000px;
     }
+}
+
+/* Ensure headings and other text elements use Inter as well */
+h1, h2, h3, h4, h5, h6, p, a, span {
+    font-family: 'Inter', sans-serif;
 }

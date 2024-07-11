@@ -10,13 +10,12 @@ body {
     position: relative;
     width: 100%;
     height: 0;
-    padding-bottom: 66.625%; /* This is (1066 / 1600) * 100 to maintain aspect ratio */
+    padding-bottom: 66.625%; /* Maintain aspect ratio */
     overflow: hidden;
 }
 
 @media (min-width: 1100px) {
     .carousel {
-        height: 0;
         padding-bottom: 56.25%; /* 16:9 aspect ratio for larger screens */
         max-height: 92vh;
     }
@@ -71,7 +70,7 @@ h2 {
 }
 
 p {
-    font-size: 1em; /* Decreased font size for specific paragraph */
+    font-size: 1em;
     margin-bottom: 15px;
     line-height: 1.25; /* Reduce line spacing by 50% */
     letter-spacing: -0.02em; /* Reduce kerning by 20% */
@@ -83,9 +82,8 @@ p {
 }
 
 .smaller-text {
-    font-size: 0.9em; /* Smaller font size for specific paragraph */
-    margin-left: 25px; /* Adjust the value as needed */
-    margin-right: 25px; /* Adjust the value as needed */
+    font-size: 0.9em;
+    margin: 0 10%;
 }
 
 .featured-images {
@@ -97,28 +95,32 @@ p {
 }
 
 .featured-logo {
-    width: 50px; /* Default size */
+    width: 80%; /* Default size */
     height: auto;
+    max-width: 300px; /* Max width to prevent too large on large screens */
 }
 
 /* Mobile View */
 @media (max-width: 480px) {
     .featured-logo {
-        width: 100px; /* Increased size for mobile */
+        width: 40%; /* Smaller size for mobile */
+    }
+    .five-stars {
+        width: 60%; /* Further reduction for mobile */
     }
 }
 
 /* Tablet View */
 @media (min-width: 481px) and (max-width: 768px) {
     .featured-logo {
-        width: 150px; /* 2 times bigger for tablet */
+        width: 60%; /* Adjust size for tablet */
     }
 }
 
 /* Desktop View */
 @media (min-width: 769px) {
     .featured-logo {
-        width: 200px; /* 2 times bigger for desktop */
+        width: 40%; /* Adjust size for desktop */
     }
 }
 
