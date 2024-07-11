@@ -82,8 +82,8 @@ p {
 }
 
 .smaller-text {
-    font-size: 0.9em;
-    margin: 0 10%;
+    font-size: 1.1em;
+    margin: 0 15%;
 }
 
 .featured-images {
@@ -103,26 +103,24 @@ p {
 /* Mobile View */
 @media (max-width: 480px) {
     .featured-logo {
-        width: 40%; /* Smaller size for mobile */
-    }
-    .five-stars {
-        width: 60%; /* Further reduction for mobile */
+        width: 50%; /* Adjust size for mobile */
     }
 }
 
 /* Tablet View */
 @media (min-width: 481px) and (max-width: 768px) {
     .featured-logo {
-        width: 60%; /* Adjust size for tablet */
+        width: 40%; /* Adjust size for tablet */
     }
 }
 
 /* Desktop View */
 @media (min-width: 769px) {
     .featured-logo {
-        width: 40%; /* Adjust size for desktop */
+        width: 30%; /* Adjust size for desktop */
     }
 }
+
 
 .iframe-container {
     width: 100%;
@@ -161,6 +159,11 @@ footer a {
     .iframe-container {
         height: 1000px;
     }
+}
+
+.five-stars {
+    width: 50%; /* Reduced size by 25% */
+    max-width: 200px; /* Ensures the image does not get too large */
 }
 
 /* Ensure headings and other text elements use Inter as well */
