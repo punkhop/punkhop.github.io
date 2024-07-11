@@ -69,10 +69,9 @@ h2 {
 }
 
 p {
-    font-size: 1.1em; /* Decrease font size for specific paragraph */
+    font-size: 1.2em;
     margin-bottom: 15px;
-    line-height: 1.25; /* Reduce line spacing by 50% */
-    letter-spacing: -0.02em; /* Reduce kerning by 20% */
+    line-height: 1.5;
 }
 
 .highlight {
