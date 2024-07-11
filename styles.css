@@ -162,7 +162,7 @@ footer a {
 }
 
 .five-stars {
-    width: 50%; /* Reduced size by 25% */
+    width: 40%; /* Reduced size by 25% */
     max-width: 200px; /* Ensures the image does not get too large */
 }
 
