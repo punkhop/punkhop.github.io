@@ -5,24 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jetpack Comedy</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="./swiper-element-bundle.min.js"></script>
+
 </head>
 <body>
     <header class="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item"><img src="andy.jpg" alt="Andy"></div>
-            <div class="carousel-item"><img src="bob.JPG" alt="Bob"></div>
-            <div class="carousel-item"><img src="bryant.jpg" alt="Bryant"></div>
-            <div class="carousel-item"><img src="crowd.jpg" alt="Crowd"></div>
-            <div class="carousel-item"><img src="fran.jpg" alt="Fran"></div>
-            <div class="carousel-item"><img src="jb.jpg" alt="JB"></div>
-            <div class="carousel-item"><img src="joe.jpg" alt="Joe"></div>
-            <div class="carousel-item"><img src="kevin.jpg" alt="Kevin"></div>
-            <div class="carousel-item"><img src="moses.jpg" alt="Moses"></div>
-            <div class="carousel-item"><img src="moseslogan.jpg" alt="Moses Logan"></div>
-            <div class="carousel-item"><img src="peet.jpg" alt="Peet"></div>
-        </div>
+        <img id = 'holderImg' src="andy.jpg" alt="Andy">
+        <swiper-container autoplay = "true" class = 'carousel-inner' style = 'display:none;'>
+            <swiper-slide><img src="andy.jpg" alt="Andy"></swiper-slide>
+            <swiper-slide><img src="kevin.jpg" alt="Kevin"></swiper-slide>
+            <swiper-slide><img src="fran.jpg" alt="Fran"></swiper-slide>
+            <swiper-slide><img src="jb.jpg" alt="JB"></swiper-slide>
+            <swiper-slide><img src="bob.JPG" alt="Bob"></swiper-slide>
+            <swiper-slide><img src="bryant.jpg" alt="Bryant"></swiper-slide>
+            <swiper-slide><img src="crowd.jpg" alt="Crowd"></swiper-slide>
+            <swiper-slide><img src="joe.jpg" alt="Joe"></swiper-slide>
+            <swiper-slide><img src="moses.jpg" alt="Moses"></swiper-slide>
+            <swiper-slide><img src="moseslogan.jpg" alt="Moses logistics"></swiper-slide>
+            <swiper-slide><img src="peet.jpg" alt="Peet"></swiper-slide>
+        </swiper-container>
     </header>
-
     <main>
         <div class="content-container">
             <h1>The Anti-Club comedy club.</h1>
@@ -51,7 +53,6 @@
             </address>
         </div>
     </footer>
-
     <script src="scripts.js"></script>
 </body>
 </html>
