@@ -5,150 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="facebook-domain-verification" content="1bim11dw7ulo3ta8ep6h6f25ms22nn" />
   <title>Jetpack Comedy — Every Friday at Bar Lubitsch, West Hollywood</title>
-  <meta name="description" content="The anti-club comedy club. Top-notch standup every Friday since 2012 at Bar Lubitsch in West Hollywood. Featured in the New York Times, LA Weekly, and Netflix Is A Joke festival.">
+  <meta name="description" content="The anti-club comedy club. Top-notch standup every Friday since 2012 at Bar Lubitsch in West Hollywood. Featured in the New York Times, LA Weekly, and Netflix Is A Joke Fest.">
+  <meta name="theme-color" content="#141011">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Jetpack Comedy — Every Friday in West Hollywood">
+  <meta property="og:description" content="The anti-club comedy club. Top-notch standup every Friday at Bar Lubitsch. Featured in the New York Times and Netflix Is A Joke Fest.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jetpackcomedy.com">
+  <meta property="og:image" content="https://jetpackcomedy.com/og-image.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jetpack Comedy — Every Friday in West Hollywood">
+  <meta name="twitter:description" content="The anti-club comedy club. Top-notch standup every Friday at Bar Lubitsch.">
+  <meta name="twitter:image" content="https://jetpackcomedy.com/og-image.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            deep: '#141011',
-            'deep-warm': '#1a1215',
-            'deep-lighter': '#241c1f',
-            'deep-card': '#1e1619',
-            burgundy: '#8B2252',
-            'burgundy-dim': '#7B2040',
-            'burgundy-deep': '#5a1630',
-            'burgundy-glow': '#a82d65',
-            gold: '#C5975B',
-            'gold-bright': '#d4a96a',
-            'gold-dim': '#a07a48',
-            cream: '#F5F0EB',
-            'cream-dim': '#c8bfb5',
-            'cream-faint': '#9e958c',
-            velvet: '#3d2028',
-            'velvet-light': '#5a3540',
-            wood: '#3d2e24',
-            'wood-light': '#5a4538',
-          },
-          fontFamily: {
-            display: ['"Playfair Display"', 'Georgia', 'serif'],
-            body: ['"Inter"', 'system-ui', 'sans-serif'],
-          },
-        },
-      },
-    };
-  </script>
+  <!-- MiniMasonry.js -->
+  <script src="https://unpkg.com/minimasonry@1.3.2/build/minimasonry.min.js"></script>
 
   <style>
     /* ================================================================
        BASE
        ================================================================ */
-    html { scroll-behavior: smooth; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
+    html, body {
+      width: 100%;
       background-color: #141011;
       color: #F5F0EB;
-      overflow-x: hidden;
-    }
-
-    ::selection {
-      background: #8B225280;
-      color: #F5F0EB;
+      font-family: 'Inter', system-ui, sans-serif;
     }
 
     /* ================================================================
-       MOSAIC GRID — Asymmetric magazine-style layout
+       HERO SECTION
        ================================================================ */
-    .mosaic-hero {
+    .hero-section {
       position: relative;
       width: 100%;
-      height: 100vh;
-      height: 100svh;
-      min-height: 600px;
-      overflow: hidden;
+      background-color: #141011;
     }
 
-    .mosaic-grid {
-      display: grid;
-      gap: 3px;
+    .masonry-grid {
+      position: relative;
       width: 100%;
-      height: 100%;
-      /* Grid template applied dynamically via JS for layout variety */
     }
 
     /* ================================================================
-       TILE IMAGE CROSSFADE LAYERS
+       TILE STYLES
        ================================================================ */
-    .mosaic-tile {
-      position: relative;
+    .masonry-tile {
+      position: absolute;
       overflow: hidden;
       opacity: 0;
-      transform: scale(1.08);
-      transition: opacity 0.8s ease-out, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: scale(0.92);
+      transition: opacity 0.45s ease-out, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .mosaic-tile.is-revealed {
+    .masonry-tile.is-revealed {
       opacity: 1;
       transform: scale(1);
     }
 
-    .mosaic-tile .tile-layer {
+    .masonry-tile .tile-layer {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: opacity 1.6s ease-in-out;
-      will-change: opacity;
     }
 
-    .mosaic-tile .tile-layer.is-hidden {
+    .masonry-tile .tile-layer.is-hidden {
       opacity: 0;
     }
 
-    /* Subtle Ken Burns drift on each tile */
-    .mosaic-tile .tile-layer {
-      animation: kenBurns 25s ease-in-out infinite alternate;
+    /* Ken Burns drift */
+    .masonry-tile .tile-layer {
+      animation: kenBurnsA 24s ease-in-out infinite alternate;
     }
 
-    .mosaic-tile:nth-child(odd) .tile-layer {
+    .masonry-tile:nth-child(odd) .tile-layer {
+      animation-name: kenBurnsB;
+      animation-duration: 27s;
       animation-direction: alternate-reverse;
-      animation-duration: 30s;
     }
 
-    .mosaic-tile:nth-child(3n) .tile-layer {
+    .masonry-tile:nth-child(3n) .tile-layer {
       animation-duration: 22s;
     }
 
-    @keyframes kenBurns {
+    .masonry-tile:nth-child(4n+1) .tile-layer {
+      animation-name: kenBurnsB;
+      animation-duration: 28s;
+    }
+
+    @keyframes kenBurnsA {
       0%   { transform: scale(1.0) translate(0, 0); }
       100% { transform: scale(1.06) translate(-1%, -1%); }
     }
 
+    @keyframes kenBurnsB {
+      0%   { transform: scale(1.0) translate(0, 0); }
+      100% { transform: scale(1.05) translate(1%, -0.5%); }
+    }
+
     /* ================================================================
-       HERO OVERLAY — Cinematic gradient + bold type
+       HERO OVERLAY
        ================================================================ */
     .hero-overlay {
       position: absolute;
-      inset: 0;
-      z-index: 10;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      /* Multi-layered gradient: center darkening for text + vignette edges */
       background:
-        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(20,16,17,0.62) 0%, rgba(20,16,17,0.30) 40%, transparent 70%),
-        radial-gradient(ellipse at center, transparent 40%, rgba(20,16,17,0.55) 80%, rgba(20,16,17,0.80) 100%);
+        radial-gradient(ellipse 70% 55% at 50% 50%, rgba(20,16,17,0.75) 0%, rgba(20,16,17,0.42) 35%, transparent 65%),
+        radial-gradient(ellipse at center, transparent 35%, rgba(20,16,17,0.50) 75%, rgba(20,16,17,0.85) 100%);
     }
 
     .hero-logo {
@@ -156,7 +143,7 @@
       max-width: 85vw;
       height: auto;
       opacity: 0;
-      transform: scale(0.9);
+      transform: scale(0.88);
       transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
       filter: drop-shadow(0 6px 30px rgba(0,0,0,0.8)) drop-shadow(0 0 60px rgba(139,34,82,0.2));
     }
@@ -167,260 +154,255 @@
     }
 
     .hero-tagline {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 500;
-      font-size: clamp(0.75rem, 1.6vw, 1rem);
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: #C5975B;
-      margin-top: 1.5rem;
-      text-shadow: 0 1px 15px rgba(0,0,0,0.7);
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      letter-spacing: 0.15em;
+      text-transform: none;
+      color: #d4a96a;
+      margin-top: 1.2rem;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.6);
       opacity: 0;
       transition: opacity 1s ease 0.3s;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5em;
     }
 
     .hero-tagline.is-visible {
       opacity: 1;
     }
 
-    .tagline-dot {
-      opacity: 0.6;
-    }
-
-    @media (max-width: 640px) {
-      .hero-tagline {
-        flex-direction: column;
-        gap: 0.2em;
-        font-size: clamp(0.6rem, 2.8vw, 0.85rem);
-        letter-spacing: 0.2em;
-      }
-      .tagline-dot {
-        display: none;
-      }
-    }
-
-    /* ================================================================
-       SCROLL INDICATOR
-       ================================================================ */
-    .scroll-cue {
+    .hero-fade {
       position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 11;
-      pointer-events: auto;
-      opacity: 0;
-      transition: opacity 1s ease 1.5s;
-    }
-
-    .scroll-cue.is-visible {
-      opacity: 1;
-    }
-
-    .scroll-cue svg {
-      animation: bob 2.5s ease-in-out infinite;
-    }
-
-    @keyframes bob {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(6px); }
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 150px;
+      background: linear-gradient(to bottom, transparent, #141011);
+      z-index: 10;
+      pointer-events: none;
     }
 
     /* ================================================================
-       SECTION TRANSITIONS (scroll reveal)
+       CONTENT
        ================================================================ */
-    .reveal-section {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.9s ease, transform 0.9s ease;
+    .site-content {
+      position: relative;
+      z-index: 30;
+      background-color: #141011;
+      text-align: center;
     }
 
-    .reveal-section.is-in-view {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ================================================================
-       DIVIDER
-       ================================================================ */
-    .section-rule {
-      width: 80px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #8B2252, transparent);
+    .content-section {
+      max-width: 800px;
       margin: 0 auto;
+      padding: 60px 20px;
     }
 
-    /* ================================================================
-       TICKET CARD
-       ================================================================ */
-    .ticket-card {
-      background: linear-gradient(145deg, #1e1619 0%, #141011 100%);
-      border: 1px solid #5a163050;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ticket-card::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(145deg, #C5975B30, #8B225240, #C5975B30);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-    }
-
-    .ticket-card::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(ellipse at 30% 20%, #8B225208 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    /* ================================================================
-       CTA BUTTON
-       ================================================================ */
-    .cta-btn {
-      background: #8B2252;
+    .site-title {
+      font-size: 2em;
+      margin: 0 0 8px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
       color: #F5F0EB;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.35s ease;
-      box-shadow: 0 4px 20px rgba(139,34,82,0.25);
     }
 
-    .cta-btn:hover {
-      background: #a82d65;
-      box-shadow:
-        0 6px 30px rgba(139,34,82,0.40),
-        0 0 60px rgba(139,34,82,0.15);
-      transform: translateY(-1px);
-    }
-
-    .cta-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    /* ================================================================
-       SHOW ROW
-       ================================================================ */
-    .show-row {
-      background: rgba(30,22,25,0.5);
-      border: 1px solid rgba(90,53,64,0.2);
-      transition: all 0.3s ease;
-    }
-
-    .show-row:hover {
-      background: rgba(30,22,25,0.9);
-      border-color: rgba(139,34,82,0.35);
-      box-shadow: 0 0 20px rgba(139,34,82,0.08);
-    }
-
-    .show-row:hover .show-arrow {
-      transform: translateX(4px);
-      color: #C5975B;
-    }
-
-    .show-arrow {
-      transition: all 0.3s ease;
+    .site-subtitle {
+      color: #E60A0C;
+      font-weight: 600;
+      font-size: 1.15em;
+      margin: 0;
     }
 
     /* ================================================================
        PRESS LOGOS
        ================================================================ */
-    .press-logo {
-      filter: grayscale(100%) brightness(1.8) contrast(0.8);
-      opacity: 0.55;
-      transition: all 0.4s ease;
+    .press-logos {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin: 48px 0 20px;
     }
 
-    .press-logo:hover {
-      filter: grayscale(0%) brightness(1.1) contrast(1);
-      opacity: 1;
+    .press-logos-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .press-logos img {
+      height: auto;
+    }
+
+    .press-logo-nyt { width: 240px; }
+    .press-logo-law { width: 180px; }
+    .press-logo-niaj { width: 100px; }
+
+    .press-text {
+      font-size: 0.95em;
+      margin: 0;
+      padding: 0 10%;
+      color: #999;
+      line-height: 1.6;
     }
 
     /* ================================================================
-       STARS
+       TESTIMONIALS
        ================================================================ */
-    .stars {
-      color: #C5975B;
-      letter-spacing: 3px;
+    .testimonial-section {
+      padding: 40px 20px;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 48px;
+      justify-items: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .testimonial-grid img {
+      width: 100%;
+      max-width: 320px;
     }
 
     /* ================================================================
-       FAQ ACCORDION
+       SHOWS / IFRAME
        ================================================================ */
-    .faq-answer {
-      max-height: 0;
+    .shows-section {
+      padding: 40px 20px;
+    }
+
+    .shows-title {
+      font-size: 1.4em;
+      font-weight: 600;
+      margin: 40px 0 20px;
+      color: #F5F0EB;
+    }
+
+    .shows-iframe-wrap {
+      width: 100%;
+      height: 500px;
       overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), padding 0.4s ease;
-      padding-top: 0;
-      padding-bottom: 0;
     }
 
-    .faq-item.is-open .faq-answer {
-      max-height: 220px;
-      padding-top: 0.75rem;
-      padding-bottom: 0.5rem;
-    }
-
-    .faq-toggle {
-      transition: all 0.3s ease;
-    }
-
-    .faq-item.is-open .faq-toggle {
-      background: rgba(139,34,82,0.06);
-    }
-
-    .faq-chevron {
-      transition: transform 0.35s ease;
-    }
-
-    .faq-item.is-open .faq-chevron {
-      transform: rotate(180deg);
+    .shows-iframe-wrap iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
     }
 
     /* ================================================================
-       AMBIENT GLOW (subtle background radials for depth)
+       FOOTER
        ================================================================ */
-    .ambient-top::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%;
-      height: 250px;
-      background: radial-gradient(ellipse at center, #8B22520a 0%, transparent 70%);
-      pointer-events: none;
+    .site-footer {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background-color: #141011;
+      color: #9e958c;
+      padding: 40px 20px;
+      text-align: center;
     }
 
-    /* ================================================================
-       FOOTER LINK
-       ================================================================ */
-    .footer-link {
+    .site-footer .footer-brand {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #F5F0EB;
+      margin-bottom: 8px;
+    }
+
+    .site-footer .footer-address {
+      margin-bottom: 12px;
+      font-size: 0.9em;
+    }
+
+    .site-footer .footer-address a {
+      color: #9e958c;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .site-footer .footer-address a:hover {
+      color: #F5F0EB;
+    }
+
+    .site-footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 0.9em;
+    }
+
+    .site-footer .footer-links a {
       color: #C5975B;
-      transition: color 0.3s ease;
+      text-decoration: none;
+      transition: color 0.2s ease;
     }
 
-    .footer-link:hover {
+    .site-footer .footer-links a:hover {
       color: #d4a96a;
+    }
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+
+    /* Tablet */
+    @media (max-width: 1024px) {
+      .hero-logo {
+        width: clamp(220px, 55vw, 500px);
+      }
+      .hero-tagline {
+        letter-spacing: 0.2em;
+        font-size: clamp(0.65rem, 2vw, 0.9rem);
+      }
+      .hero-fade {
+        height: 120px;
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .hero-overlay {
+        background:
+          radial-gradient(ellipse 85% 45% at 50% 48%, rgba(20,16,17,0.82) 0%, rgba(20,16,17,0.50) 30%, transparent 55%),
+          radial-gradient(ellipse at center, transparent 20%, rgba(20,16,17,0.55) 60%, rgba(20,16,17,0.90) 100%);
+      }
+      .hero-logo {
+        width: clamp(160px, 60vw, 280px);
+      }
+      .hero-tagline {
+        letter-spacing: 0.08em;
+        font-size: 3.5vw;
+        margin-top: 0.6rem;
+      }
+      .hero-fade {
+        height: 80px;
+      }
+      .site-title {
+        font-size: 1.5em;
+      }
+      .press-logos {
+        gap: 16px;
+        margin-top: 32px;
+      }
+      .press-logo-nyt { width: 130px; }
+      .press-logo-law { width: 130px; }
+      .press-logo-niaj { width: 70px; }
+      .press-text {
+        padding: 0 5%;
+        font-size: 1em;
+      }
+      .testimonial-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .testimonial-grid img {
+        max-width: 280px;
+      }
+      .shows-iframe-wrap {
+        height: 450px;
+      }
     }
   </style>
 
@@ -443,286 +425,68 @@
   <!-- End Meta Pixel Code -->
 </head>
 
-<body class="font-body antialiased">
+<body>
 
   <!-- ================================================================
-       SECTION 1: HERO — Animated Mosaic Grid
+       HERO
        ================================================================ -->
-  <header class="mosaic-hero" id="hero">
-    <div class="mosaic-grid" id="mosaicGrid">
-      <!-- Tile 1 -->
-      <div class="mosaic-tile" data-tile="0" data-delay="0">
-        <img src="images/comics/bob.JPG" alt="Comedian performing at Jetpack" class="tile-layer" loading="eager">
-        <img src="images/comics/Demetri 2.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 2 -->
-      <div class="mosaic-tile" data-tile="1" data-delay="120">
-        <img src="images/comics/fran.jpg" alt="Comedian close-up with mic" class="tile-layer" loading="eager">
-        <img src="images/audience/crowd.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 3: wide -->
-      <div class="mosaic-tile" data-tile="2" data-delay="240">
-        <img src="images/comics/Atsuko wide resize.JPG" alt="Wide venue shot" class="tile-layer" loading="eager">
-        <img src="images/comics/Harland Williams.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 4: tall -->
-      <div class="mosaic-tile" data-tile="3" data-delay="180">
-        <img src="images/comics/moses.jpg" alt="Comedian on stage" class="tile-layer" loading="eager">
-        <img src="images/comics/Laurie.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 5 -->
-      <div class="mosaic-tile" data-tile="4" data-delay="350">
-        <img src="images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6266.JPG" alt="Comedian performing" class="tile-layer" loading="eager">
-        <img src="images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6098.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 6 -->
-      <div class="mosaic-tile" data-tile="5" data-delay="280">
-        <img src="images/comics/kevin.jpg" alt="Comedian on stage" class="tile-layer" loading="eager">
-        <img src="images/comics/Kelsey Cook.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 7 -->
-      <div class="mosaic-tile" data-tile="6" data-delay="420">
-        <img src="images/audience/reaction-three-friends-01.jpg" alt="Audience laughing" class="tile-layer" loading="eager">
-        <img src="images/comics/joe.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 8: wide -->
-      <div class="mosaic-tile" data-tile="7" data-delay="500">
-        <img src="images/comics/Sklar Brothers copy.jpg" alt="Comedians on stage" class="tile-layer" loading="eager">
-        <img src="images/comics/Matt Besser - geoff edit resize.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-      <!-- Tile 9 -->
-      <div class="mosaic-tile" data-tile="8" data-delay="380">
-        <img src="images/comics/peet.jpg" alt="Comedian performing" class="tile-layer" loading="eager">
-        <img src="images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6350.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
-      </div>
-    </div>
+  <div class="hero-section" id="heroSection">
+    <div class="masonry-grid" id="masonryGrid"></div>
 
-    <!-- Hero text overlay -->
     <div class="hero-overlay" id="heroOverlay">
       <img src="Jetpack Logo Solo Straight.png" alt="Jetpack Comedy" class="hero-logo" id="heroLogo">
-      <p class="hero-tagline" id="heroTagline">
-        <span>Every Friday</span>
-        <span class="tagline-dot">&middot;</span>
-        <span>Bar Lubitsch</span>
-        <span class="tagline-dot">&middot;</span>
-        <span>West Hollywood</span>
-      </p>
+      <p class="hero-tagline" id="heroTagline">The anti-club comedy club</p>
     </div>
 
-    <!-- Scroll cue -->
-    <a href="#pitch" class="scroll-cue" id="scrollCue" aria-label="Scroll to content">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C5975B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M7 10l5 5 5-5"/>
-      </svg>
-    </a>
-  </header>
+    <div class="hero-fade"></div>
+  </div>
 
   <!-- ================================================================
-       SECTION 2: PITCH
+       CONTENT
        ================================================================ -->
-  <section id="pitch" class="reveal-section py-20 md:py-28 px-6">
-    <div class="max-w-2xl mx-auto text-center">
-      <h2 class="font-display text-4xl md:text-5xl font-bold text-gold tracking-wide mb-6 italic">&ldquo;The anti-club comedy club&rdquo;</h2>
-      <p class="text-cream-dim text-lg md:text-xl leading-relaxed mb-2">
-        Top-notch standup in a swanky, velvet bar.
-      </p>
-      <p class="text-cream-faint text-base md:text-lg leading-relaxed">
-        Every Friday night at Bar Lubitsch. Since 2012.
-      </p>
-    </div>
-  </section>
+  <main class="site-content">
+    <div class="content-section">
+      <h1 class="site-title">Top-notch standup in a swanky, velvet bar</h1>
+      <p class="site-subtitle">Fridays at Bar Lubitsch</p>
 
-  <div class="section-rule"></div>
-
-  <!-- ================================================================
-       SECTION 3: TICKETS
-       ================================================================ -->
-  <!-- PLACEHOLDER: Will be replaced with Mic Drop venue calendar components -->
-  <section id="tickets" class="reveal-section py-20 md:py-28 px-6 relative ambient-top">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="font-display text-3xl md:text-4xl font-bold text-cream text-center mb-14 tracking-wide">Upcoming Shows</h2>
-
-      <!-- Next show featured widget -->
-      <div class="ticket-card rounded-2xl p-8 md:p-12 text-center mb-10">
-        <p class="text-gold font-body text-xs font-semibold uppercase tracking-[0.25em] mb-3">Next Show</p>
-        <h3 class="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-cream mb-2">This Friday, February 20th</h3>
-        <p class="text-cream-dim text-base md:text-lg mb-2">Doors 7:30pm &middot; Show 8:00pm</p>
-        <p class="text-gold-bright font-display text-2xl font-bold mb-8">$20</p>
-        <a href="#" class="cta-btn inline-block font-body font-semibold text-lg px-12 py-4 rounded-lg tracking-wide">
-          Get Tickets
-        </a>
+      <div class="press-logos">
+        <img src="netflix-is-a-joke-fest.png" alt="Part of Netflix Is A Joke Fest 2026" class="press-logo-niaj" loading="lazy">
+        <div class="press-logos-row">
+          <img src="nytimes.png" alt="Featured in The New York Times" class="press-logo-nyt" loading="lazy">
+          <img src="laweekly.png" alt="Featured in LA Weekly" class="press-logo-law" loading="lazy">
+        </div>
       </div>
+      <p class="press-text">Featured in The New York Times and LA Weekly, and part of the Netflix Is A Joke Festival. Jetpack has been making audiences laugh til they cry every Friday since 2012.</p>
+    </div>
 
-      <!-- Upcoming shows list -->
-      <div class="space-y-3">
-        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
-          <div>
-            <span class="text-cream font-body font-medium">Friday, February 27</span>
-            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
-          </div>
-          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
-        </a>
-        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
-          <div>
-            <span class="text-cream font-body font-medium">Friday, March 6</span>
-            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
-          </div>
-          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
-        </a>
-        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
-          <div>
-            <span class="text-cream font-body font-medium">Friday, March 13</span>
-            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
-          </div>
-          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
-        </a>
-        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
-          <div>
-            <span class="text-cream font-body font-medium">Friday, March 20</span>
-            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
-          </div>
-          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
-        </a>
+    <div class="shows-section">
+      <h2 class="shows-title">Upcoming shows</h2>
+      <div class="shows-iframe-wrap">
+        <iframe id="jetbookiframe" allow="clipboard-read; clipboard-write" src="https://jetbook.co/o_iframe/jetpack-comedy-9yo7g" scrolling="yes" allowfullscreen></iframe>
       </div>
     </div>
-  </section>
 
-  <div class="section-rule"></div>
-
-  <!-- ================================================================
-       SECTION 4: PROOF
-       ================================================================ -->
-  <section id="proof" class="reveal-section py-20 md:py-28 px-6">
-    <div class="max-w-4xl mx-auto">
-
-      <!-- Press logos -->
-      <div class="flex items-center justify-center gap-10 md:gap-16 mb-6 flex-wrap">
-        <img src="nytimes.png" alt="The New York Times" class="press-logo h-6 md:h-8 w-auto">
-        <img src="laweekly.png" alt="LA Weekly" class="press-logo h-7 md:h-9 w-auto">
-        <span class="press-logo font-display text-xl md:text-2xl font-bold text-cream-dim tracking-wide italic" style="opacity:0.55;">Netflix Is A Joke</span>
-      </div>
-
-      <p class="text-cream-faint text-sm text-center mb-14 tracking-wide">
-        Featured in The New York Times and LA Weekly. Part of the Netflix Is A Joke festival.
-      </p>
-
-      <!-- Review quotes -->
-      <div class="grid md:grid-cols-3 gap-10 text-center">
-        <blockquote class="space-y-3">
-          <p class="stars text-base">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-          <p class="text-cream font-display text-xl italic leading-relaxed">&ldquo;The best comedy night in LA. Period.&rdquo;</p>
-          <cite class="text-cream-faint text-xs not-italic uppercase tracking-wider block">&mdash; Yelp Review</cite>
-        </blockquote>
-        <blockquote class="space-y-3">
-          <p class="stars text-base">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-          <p class="text-cream font-display text-xl italic leading-relaxed">&ldquo;An absolute gem hidden in plain sight on Santa Monica Blvd.&rdquo;</p>
-          <cite class="text-cream-faint text-xs not-italic uppercase tracking-wider block">&mdash; Google Review</cite>
-        </blockquote>
-        <blockquote class="space-y-3">
-          <p class="stars text-base">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-          <p class="text-cream font-display text-xl italic leading-relaxed">&ldquo;Skip the comedy clubs. Go here instead.&rdquo;</p>
-          <cite class="text-cream-faint text-xs not-italic uppercase tracking-wider block">&mdash; Timeout LA</cite>
-        </blockquote>
+    <div class="testimonial-section">
+      <div class="testimonial-grid">
+        <img src="test1.png" alt="5-star review: My face was literally sore the next day" loading="lazy">
+        <img src="test2.png" alt="5-star review: Non stop laughs at a hip bar" loading="lazy">
+        <img src="test3.png" alt="5-star review from audience member" loading="lazy">
+        <img src="test4.png" alt="5-star review from audience member" loading="lazy">
       </div>
     </div>
-  </section>
-
-  <div class="section-rule"></div>
+  </main>
 
   <!-- ================================================================
-       SECTION 5: FAQ (functional accordion)
+       FOOTER
        ================================================================ -->
-  <section id="faq" class="reveal-section py-20 md:py-28 px-6">
-    <div class="max-w-2xl mx-auto">
-      <h2 class="font-display text-3xl md:text-4xl font-bold text-cream text-center mb-14 tracking-wide">Questions</h2>
-
-      <div class="space-y-3" id="faqList">
-        <!-- FAQ 1 -->
-        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
-          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
-            <span class="text-cream font-body font-medium text-base">What time does the show start?</span>
-            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
-            Doors open at 7:30pm, show starts at 8:00pm. Shows typically run about 90 minutes.
-          </div>
-        </div>
-
-        <!-- FAQ 2 -->
-        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
-          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
-            <span class="text-cream font-body font-medium text-base">Is there a drink minimum?</span>
-            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
-            No drink minimum! Bar Lubitsch has a full bar with craft cocktails, beer, and wine.
-          </div>
-        </div>
-
-        <!-- FAQ 3 -->
-        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
-          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
-            <span class="text-cream font-body font-medium text-base">Where do I park?</span>
-            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
-            Street parking is available on Santa Monica Blvd and surrounding streets. We recommend arriving 15-20 minutes early.
-          </div>
-        </div>
-
-        <!-- FAQ 4 -->
-        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
-          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
-            <span class="text-cream font-body font-medium text-base">How old do you have to be?</span>
-            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
-            21+ only (it's a bar!).
-          </div>
-        </div>
-
-        <!-- FAQ 5 -->
-        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
-          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
-            <span class="text-cream font-body font-medium text-base">Can I bring a group?</span>
-            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
-            Absolutely! For groups of 8+, email us at <a href="mailto:shows@jetpackcomedy.com" class="text-gold hover:underline">shows@jetpackcomedy.com</a> for group rates.
-          </div>
-        </div>
-
-        <!-- FAQ 6 -->
-        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
-          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
-            <span class="text-cream font-body font-medium text-base">Who performs?</span>
-            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
-            Each week features a hand-picked lineup of LA's best standup comedians, plus surprise drop-ins. Our comics have appeared on every major network and streaming platform.
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================================================================
-       SECTION 6: FOOTER
-       ================================================================ -->
-  <footer class="border-t border-velvet/30 py-16 px-6">
-    <div class="max-w-3xl mx-auto text-center space-y-5">
-      <p class="font-display text-2xl font-bold text-cream tracking-wide">Jetpack Comedy</p>
-      <p class="text-cream-dim text-sm">
-        <a href="https://maps.google.com/?q=7702+Santa+Monica+Blvd+West+Hollywood+CA" target="_blank" rel="noopener" class="hover:text-cream transition-colors duration-200">
-          7702 Santa Monica Blvd, West Hollywood
-        </a>
-      </p>
-      <div class="flex items-center justify-center gap-6 text-sm flex-wrap">
-        <a href="mailto:shows@jetpackcomedy.com" class="footer-link">shows@jetpackcomedy.com</a>
-        <span class="text-velvet-light">&middot;</span>
-        <a href="https://instagram.com/jetpackcomedy" target="_blank" rel="noopener" class="footer-link">@jetpackcomedy</a>
-      </div>
-      <p class="text-cream-faint/60 text-xs pt-2">Follow us on Instagram for weekly lineup announcements</p>
+  <footer class="site-footer">
+    <p class="footer-brand">Jetpack Comedy</p>
+    <p class="footer-address">
+      <a href="https://maps.google.com/?q=7702+Santa+Monica+Blvd+West+Hollywood+CA" target="_blank" rel="noopener">7702 Santa Monica Blvd, West Hollywood</a>
+    </p>
+    <div class="footer-links">
+      <a href="mailto:shows@jetpackcomedy.com">shows@jetpackcomedy.com</a>
+      <a href="https://instagram.com/jetpackcomedy" target="_blank" rel="noopener">@jetpackcomedy</a>
     </div>
   </footer>
 
@@ -730,317 +494,387 @@
        JAVASCRIPT
        ================================================================ -->
   <script>
+  (function () {
     // ================================================================
-    // MOSAIC: Layout Engine + Crossfade
-    // Random grid layouts, random crops, global image deduplication
+    // PHOTO POOL
     // ================================================================
-    (function () {
-      // ── Photo pool ──
-      var allPhotos = [
-        // Comics (52 images)
-        'images/comics/Adomian.JPG',
-        'images/comics/Ahbay.JPG',
-        'images/comics/Ahmed.JPG',
-        'images/comics/Aisha 1.JPG',
-        'images/comics/Andy.JPG',
-        'images/comics/Atsuko 2.JPG',
-        'images/comics/Atsuko wide resize.JPG',
-        'images/comics/bob.JPG',
-        'images/comics/bryant.jpg',
-        'images/comics/Chinedu.JPG',
-        'images/comics/Clark.JPG',
-        'images/comics/Demetri 2.JPG',
-        'images/comics/Demetri resize.JPG',
-        'images/comics/Emma 2.JPG',
-        'images/comics/Eric 1.JPG',
-        'images/comics/fran.jpg',
-        'images/comics/Grant 3.JPG',
-        'images/comics/Harland Williams.jpg',
-        'images/comics/IMG_3221.jpg',
-        'images/comics/jb.jpg',
-        'images/comics/Jenny Zigrino.JPG',
-        'images/comics/joe.jpg',
-        'images/comics/Kelsey Cook.jpg',
-        'images/comics/kevin.jpg',
-        'images/comics/Kiran.JPG',
-        'images/comics/Lady.JPG',
-        'images/comics/Langston 3.JPG',
-        'images/comics/Laurie 2.JPG',
-        'images/comics/Laurie 3.JPG',
-        'images/comics/Laurie.JPG',
-        'images/comics/Maggie Maye.JPG',
-        'images/comics/Matt Besser - geoff edit resize.jpg',
-        'images/comics/moses.jpg',
-        'images/comics/moseslogan.jpg',
-        'images/comics/Nick Hoff.JPG',
-        'images/comics/Peet 1.JPG',
-        'images/comics/peet.jpg',
-        'images/comics/Rachel Scanlon.JPG',
-        'images/comics/Ryan O.JPG',
-        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6195.JPG',
-        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6246.JPG',
-        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6266.JPG',
-        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6399.JPG',
-        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6470.JPG',
-        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6538.JPG',
-        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6579.JPG',
-        'images/comics/Sheng.JPG',
-        'images/comics/Sklar Brothers copy.jpg',
-        'images/comics/Usama 1.JPG',
-        'images/comics/Will 1.JPG',
-        'images/comics/Will.JPG',
-        'images/comics/Zach.JPG',
-        // Audience (15 images)
-        'images/audience/crowd-through-03.jpg',
-        'images/audience/crowd.jpg',
-        'images/audience/man-reaction-01.jpg',
-        'images/audience/react-guy-laughing-01.jpg',
-        'images/audience/reaction-guy-beard-01.jpg',
-        'images/audience/reaction-three-friends-01.jpg',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6098.JPG',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6237 resize.JPG',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6326.JPG',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6334.JPG',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6350.JPG',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6425.JPG',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6485.JPG',
-        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6509.JPG',
-        'images/audience/through-crowd-comp-02.jpg'
-      ];
+    var allPhotos = [
+      { sm: 'images/webp/comics/Adomian-sm.webp', lg: 'images/webp/comics/Adomian-lg.webp' },
+      { sm: 'images/webp/comics/Ahbay-sm.webp', lg: 'images/webp/comics/Ahbay-lg.webp' },
+      { sm: 'images/webp/comics/Ahmed-sm.webp', lg: 'images/webp/comics/Ahmed-lg.webp' },
+      { sm: 'images/webp/comics/Aisha 1-sm.webp', lg: 'images/webp/comics/Aisha 1-lg.webp' },
+      { sm: 'images/webp/comics/Andy-sm.webp', lg: 'images/webp/comics/Andy-lg.webp' },
+      { sm: 'images/webp/comics/Atsuko 2-sm.webp', lg: 'images/webp/comics/Atsuko 2-lg.webp' },
+      { sm: 'images/webp/comics/Atsuko wide resize-sm.webp', lg: 'images/webp/comics/Atsuko wide resize-lg.webp' },
+      { sm: 'images/webp/comics/bob-sm.webp', lg: 'images/webp/comics/bob-lg.webp' },
+      { sm: 'images/webp/comics/bryant-sm.webp', lg: 'images/webp/comics/bryant-lg.webp' },
+      { sm: 'images/webp/comics/Chinedu-sm.webp', lg: 'images/webp/comics/Chinedu-lg.webp' },
+      { sm: 'images/webp/comics/Clark-sm.webp', lg: 'images/webp/comics/Clark-lg.webp' },
+      { sm: 'images/webp/comics/Demetri 2-sm.webp', lg: 'images/webp/comics/Demetri 2-lg.webp' },
+      { sm: 'images/webp/comics/Demetri resize-sm.webp', lg: 'images/webp/comics/Demetri resize-lg.webp' },
+      { sm: 'images/webp/comics/Emma 2-sm.webp', lg: 'images/webp/comics/Emma 2-lg.webp' },
+      { sm: 'images/webp/comics/Eric 1-sm.webp', lg: 'images/webp/comics/Eric 1-lg.webp' },
+      { sm: 'images/webp/comics/fran-sm.webp', lg: 'images/webp/comics/fran-lg.webp' },
+      { sm: 'images/webp/comics/Grant 3-sm.webp', lg: 'images/webp/comics/Grant 3-lg.webp' },
+      { sm: 'images/webp/comics/Harland Williams-sm.webp', lg: 'images/webp/comics/Harland Williams-lg.webp' },
+      { sm: 'images/webp/comics/IMG_3221-sm.webp', lg: 'images/webp/comics/IMG_3221-lg.webp' },
+      { sm: 'images/webp/comics/jb-sm.webp', lg: 'images/webp/comics/jb-lg.webp' },
+      { sm: 'images/webp/comics/Jenny Zigrino-sm.webp', lg: 'images/webp/comics/Jenny Zigrino-lg.webp' },
+      { sm: 'images/webp/comics/joe-sm.webp', lg: 'images/webp/comics/joe-lg.webp' },
+      { sm: 'images/webp/comics/Kelsey Cook-sm.webp', lg: 'images/webp/comics/Kelsey Cook-lg.webp' },
+      { sm: 'images/webp/comics/kevin-sm.webp', lg: 'images/webp/comics/kevin-lg.webp' },
+      { sm: 'images/webp/comics/Kiran-sm.webp', lg: 'images/webp/comics/Kiran-lg.webp' },
+      { sm: 'images/webp/comics/Lady-sm.webp', lg: 'images/webp/comics/Lady-lg.webp' },
+      { sm: 'images/webp/comics/Langston 3-sm.webp', lg: 'images/webp/comics/Langston 3-lg.webp' },
+      { sm: 'images/webp/comics/Laurie 2-sm.webp', lg: 'images/webp/comics/Laurie 2-lg.webp' },
+      { sm: 'images/webp/comics/Laurie 3-sm.webp', lg: 'images/webp/comics/Laurie 3-lg.webp' },
+      { sm: 'images/webp/comics/Laurie-sm.webp', lg: 'images/webp/comics/Laurie-lg.webp' },
+      { sm: 'images/webp/comics/Maggie Maye-sm.webp', lg: 'images/webp/comics/Maggie Maye-lg.webp' },
+      { sm: 'images/webp/comics/Matt Besser - geoff edit resize-sm.webp', lg: 'images/webp/comics/Matt Besser - geoff edit resize-lg.webp' },
+      { sm: 'images/webp/comics/moses-sm.webp', lg: 'images/webp/comics/moses-lg.webp' },
+      { sm: 'images/webp/comics/moseslogan-sm.webp', lg: 'images/webp/comics/moseslogan-lg.webp' },
+      { sm: 'images/webp/comics/Nick Hoff-sm.webp', lg: 'images/webp/comics/Nick Hoff-lg.webp' },
+      { sm: 'images/webp/comics/Peet 1-sm.webp', lg: 'images/webp/comics/Peet 1-lg.webp' },
+      { sm: 'images/webp/comics/peet-sm.webp', lg: 'images/webp/comics/peet-lg.webp' },
+      { sm: 'images/webp/comics/Rachel Scanlon-sm.webp', lg: 'images/webp/comics/Rachel Scanlon-lg.webp' },
+      { sm: 'images/webp/comics/Ryan O-sm.webp', lg: 'images/webp/comics/Ryan O-lg.webp' },
+      { sm: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6195-sm.webp', lg: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6195-lg.webp' },
+      { sm: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6246-sm.webp', lg: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6246-lg.webp' },
+      { sm: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6266-sm.webp', lg: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6266-lg.webp' },
+      { sm: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6399-sm.webp', lg: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6399-lg.webp' },
+      { sm: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6470-sm.webp', lg: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6470-lg.webp' },
+      { sm: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6538-sm.webp', lg: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6538-lg.webp' },
+      { sm: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6579-sm.webp', lg: 'images/webp/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6579-lg.webp' },
+      { sm: 'images/webp/comics/Sheng-sm.webp', lg: 'images/webp/comics/Sheng-lg.webp' },
+      { sm: 'images/webp/comics/Sklar Brothers copy-sm.webp', lg: 'images/webp/comics/Sklar Brothers copy-lg.webp' },
+      { sm: 'images/webp/comics/Usama 1-sm.webp', lg: 'images/webp/comics/Usama 1-lg.webp' },
+      { sm: 'images/webp/comics/Will 1-sm.webp', lg: 'images/webp/comics/Will 1-lg.webp' },
+      { sm: 'images/webp/comics/Will-sm.webp', lg: 'images/webp/comics/Will-lg.webp' },
+      { sm: 'images/webp/comics/Zach-sm.webp', lg: 'images/webp/comics/Zach-lg.webp' },
+      { sm: 'images/webp/audience/crowd-through-03-sm.webp', lg: 'images/webp/audience/crowd-through-03-lg.webp' },
+      { sm: 'images/webp/audience/crowd-sm.webp', lg: 'images/webp/audience/crowd-lg.webp' },
+      { sm: 'images/webp/audience/man-reaction-01-sm.webp', lg: 'images/webp/audience/man-reaction-01-lg.webp' },
+      { sm: 'images/webp/audience/react-guy-laughing-01-sm.webp', lg: 'images/webp/audience/react-guy-laughing-01-lg.webp' },
+      { sm: 'images/webp/audience/reaction-guy-beard-01-sm.webp', lg: 'images/webp/audience/reaction-guy-beard-01-lg.webp' },
+      { sm: 'images/webp/audience/reaction-three-friends-01-sm.webp', lg: 'images/webp/audience/reaction-three-friends-01-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6098-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6098-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6237 resize-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6237 resize-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6326-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6326-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6334-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6334-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6350-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6350-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6425-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6425-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6485-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6485-lg.webp' },
+      { sm: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6509-sm.webp', lg: 'images/webp/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6509-lg.webp' },
+      { sm: 'images/webp/audience/through-crowd-comp-02-sm.webp', lg: 'images/webp/audience/through-crowd-comp-02-lg.webp' }
+    ];
 
-      // ── Layout templates ──
-      // Gallery-wall style: 4-5 rows with varied heights, irregular tile spans.
-      // Area letters map to tiles in order (a=tile0, b=tile1, etc.)
-      var desktopLayouts = [
-        // Big hero top-left, tall right column
-        { cols: '2fr 1fr 1fr 1.3fr', rows: '1.3fr 0.8fr 1fr 1.1fr',
-          areas: '"a a b c" "a a d c" "e f d g" "e h i g"' },
-        // Big hero center-right, scattered left
-        { cols: '1fr 1.2fr 1.5fr 1.5fr', rows: '1.1fr 0.7fr 0.9fr 1.3fr',
-          areas: '"a b c c" "a d c c" "e d f g" "h h i g"' },
-        // Panoramic top strip, gallery below
-        { cols: '1fr 1fr 1.3fr 0.8fr 1fr', rows: '1.4fr 1fr 1fr',
-          areas: '"a a a b b" "c d e e f" "c g g h i"' },
-        // L-shaped hero bottom-left
-        { cols: '1.5fr 1.5fr 1fr 1fr', rows: '0.9fr 1fr 1.3fr 0.8fr',
-          areas: '"a b c d" "a b c e" "f f g g" "f f h i"' },
-        // Tall left column spanning 3 rows
-        { cols: '1.3fr 0.8fr 1.2fr 1fr', rows: '1fr 1.2fr 0.8fr 1fr',
-          areas: '"a b c c" "a d e f" "a d g f" "h h g i"' },
-        // Center hero with frame
-        { cols: '1fr 1.5fr 1.5fr 1fr', rows: '1fr 1.2fr 1.2fr 0.7fr',
-          areas: '"a b b c" "d e e f" "g e e h" "g i i i"' },
-        // Diagonal stepping pattern
-        { cols: '1.4fr 1fr 1fr 1.4fr', rows: '1.2fr 0.8fr 0.8fr 1.2fr',
-          areas: '"a a b c" "d e b c" "d e f f" "g h h i"' },
-        // 5-col staggered bricks
-        { cols: '1fr 1fr 1.2fr 1.2fr 0.8fr', rows: '1.1fr 0.9fr 1fr 1fr',
-          areas: '"a a b c c" "d d b e e" "f g g g h" "f i i i h"' },
-        // Tall columns with small fills
-        { cols: '1fr 1.1fr 1.1fr 1fr', rows: '1.1fr 0.6fr 1fr 1.3fr',
-          areas: '"a b b c" "a d e c" "f d e g" "f h i g"' },
-        // Big hero top-right
-        { cols: '1fr 0.8fr 1.5fr 1.5fr', rows: '0.9fr 1.2fr 0.8fr 1.1fr',
-          areas: '"a b c c" "d e c c" "d e f g" "h h i g"' },
-      ];
+    // ================================================================
+    // FACE POSITION MAP
+    // ================================================================
+    var faceMap = {
+      'Adomian-sm.webp': '50% 31%',
+      'Ahbay-sm.webp': '55% 18%',
+      'Ahmed-sm.webp': '39% 34%',
+      'Aisha 1-sm.webp': '51% 35%',
+      'Andy-sm.webp': '51% 29%',
+      'Atsuko 2-sm.webp': '56% 64%',
+      'Atsuko wide resize-sm.webp': '41% 33%',
+      'bob-sm.webp': '34% 31%',
+      'bryant-sm.webp': '56% 36%',
+      'Chinedu-sm.webp': '38% 84%',
+      'Clark-sm.webp': '50% 30%',
+      'Demetri 2-sm.webp': '26% 47%',
+      'Demetri resize-sm.webp': '32% 23%',
+      'Emma 2-sm.webp': '55% 42%',
+      'Eric 1-sm.webp': '41% 31%',
+      'fran-sm.webp': '60% 19%',
+      'Grant 3-sm.webp': '72% 43%',
+      'Harland Williams-sm.webp': '54% 26%',
+      'IMG_3221-sm.webp': '64% 34%',
+      'jb-sm.webp': '43% 21%',
+      'Jenny Zigrino-sm.webp': '41% 31%',
+      'joe-sm.webp': '40% 26%',
+      'Kelsey Cook-sm.webp': '33% 24%',
+      'kevin-sm.webp': '68% 25%',
+      'Kiran-sm.webp': '41% 41%',
+      'Lady-sm.webp': '40% 40%',
+      'Langston 3-sm.webp': '50% 30%',
+      'Laurie 2-sm.webp': '47% 37%',
+      'Laurie 3-sm.webp': '37% 39%',
+      'Laurie-sm.webp': '26% 35%',
+      'Maggie Maye-sm.webp': '53% 37%',
+      'Matt Besser - geoff edit resize-sm.webp': '38% 23%',
+      'moses-sm.webp': '44% 27%',
+      'moseslogan-sm.webp': '89% 70%',
+      'Nick Hoff-sm.webp': '54% 39%',
+      'Peet 1-sm.webp': '68% 35%',
+      'peet-sm.webp': '47% 37%',
+      'Rachel Scanlon-sm.webp': '50% 30%',
+      'Ryan O-sm.webp': '59% 40%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6195-sm.webp': '73% 43%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6246-sm.webp': '50% 30%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6266-sm.webp': '61% 45%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6399-sm.webp': '21% 42%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6470-sm.webp': '53% 40%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6538-sm.webp': '47% 44%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6579-sm.webp': '53% 22%',
+      'Sheng-sm.webp': '46% 36%',
+      'Sklar Brothers copy-sm.webp': '41% 41%',
+      'Usama 1-sm.webp': '71% 24%',
+      'Will 1-sm.webp': '57% 47%',
+      'Will-sm.webp': '68% 28%',
+      'Zach-sm.webp': '38% 29%',
+      'crowd-through-03-sm.webp': '50% 51%',
+      'crowd-sm.webp': '63% 82%',
+      'man-reaction-01-sm.webp': '53% 49%',
+      'react-guy-laughing-01-sm.webp': '55% 41%',
+      'reaction-guy-beard-01-sm.webp': '49% 45%',
+      'reaction-three-friends-01-sm.webp': '53% 36%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6098-sm.webp': '58% 53%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6237 resize-sm.webp': '62% 78%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6326-sm.webp': '55% 27%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6334-sm.webp': '37% 84%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6350-sm.webp': '50% 30%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6425-sm.webp': '56% 55%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6485-sm.webp': '36% 34%',
+      'SARKIS-STUDIOS-COMEDIANS-WEHO-6509-sm.webp': '69% 62%',
+      'through-crowd-comp-02-sm.webp': '50% 30%'
+    };
 
-      var tabletLayouts = [
-        // 7 tiles (a-g), 3 cols, 4 rows
-        { cols: '1.2fr 1fr 1.1fr', rows: '1.2fr 0.8fr 1fr 1.1fr',
-          areas: '"a a b" "c d b" "c d e" "f f g"' },
-        { cols: '1fr 1.3fr 0.9fr', rows: '0.9fr 1fr 1fr 1.1fr',
-          areas: '"a b b" "c d e" "c d e" "f f g"' },
-        { cols: '0.9fr 1.1fr 1.2fr', rows: '1.1fr 1fr 0.7fr 1.2fr',
-          areas: '"a b c" "a d c" "e d f" "e g g"' },
-        { cols: '1.2fr 0.8fr 1fr', rows: '0.8fr 1.2fr 1fr 1fr',
-          areas: '"a b b" "a c d" "e c d" "e f g"' },
-        { cols: '1fr 1.2fr 1fr', rows: '1fr 0.7fr 1.2fr 1.1fr',
-          areas: '"a a b" "c d b" "c e e" "f f g"' },
-      ];
+    function getFacePosition(url) {
+      var parts = url.split('/');
+      var fname = parts[parts.length - 1];
+      fname = fname.replace('-lg.webp', '-sm.webp');
+      return faceMap[fname] || '50% 30%';
+    }
 
-      var mobileLayouts = [
-        // 5 tiles (a-e), 2 cols, 4 rows
-        { cols: '1fr 1.2fr', rows: '1.3fr 0.8fr 1fr 1.1fr',
-          areas: '"a a" "b c" "d c" "d e"' },
-        { cols: '1.1fr 1fr', rows: '1fr 1.3fr 0.7fr 1fr',
-          areas: '"a b" "a c" "d c" "d e"' },
-        { cols: '1fr 1.1fr', rows: '0.8fr 1.1fr 1.2fr 0.9fr',
-          areas: '"a b" "c b" "c d" "e e"' },
-        { cols: '1.2fr 0.9fr', rows: '1.1fr 0.9fr 0.8fr 1.2fr',
-          areas: '"a a" "b c" "b d" "e d"' },
-      ];
+    // ================================================================
+    // UTILITIES
+    // ================================================================
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+      }
+      return a;
+    }
 
-      // ── Utilities ──
-      function shuffle(arr) {
-        var a = arr.slice();
-        for (var i = a.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-        }
-        return a;
+    function filenameFromSrc(src) {
+      var parts = src.split('/');
+      var name = parts[parts.length - 1];
+      try { name = decodeURIComponent(name); } catch (e) {}
+      return name.toLowerCase();
+    }
+
+    var scheduleIdle = window.requestIdleCallback
+      ? function (cb) { window.requestIdleCallback(cb); }
+      : function (cb) { setTimeout(cb, 1); };
+
+    // ================================================================
+    // CONFIGURATION
+    // ================================================================
+    var vw = window.innerWidth;
+    var BASE_WIDTH = vw <= 600 ? 140 : vw <= 1024 ? 220 : 220;
+    var TILE_COUNT = vw <= 600 ? 6 : vw <= 1024 ? 10 : 18;
+
+    function pickAspectClass() {
+      var r = Math.random();
+      if (r < 0.35) return 'portrait';
+      if (r < 0.60) return 'landscape';
+      if (r < 0.85) return 'square';
+      return 'tall';
+    }
+
+    function heightForAspect(aspectClass, width) {
+      var isMobile = window.innerWidth <= 600;
+      switch (aspectClass) {
+        case 'portrait':  return Math.round(width * (isMobile ? 1.3 : 1.5));
+        case 'landscape': return Math.round(width * 0.667);
+        case 'square':    return Math.round(width);
+        case 'tall':      return Math.round(width * (isMobile ? 1.5 : 2));
+        default:          return Math.round(width);
+      }
+    }
+
+    // ================================================================
+    // BUILD TILES
+    // ================================================================
+    var grid = document.getElementById('masonryGrid');
+    var shuffledPhotos = shuffle(allPhotos);
+    var tiles = [];
+    var tileState = [];
+    var preloadUrls = [];
+
+    for (var t = 0; t < TILE_COUNT; t++) {
+      var aspectClass = pickAspectClass();
+      var tileHeight = heightForAspect(aspectClass, BASE_WIDTH);
+
+      var tile = document.createElement('div');
+      tile.className = 'masonry-tile';
+      tile.setAttribute('data-tile', t);
+      tile.style.height = tileHeight + 'px';
+
+      var photo1 = shuffledPhotos[t];
+      var photo2 = shuffledPhotos[TILE_COUNT + t];
+      var url1 = photo1.sm;
+      var url2 = photo2.sm;
+
+      var pos1 = getFacePosition(url1);
+      var pos2 = getFacePosition(url2);
+
+      var img1 = document.createElement('img');
+      img1.className = 'tile-layer';
+      img1.src = url1;
+      img1.alt = 'Jetpack Comedy';
+      img1.decoding = 'async';
+      img1.style.objectPosition = pos1;
+
+      var img2 = document.createElement('img');
+      img2.className = 'tile-layer is-hidden';
+      img2.src = url2;
+      img2.alt = '';
+      img2.decoding = 'async';
+      img2.loading = 'lazy';
+      img2.style.objectPosition = pos2;
+
+      if (t < 6) {
+        img1.loading = 'eager';
+        img1.fetchPriority = 'high';
+        preloadUrls.push(url1);
+      } else {
+        img1.loading = 'lazy';
       }
 
-      function getUniqueAreas(areasStr) {
-        var seen = {};
-        var result = [];
-        var letters = areasStr.replace(/["'\s]/g, '');
-        for (var i = 0; i < letters.length; i++) {
-          var ch = letters[i];
-          if (!seen[ch]) {
-            seen[ch] = true;
-            result.push(ch);
-          }
-        }
-        return result;
-      }
+      tile.appendChild(img1);
+      tile.appendChild(img2);
+      grid.appendChild(tile);
+      tiles.push(tile);
+      tileState.push(0);
+    }
 
-      function filenameFromSrc(src) {
-        var parts = src.split('/');
-        return parts[parts.length - 1].toLowerCase();
-      }
+    preloadUrls.forEach(function (url) {
+      var link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = url;
+      document.head.appendChild(link);
+    });
 
-      // ── DOM refs ──
-      var grid = document.getElementById('mosaicGrid');
-      var tiles = Array.prototype.slice.call(document.querySelectorAll('.mosaic-tile'));
-      var heroLogo = document.getElementById('heroLogo');
-      var heroTagline = document.getElementById('heroTagline');
-      var scrollCue = document.getElementById('scrollCue');
+    // ================================================================
+    // INIT MINIMASONRY
+    // ================================================================
+    var masonry = new MiniMasonry({
+      container: '.masonry-grid',
+      baseWidth: BASE_WIDTH,
+      gutter: 4,
+      ultimateGutter: 4,
+      surroundingGutter: false
+    });
 
-      // ── Pick random layout for viewport ──
-      var w = window.innerWidth;
-      var layouts = w <= 640 ? mobileLayouts : w <= 1024 ? tabletLayouts : desktopLayouts;
-      var layout = layouts[Math.floor(Math.random() * layouts.length)];
-      var uniqueAreas = getUniqueAreas(layout.areas);
-      var tileCount = uniqueAreas.length;
+    // ================================================================
+    // CASCADE REVEAL
+    // ================================================================
+    function revealTiles() {
+      var tilePositions = tiles.map(function (tile, idx) {
+        var rect = tile.getBoundingClientRect();
+        return { idx: idx, top: rect.top, left: rect.left };
+      });
 
-      // Apply grid template
-      grid.style.gridTemplateColumns = layout.cols;
-      grid.style.gridTemplateRows = layout.rows;
-      grid.style.gridTemplateAreas = layout.areas;
+      tilePositions.sort(function (a, b) {
+        var rowA = Math.floor(a.top / 40);
+        var rowB = Math.floor(b.top / 40);
+        if (rowA !== rowB) return rowA - rowB;
+        return a.left - b.left;
+      });
 
-      // Assign grid-area to each visible tile, hide the rest
-      for (var i = 0; i < tiles.length; i++) {
-        if (i < tileCount) {
-          tiles[i].style.gridArea = uniqueAreas[i];
-          tiles[i].style.display = '';
-        } else {
-          tiles[i].style.display = 'none';
-        }
-      }
+      tilePositions.forEach(function (item, orderIdx) {
+        setTimeout(function () {
+          tiles[item.idx].classList.add('is-revealed');
+        }, 80 + orderIdx * 50);
+      });
 
-      // ── Assign random images (no duplicates across visible tiles) ──
-      var shuffledPhotos = shuffle(allPhotos);
+      var totalRevealTime = 80 + TILE_COUNT * 50 + 500;
+      setTimeout(function () {
+        document.getElementById('heroLogo').classList.add('is-visible');
+        document.getElementById('heroTagline').classList.add('is-visible');
+      }, totalRevealTime);
+    }
 
-      for (var i = 0; i < tileCount; i++) {
-        var layers = tiles[i].querySelectorAll('.tile-layer');
-        // Two unique images per tile (front + back for crossfade)
-        var photo1 = shuffledPhotos[i * 2 % shuffledPhotos.length];
-        var photo2 = shuffledPhotos[(i * 2 + 1) % shuffledPhotos.length];
-        if (layers[0]) layers[0].src = photo1;
-        if (layers[1]) layers[1].src = photo2;
-      }
+    setTimeout(revealTiles, 150);
 
-      // ── Random crop per tile (object-position for variety) ──
-      for (var i = 0; i < tileCount; i++) {
-        var posX = 25 + Math.random() * 50; // 25-75%
-        var posY = 15 + Math.random() * 45; // 15-60% (biased up for faces)
+    // ================================================================
+    // CROSSFADE ENGINE
+    // ================================================================
+    allPhotos.forEach(function (photo) {
+      var img = new Image();
+      img.src = photo.sm;
+    });
+
+    function getAllAssignedFilenames() {
+      var names = [];
+      for (var i = 0; i < TILE_COUNT; i++) {
         var layers = tiles[i].querySelectorAll('.tile-layer');
         for (var j = 0; j < layers.length; j++) {
-          layers[j].style.objectPosition = posX.toFixed(0) + '% ' + posY.toFixed(0) + '%';
-        }
-      }
-
-      // ── Staggered reveal ──
-      var revealOrder = [];
-      for (var i = 0; i < tileCount; i++) revealOrder.push(i);
-      revealOrder = shuffle(revealOrder);
-
-      revealOrder.forEach(function (tileIdx, orderIdx) {
-        setTimeout(function () {
-          tiles[tileIdx].classList.add('is-revealed');
-        }, 100 + orderIdx * 100 + Math.random() * 80);
-      });
-
-      var maxRevealTime = tileCount * 100 + 200;
-      setTimeout(function () {
-        heroLogo.classList.add('is-visible');
-        heroTagline.classList.add('is-visible');
-      }, maxRevealTime + 300);
-
-      setTimeout(function () {
-        scrollCue.classList.add('is-visible');
-      }, maxRevealTime + 1200);
-
-      // ── Crossfade engine (global deduplication) ──
-      var tileState = [];
-      for (var i = 0; i < tiles.length; i++) tileState.push(0);
-
-      // Preload all photos
-      allPhotos.forEach(function (src) {
-        var img = new Image();
-        img.src = src;
-      });
-
-      function getAllVisibleFilenames() {
-        var names = [];
-        for (var i = 0; i < tileCount; i++) {
-          var layers = tiles[i].querySelectorAll('.tile-layer');
-          var visIdx = tileState[i];
-          // Only count the currently-visible layer
-          if (layers[visIdx] && layers[visIdx].src) {
-            names.push(filenameFromSrc(layers[visIdx].src));
+          if (layers[j].src) {
+            names.push(filenameFromSrc(layers[j].src));
           }
         }
-        return names;
       }
+      return names;
+    }
 
-      function getRandomPhoto(excludeFilenames) {
-        var candidates = allPhotos.filter(function (p) {
-          return excludeFilenames.indexOf(filenameFromSrc(p)) === -1;
-        });
-        if (candidates.length === 0) candidates = allPhotos;
-        return candidates[Math.floor(Math.random() * candidates.length)];
-      }
+    function getRandomPhoto(excludeFilenames) {
+      var candidates = allPhotos.filter(function (p) {
+        return excludeFilenames.indexOf(filenameFromSrc(p.sm)) === -1;
+      });
+      if (candidates.length === 0) candidates = allPhotos;
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
 
-      function crossfadeTile(index) {
-        if (index >= tileCount) return;
-        var tile = tiles[index];
-        if (!tile || tile.style.display === 'none') return;
+    function crossfadeTile(index) {
+      if (index >= TILE_COUNT) return;
+      var tile = tiles[index];
+      if (!tile) return;
 
-        var layers = tile.querySelectorAll('.tile-layer');
-        if (layers.length < 2) return;
+      var layers = tile.querySelectorAll('.tile-layer');
+      if (layers.length < 2) return;
 
-        var visibleIndex = tileState[index];
-        var hiddenIndex = visibleIndex === 0 ? 1 : 0;
+      var visibleIndex = tileState[index];
+      var hiddenIndex = visibleIndex === 0 ? 1 : 0;
 
-        // Exclude ALL currently visible images across all tiles
-        var excludeList = getAllVisibleFilenames();
-        var newPhoto = getRandomPhoto(excludeList);
+      var excludeList = getAllAssignedFilenames();
+      var newPhoto = getRandomPhoto(excludeList);
+      var newUrl = newPhoto.sm;
 
-        // Set new photo on hidden layer with a fresh random crop
-        layers[hiddenIndex].src = newPhoto;
-        var posX = 25 + Math.random() * 50;
-        var posY = 15 + Math.random() * 45;
-        layers[hiddenIndex].style.objectPosition = posX.toFixed(0) + '% ' + posY.toFixed(0) + '%';
+      var pos = getFacePosition(newUrl);
 
+      layers[hiddenIndex].src = newUrl;
+      layers[hiddenIndex].style.objectPosition = pos;
+
+      layers[visibleIndex].style.willChange = 'opacity';
+      layers[hiddenIndex].style.willChange = 'opacity';
+
+      requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            layers[visibleIndex].classList.add('is-hidden');
-            layers[hiddenIndex].classList.remove('is-hidden');
-            tileState[index] = hiddenIndex;
-          });
+          layers[visibleIndex].classList.add('is-hidden');
+          layers[hiddenIndex].classList.remove('is-hidden');
+          tileState[index] = hiddenIndex;
+
+          setTimeout(function () {
+            layers[visibleIndex].style.willChange = 'auto';
+            layers[hiddenIndex].style.willChange = 'auto';
+          }, 1700);
         });
-      }
+      });
+    }
 
-      var isMobile = w <= 640;
-
-      function startCrossfade() {
-        for (var i = 0; i < tileCount; i++) {
-          (function (idx) {
-            var initialDelay = 2000 + Math.random() * 4000;
-            var baseInterval = isMobile ? 5000 : 3500;
-            var variance = isMobile ? 3000 : 3500;
-            var interval = baseInterval + Math.random() * variance;
+    function startCrossfade() {
+      for (var i = 0; i < TILE_COUNT; i++) {
+        (function (idx) {
+          scheduleIdle(function () {
+            var initialDelay = 3000 + Math.random() * 5000;
+            var interval = 6000 + Math.random() * 4000;
 
             setTimeout(function () {
               crossfadeTile(idx);
@@ -1048,76 +882,47 @@
                 crossfadeTile(idx);
               }, interval);
             }, initialDelay);
-          })(i);
-        }
-      }
-
-      if (document.readyState === 'complete') {
-        setTimeout(startCrossfade, 1500);
-      } else {
-        window.addEventListener('load', function () {
-          setTimeout(startCrossfade, 1500);
-        });
-      }
-    })();
-
-    // ================================================================
-    // FAQ ACCORDION
-    // ================================================================
-    (function () {
-      var faqItems = document.querySelectorAll('.faq-item');
-
-      faqItems.forEach(function (item) {
-        var toggle = item.querySelector('.faq-toggle');
-
-        toggle.addEventListener('click', function () {
-          var isOpen = item.classList.contains('is-open');
-
-          // Close all others
-          faqItems.forEach(function (other) {
-            if (other !== item) {
-              other.classList.remove('is-open');
-              other.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
-            }
           });
-
-          // Toggle this one
-          if (isOpen) {
-            item.classList.remove('is-open');
-            toggle.setAttribute('aria-expanded', 'false');
-          } else {
-            item.classList.add('is-open');
-            toggle.setAttribute('aria-expanded', 'true');
-          }
-        });
-      });
-    })();
-
-    // ================================================================
-    // SCROLL REVEAL — Intersection Observer for sections
-    // ================================================================
-    (function () {
-      if (!('IntersectionObserver' in window)) {
-        // Fallback: just show everything
-        document.querySelectorAll('.reveal-section').forEach(function (el) {
-          el.classList.add('is-in-view');
-        });
-        return;
+        })(i);
       }
+    }
 
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-in-view');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12 });
-
-      document.querySelectorAll('.reveal-section').forEach(function (section) {
-        observer.observe(section);
+    if (document.readyState === 'complete') {
+      setTimeout(startCrossfade, 2000);
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(startCrossfade, 2000);
       });
-    })();
+    }
+
+    // ================================================================
+    // HANDLE RESIZE
+    // ================================================================
+    var resizeTimeout;
+    var lastBreakpoint = vw <= 600 ? 'mobile' : vw <= 1024 ? 'tablet' : 'desktop';
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function () {
+        var newVw = window.innerWidth;
+        var newBp = newVw <= 600 ? 'mobile' : newVw <= 1024 ? 'tablet' : 'desktop';
+        if (newBp !== lastBreakpoint) {
+          var newBase = newVw <= 600 ? 140 : newVw <= 1024 ? 220 : 220;
+          masonry.destroy();
+          masonry = new MiniMasonry({
+            container: '.masonry-grid',
+            baseWidth: newBase,
+            gutter: 4,
+            ultimateGutter: 4,
+            surroundingGutter: false
+          });
+          lastBreakpoint = newBp;
+        } else {
+          masonry.layout();
+        }
+      }, 200);
+    });
+
+  })();
   </script>
 
 </body>
