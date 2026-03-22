@@ -1,87 +1,1124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="facebook-domain-verification" content="1bim11dw7ulo3ta8ep6h6f25ms22nn" />
-    <title>Jetpack Comedy</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
-    <script src="./swiper-element-bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="facebook-domain-verification" content="1bim11dw7ulo3ta8ep6h6f25ms22nn" />
+  <title>Jetpack Comedy — Every Friday at Bar Lubitsch, West Hollywood</title>
+  <meta name="description" content="The anti-club comedy club. Top-notch standup every Friday since 2012 at Bar Lubitsch in West Hollywood. Featured in the New York Times, LA Weekly, and Netflix Is A Joke festival.">
 
-    <!-- Meta Pixel Code -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '4310041135918044');
-    fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=4310041135918044&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            deep: '#141011',
+            'deep-warm': '#1a1215',
+            'deep-lighter': '#241c1f',
+            'deep-card': '#1e1619',
+            burgundy: '#8B2252',
+            'burgundy-dim': '#7B2040',
+            'burgundy-deep': '#5a1630',
+            'burgundy-glow': '#a82d65',
+            gold: '#C5975B',
+            'gold-bright': '#d4a96a',
+            'gold-dim': '#a07a48',
+            cream: '#F5F0EB',
+            'cream-dim': '#c8bfb5',
+            'cream-faint': '#9e958c',
+            velvet: '#3d2028',
+            'velvet-light': '#5a3540',
+            wood: '#3d2e24',
+            'wood-light': '#5a4538',
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'Georgia', 'serif'],
+            body: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ================================================================
+       BASE
+       ================================================================ */
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #141011;
+      color: #F5F0EB;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: #8B225280;
+      color: #F5F0EB;
+    }
+
+    /* ================================================================
+       MOSAIC GRID — Asymmetric magazine-style layout
+       ================================================================ */
+    .mosaic-hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+    }
+
+    .mosaic-grid {
+      display: grid;
+      gap: 3px;
+      width: 100%;
+      height: 100%;
+      /* Grid template applied dynamically via JS for layout variety */
+    }
+
+    /* ================================================================
+       TILE IMAGE CROSSFADE LAYERS
+       ================================================================ */
+    .mosaic-tile {
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(1.08);
+      transition: opacity 0.8s ease-out, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mosaic-tile.is-revealed {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .mosaic-tile .tile-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 1.6s ease-in-out;
+      will-change: opacity;
+    }
+
+    .mosaic-tile .tile-layer.is-hidden {
+      opacity: 0;
+    }
+
+    /* Subtle Ken Burns drift on each tile */
+    .mosaic-tile .tile-layer {
+      animation: kenBurns 25s ease-in-out infinite alternate;
+    }
+
+    .mosaic-tile:nth-child(odd) .tile-layer {
+      animation-direction: alternate-reverse;
+      animation-duration: 30s;
+    }
+
+    .mosaic-tile:nth-child(3n) .tile-layer {
+      animation-duration: 22s;
+    }
+
+    @keyframes kenBurns {
+      0%   { transform: scale(1.0) translate(0, 0); }
+      100% { transform: scale(1.06) translate(-1%, -1%); }
+    }
+
+    /* ================================================================
+       HERO OVERLAY — Cinematic gradient + bold type
+       ================================================================ */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      /* Multi-layered gradient: center darkening for text + vignette edges */
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(20,16,17,0.62) 0%, rgba(20,16,17,0.30) 40%, transparent 70%),
+        radial-gradient(ellipse at center, transparent 40%, rgba(20,16,17,0.55) 80%, rgba(20,16,17,0.80) 100%);
+    }
+
+    .hero-logo {
+      width: clamp(260px, 50vw, 650px);
+      max-width: 85vw;
+      height: auto;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+      filter: drop-shadow(0 6px 30px rgba(0,0,0,0.8)) drop-shadow(0 0 60px rgba(139,34,82,0.2));
+    }
+
+    .hero-logo.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .hero-tagline {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 500;
+      font-size: clamp(0.75rem, 1.6vw, 1rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #C5975B;
+      margin-top: 1.5rem;
+      text-shadow: 0 1px 15px rgba(0,0,0,0.7);
+      opacity: 0;
+      transition: opacity 1s ease 0.3s;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5em;
+    }
+
+    .hero-tagline.is-visible {
+      opacity: 1;
+    }
+
+    .tagline-dot {
+      opacity: 0.6;
+    }
+
+    @media (max-width: 640px) {
+      .hero-tagline {
+        flex-direction: column;
+        gap: 0.2em;
+        font-size: clamp(0.6rem, 2.8vw, 0.85rem);
+        letter-spacing: 0.2em;
+      }
+      .tagline-dot {
+        display: none;
+      }
+    }
+
+    /* ================================================================
+       SCROLL INDICATOR
+       ================================================================ */
+    .scroll-cue {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      pointer-events: auto;
+      opacity: 0;
+      transition: opacity 1s ease 1.5s;
+    }
+
+    .scroll-cue.is-visible {
+      opacity: 1;
+    }
+
+    .scroll-cue svg {
+      animation: bob 2.5s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ================================================================
+       SECTION TRANSITIONS (scroll reveal)
+       ================================================================ */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .reveal-section.is-in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ================================================================
+       DIVIDER
+       ================================================================ */
+    .section-rule {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #8B2252, transparent);
+      margin: 0 auto;
+    }
+
+    /* ================================================================
+       TICKET CARD
+       ================================================================ */
+    .ticket-card {
+      background: linear-gradient(145deg, #1e1619 0%, #141011 100%);
+      border: 1px solid #5a163050;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ticket-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(145deg, #C5975B30, #8B225240, #C5975B30);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .ticket-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, #8B225208 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* ================================================================
+       CTA BUTTON
+       ================================================================ */
+    .cta-btn {
+      background: #8B2252;
+      color: #F5F0EB;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s ease;
+      box-shadow: 0 4px 20px rgba(139,34,82,0.25);
+    }
+
+    .cta-btn:hover {
+      background: #a82d65;
+      box-shadow:
+        0 6px 30px rgba(139,34,82,0.40),
+        0 0 60px rgba(139,34,82,0.15);
+      transform: translateY(-1px);
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* ================================================================
+       SHOW ROW
+       ================================================================ */
+    .show-row {
+      background: rgba(30,22,25,0.5);
+      border: 1px solid rgba(90,53,64,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .show-row:hover {
+      background: rgba(30,22,25,0.9);
+      border-color: rgba(139,34,82,0.35);
+      box-shadow: 0 0 20px rgba(139,34,82,0.08);
+    }
+
+    .show-row:hover .show-arrow {
+      transform: translateX(4px);
+      color: #C5975B;
+    }
+
+    .show-arrow {
+      transition: all 0.3s ease;
+    }
+
+    /* ================================================================
+       PRESS LOGOS
+       ================================================================ */
+    .press-logo {
+      filter: grayscale(100%) brightness(1.8) contrast(0.8);
+      opacity: 0.55;
+      transition: all 0.4s ease;
+    }
+
+    .press-logo:hover {
+      filter: grayscale(0%) brightness(1.1) contrast(1);
+      opacity: 1;
+    }
+
+    /* ================================================================
+       STARS
+       ================================================================ */
+    .stars {
+      color: #C5975B;
+      letter-spacing: 3px;
+    }
+
+    /* ================================================================
+       FAQ ACCORDION
+       ================================================================ */
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), padding 0.4s ease;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .faq-item.is-open .faq-answer {
+      max-height: 220px;
+      padding-top: 0.75rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .faq-toggle {
+      transition: all 0.3s ease;
+    }
+
+    .faq-item.is-open .faq-toggle {
+      background: rgba(139,34,82,0.06);
+    }
+
+    .faq-chevron {
+      transition: transform 0.35s ease;
+    }
+
+    .faq-item.is-open .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    /* ================================================================
+       AMBIENT GLOW (subtle background radials for depth)
+       ================================================================ */
+    .ambient-top::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70%;
+      height: 250px;
+      background: radial-gradient(ellipse at center, #8B22520a 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ================================================================
+       FOOTER LINK
+       ================================================================ */
+    .footer-link {
+      color: #C5975B;
+      transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: #d4a96a;
+    }
+  </style>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '4310041135918044');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=4310041135918044&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 </head>
-<body>
-    <header class="carousel">
-        <img id='holderImg' src="andy.jpg" alt="Andy">
-        <swiper-container autoplay="true" class='carousel-inner' style='display:none;'>
-            <swiper-slide><img src="bob.JPG" alt="Bob"></swiper-slide>
-            <swiper-slide><img src="crowd.jpg" alt="Crowd"></swiper-slide>
-            <swiper-slide><img src="moses.jpg" alt="Moses"></swiper-slide>
-            <swiper-slide><img src="kevin.jpg" alt="Kevin"></swiper-slide>
-            <swiper-slide><img src="fran.jpg" alt="Fran"></swiper-slide>
-            <swiper-slide><img src="jb.jpg" alt="JB"></swiper-slide>
-            <swiper-slide><img src="bryant.jpg" alt="Bryant"></swiper-slide>
-            <swiper-slide><img src="andy.jpg" alt="Andy"></swiper-slide>
-            <swiper-slide><img src="joe.jpg" alt="Joe"></swiper-slide>
-            <swiper-slide><img src="moseslogan.jpg" alt="Moses logistics"></swiper-slide>
-            <swiper-slide><img src="peet.jpg" alt="Peet"></swiper-slide>
-        </swiper-container>
-    </header>
-    <main>
-        <div class="content-container">
-            <h1>The anti-club comedy club</h1>
-            <p class="highlight">Top-notch standup in a swanky, velvet bar</p>
-            <br><br><br><br><br>
-            <div class="featured-images">
-                <img src="nytimes.png" alt="New York Times" class="featured-logo">
-                <img src="laweekly.png" alt="LA Weekly" class="featured-logo">
-            </div>
-            <p class="smaller-text">
-                Featured in The New York Times and LA Weekly as one of the country's premiere standup showcases, Jetpack has been making audiences laugh til they cry every Friday since 2012.
-            </p>
-        </div> <br><br><br><br><br>
-        <div class="image-spacer">
-            <div class="testimonials">
-                <img src="test1.png" alt="Testimonial 1" class="testimonial-image">
-                <img src="test2.png" alt="Testimonial 2" class="testimonial-image">
-                <img src="test3.png" alt="Testimonial 3" class="testimonial-image">
-                <img src="test4.png" alt="Testimonial 4" class="testimonial-image">
-            </div>
-        </div>
-        <br><br><br><br><br>
-        <h2>🎤 Our upcoming shows</h2>
-        <br>
-        <div class="iframe-container">
-            <iframe id="jetbookiframe" allow="clipboard-read; clipboard-write" src="https://jetbook.co/o_iframe/jetpack-comedy-9yo7g" scrolling="yes" allowfullscreen></iframe>
-        </div>
-    </main>
 
-    <footer>
-        <div class="contact-info">
-            <p>🚀</p>
-            <address>
-                7702 Santa Monica Blvd<br>
-                <a href="mailto:shows@jetpackcomedy.com">shows@jetpackcomedy.com</a><br>
-            </address>
+<body class="font-body antialiased">
+
+  <!-- ================================================================
+       SECTION 1: HERO — Animated Mosaic Grid
+       ================================================================ -->
+  <header class="mosaic-hero" id="hero">
+    <div class="mosaic-grid" id="mosaicGrid">
+      <!-- Tile 1 -->
+      <div class="mosaic-tile" data-tile="0" data-delay="0">
+        <img src="images/comics/bob.JPG" alt="Comedian performing at Jetpack" class="tile-layer" loading="eager">
+        <img src="images/comics/Demetri 2.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 2 -->
+      <div class="mosaic-tile" data-tile="1" data-delay="120">
+        <img src="images/comics/fran.jpg" alt="Comedian close-up with mic" class="tile-layer" loading="eager">
+        <img src="images/audience/crowd.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 3: wide -->
+      <div class="mosaic-tile" data-tile="2" data-delay="240">
+        <img src="images/comics/Atsuko wide resize.JPG" alt="Wide venue shot" class="tile-layer" loading="eager">
+        <img src="images/comics/Harland Williams.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 4: tall -->
+      <div class="mosaic-tile" data-tile="3" data-delay="180">
+        <img src="images/comics/moses.jpg" alt="Comedian on stage" class="tile-layer" loading="eager">
+        <img src="images/comics/Laurie.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 5 -->
+      <div class="mosaic-tile" data-tile="4" data-delay="350">
+        <img src="images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6266.JPG" alt="Comedian performing" class="tile-layer" loading="eager">
+        <img src="images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6098.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 6 -->
+      <div class="mosaic-tile" data-tile="5" data-delay="280">
+        <img src="images/comics/kevin.jpg" alt="Comedian on stage" class="tile-layer" loading="eager">
+        <img src="images/comics/Kelsey Cook.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 7 -->
+      <div class="mosaic-tile" data-tile="6" data-delay="420">
+        <img src="images/audience/reaction-three-friends-01.jpg" alt="Audience laughing" class="tile-layer" loading="eager">
+        <img src="images/comics/joe.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 8: wide -->
+      <div class="mosaic-tile" data-tile="7" data-delay="500">
+        <img src="images/comics/Sklar Brothers copy.jpg" alt="Comedians on stage" class="tile-layer" loading="eager">
+        <img src="images/comics/Matt Besser - geoff edit resize.jpg" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+      <!-- Tile 9 -->
+      <div class="mosaic-tile" data-tile="8" data-delay="380">
+        <img src="images/comics/peet.jpg" alt="Comedian performing" class="tile-layer" loading="eager">
+        <img src="images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6350.JPG" alt="" class="tile-layer is-hidden" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Hero text overlay -->
+    <div class="hero-overlay" id="heroOverlay">
+      <img src="Jetpack Logo Solo Straight.png" alt="Jetpack Comedy" class="hero-logo" id="heroLogo">
+      <p class="hero-tagline" id="heroTagline">
+        <span>Every Friday</span>
+        <span class="tagline-dot">&middot;</span>
+        <span>Bar Lubitsch</span>
+        <span class="tagline-dot">&middot;</span>
+        <span>West Hollywood</span>
+      </p>
+    </div>
+
+    <!-- Scroll cue -->
+    <a href="#pitch" class="scroll-cue" id="scrollCue" aria-label="Scroll to content">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C5975B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 10l5 5 5-5"/>
+      </svg>
+    </a>
+  </header>
+
+  <!-- ================================================================
+       SECTION 2: PITCH
+       ================================================================ -->
+  <section id="pitch" class="reveal-section py-20 md:py-28 px-6">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="font-display text-4xl md:text-5xl font-bold text-gold tracking-wide mb-6 italic">&ldquo;The anti-club comedy club&rdquo;</h2>
+      <p class="text-cream-dim text-lg md:text-xl leading-relaxed mb-2">
+        Top-notch standup in a swanky, velvet bar.
+      </p>
+      <p class="text-cream-faint text-base md:text-lg leading-relaxed">
+        Every Friday night at Bar Lubitsch. Since 2012.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-rule"></div>
+
+  <!-- ================================================================
+       SECTION 3: TICKETS
+       ================================================================ -->
+  <!-- PLACEHOLDER: Will be replaced with Mic Drop venue calendar components -->
+  <section id="tickets" class="reveal-section py-20 md:py-28 px-6 relative ambient-top">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-cream text-center mb-14 tracking-wide">Upcoming Shows</h2>
+
+      <!-- Next show featured widget -->
+      <div class="ticket-card rounded-2xl p-8 md:p-12 text-center mb-10">
+        <p class="text-gold font-body text-xs font-semibold uppercase tracking-[0.25em] mb-3">Next Show</p>
+        <h3 class="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-cream mb-2">This Friday, February 20th</h3>
+        <p class="text-cream-dim text-base md:text-lg mb-2">Doors 7:30pm &middot; Show 8:00pm</p>
+        <p class="text-gold-bright font-display text-2xl font-bold mb-8">$20</p>
+        <a href="#" class="cta-btn inline-block font-body font-semibold text-lg px-12 py-4 rounded-lg tracking-wide">
+          Get Tickets
+        </a>
+      </div>
+
+      <!-- Upcoming shows list -->
+      <div class="space-y-3">
+        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
+          <div>
+            <span class="text-cream font-body font-medium">Friday, February 27</span>
+            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
+          </div>
+          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
+        </a>
+        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
+          <div>
+            <span class="text-cream font-body font-medium">Friday, March 6</span>
+            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
+          </div>
+          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
+        </a>
+        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
+          <div>
+            <span class="text-cream font-body font-medium">Friday, March 13</span>
+            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
+          </div>
+          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
+        </a>
+        <a href="#" class="show-row flex items-center justify-between rounded-lg px-6 py-4 group">
+          <div>
+            <span class="text-cream font-body font-medium">Friday, March 20</span>
+            <span class="text-cream-faint text-sm ml-3">8:00pm</span>
+          </div>
+          <span class="show-arrow text-gold-dim text-sm font-semibold uppercase tracking-wider">Tickets &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-rule"></div>
+
+  <!-- ================================================================
+       SECTION 4: PROOF
+       ================================================================ -->
+  <section id="proof" class="reveal-section py-20 md:py-28 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <!-- Press logos -->
+      <div class="flex items-center justify-center gap-10 md:gap-16 mb-6 flex-wrap">
+        <img src="nytimes.png" alt="The New York Times" class="press-logo h-6 md:h-8 w-auto">
+        <img src="laweekly.png" alt="LA Weekly" class="press-logo h-7 md:h-9 w-auto">
+        <span class="press-logo font-display text-xl md:text-2xl font-bold text-cream-dim tracking-wide italic" style="opacity:0.55;">Netflix Is A Joke</span>
+      </div>
+
+      <p class="text-cream-faint text-sm text-center mb-14 tracking-wide">
+        Featured in The New York Times and LA Weekly. Part of the Netflix Is A Joke festival.
+      </p>
+
+      <!-- Review quotes -->
+      <div class="grid md:grid-cols-3 gap-10 text-center">
+        <blockquote class="space-y-3">
+          <p class="stars text-base">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="text-cream font-display text-xl italic leading-relaxed">&ldquo;The best comedy night in LA. Period.&rdquo;</p>
+          <cite class="text-cream-faint text-xs not-italic uppercase tracking-wider block">&mdash; Yelp Review</cite>
+        </blockquote>
+        <blockquote class="space-y-3">
+          <p class="stars text-base">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="text-cream font-display text-xl italic leading-relaxed">&ldquo;An absolute gem hidden in plain sight on Santa Monica Blvd.&rdquo;</p>
+          <cite class="text-cream-faint text-xs not-italic uppercase tracking-wider block">&mdash; Google Review</cite>
+        </blockquote>
+        <blockquote class="space-y-3">
+          <p class="stars text-base">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="text-cream font-display text-xl italic leading-relaxed">&ldquo;Skip the comedy clubs. Go here instead.&rdquo;</p>
+          <cite class="text-cream-faint text-xs not-italic uppercase tracking-wider block">&mdash; Timeout LA</cite>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-rule"></div>
+
+  <!-- ================================================================
+       SECTION 5: FAQ (functional accordion)
+       ================================================================ -->
+  <section id="faq" class="reveal-section py-20 md:py-28 px-6">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-cream text-center mb-14 tracking-wide">Questions</h2>
+
+      <div class="space-y-3" id="faqList">
+        <!-- FAQ 1 -->
+        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
+          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
+            <span class="text-cream font-body font-medium text-base">What time does the show start?</span>
+            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
+            Doors open at 7:30pm, show starts at 8:00pm. Shows typically run about 90 minutes.
+          </div>
         </div>
-    </footer>
-    <script src="scripts.js"></script>
+
+        <!-- FAQ 2 -->
+        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
+          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
+            <span class="text-cream font-body font-medium text-base">Is there a drink minimum?</span>
+            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
+            No drink minimum! Bar Lubitsch has a full bar with craft cocktails, beer, and wine.
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
+          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
+            <span class="text-cream font-body font-medium text-base">Where do I park?</span>
+            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
+            Street parking is available on Santa Monica Blvd and surrounding streets. We recommend arriving 15-20 minutes early.
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
+          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
+            <span class="text-cream font-body font-medium text-base">How old do you have to be?</span>
+            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
+            21+ only (it's a bar!).
+          </div>
+        </div>
+
+        <!-- FAQ 5 -->
+        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
+          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
+            <span class="text-cream font-body font-medium text-base">Can I bring a group?</span>
+            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
+            Absolutely! For groups of 8+, email us at <a href="mailto:shows@jetpackcomedy.com" class="text-gold hover:underline">shows@jetpackcomedy.com</a> for group rates.
+          </div>
+        </div>
+
+        <!-- FAQ 6 -->
+        <div class="faq-item border border-velvet/40 rounded-lg overflow-hidden">
+          <button class="faq-toggle w-full flex items-center justify-between px-6 py-4 text-left" aria-expanded="false">
+            <span class="text-cream font-body font-medium text-base">Who performs?</span>
+            <svg class="faq-chevron w-5 h-5 text-gold flex-shrink-0 ml-4 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 text-cream-dim text-sm leading-relaxed">
+            Each week features a hand-picked lineup of LA's best standup comedians, plus surprise drop-ins. Our comics have appeared on every major network and streaming platform.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       SECTION 6: FOOTER
+       ================================================================ -->
+  <footer class="border-t border-velvet/30 py-16 px-6">
+    <div class="max-w-3xl mx-auto text-center space-y-5">
+      <p class="font-display text-2xl font-bold text-cream tracking-wide">Jetpack Comedy</p>
+      <p class="text-cream-dim text-sm">
+        <a href="https://maps.google.com/?q=7702+Santa+Monica+Blvd+West+Hollywood+CA" target="_blank" rel="noopener" class="hover:text-cream transition-colors duration-200">
+          7702 Santa Monica Blvd, West Hollywood
+        </a>
+      </p>
+      <div class="flex items-center justify-center gap-6 text-sm flex-wrap">
+        <a href="mailto:shows@jetpackcomedy.com" class="footer-link">shows@jetpackcomedy.com</a>
+        <span class="text-velvet-light">&middot;</span>
+        <a href="https://instagram.com/jetpackcomedy" target="_blank" rel="noopener" class="footer-link">@jetpackcomedy</a>
+      </div>
+      <p class="text-cream-faint/60 text-xs pt-2">Follow us on Instagram for weekly lineup announcements</p>
+    </div>
+  </footer>
+
+  <!-- ================================================================
+       JAVASCRIPT
+       ================================================================ -->
+  <script>
+    // ================================================================
+    // MOSAIC: Layout Engine + Crossfade
+    // Random grid layouts, random crops, global image deduplication
+    // ================================================================
+    (function () {
+      // ── Photo pool ──
+      var allPhotos = [
+        // Comics (52 images)
+        'images/comics/Adomian.JPG',
+        'images/comics/Ahbay.JPG',
+        'images/comics/Ahmed.JPG',
+        'images/comics/Aisha 1.JPG',
+        'images/comics/Andy.JPG',
+        'images/comics/Atsuko 2.JPG',
+        'images/comics/Atsuko wide resize.JPG',
+        'images/comics/bob.JPG',
+        'images/comics/bryant.jpg',
+        'images/comics/Chinedu.JPG',
+        'images/comics/Clark.JPG',
+        'images/comics/Demetri 2.JPG',
+        'images/comics/Demetri resize.JPG',
+        'images/comics/Emma 2.JPG',
+        'images/comics/Eric 1.JPG',
+        'images/comics/fran.jpg',
+        'images/comics/Grant 3.JPG',
+        'images/comics/Harland Williams.jpg',
+        'images/comics/IMG_3221.jpg',
+        'images/comics/jb.jpg',
+        'images/comics/Jenny Zigrino.JPG',
+        'images/comics/joe.jpg',
+        'images/comics/Kelsey Cook.jpg',
+        'images/comics/kevin.jpg',
+        'images/comics/Kiran.JPG',
+        'images/comics/Lady.JPG',
+        'images/comics/Langston 3.JPG',
+        'images/comics/Laurie 2.JPG',
+        'images/comics/Laurie 3.JPG',
+        'images/comics/Laurie.JPG',
+        'images/comics/Maggie Maye.JPG',
+        'images/comics/Matt Besser - geoff edit resize.jpg',
+        'images/comics/moses.jpg',
+        'images/comics/moseslogan.jpg',
+        'images/comics/Nick Hoff.JPG',
+        'images/comics/Peet 1.JPG',
+        'images/comics/peet.jpg',
+        'images/comics/Rachel Scanlon.JPG',
+        'images/comics/Ryan O.JPG',
+        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6195.JPG',
+        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6246.JPG',
+        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6266.JPG',
+        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6399.JPG',
+        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6470.JPG',
+        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6538.JPG',
+        'images/comics/SARKIS-STUDIOS-COMEDIANS-WEHO-6579.JPG',
+        'images/comics/Sheng.JPG',
+        'images/comics/Sklar Brothers copy.jpg',
+        'images/comics/Usama 1.JPG',
+        'images/comics/Will 1.JPG',
+        'images/comics/Will.JPG',
+        'images/comics/Zach.JPG',
+        // Audience (15 images)
+        'images/audience/crowd-through-03.jpg',
+        'images/audience/crowd.jpg',
+        'images/audience/man-reaction-01.jpg',
+        'images/audience/react-guy-laughing-01.jpg',
+        'images/audience/reaction-guy-beard-01.jpg',
+        'images/audience/reaction-three-friends-01.jpg',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6098.JPG',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6237 resize.JPG',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6326.JPG',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6334.JPG',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6350.JPG',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6425.JPG',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6485.JPG',
+        'images/audience/SARKIS-STUDIOS-COMEDIANS-WEHO-6509.JPG',
+        'images/audience/through-crowd-comp-02.jpg'
+      ];
+
+      // ── Layout templates ──
+      // Gallery-wall style: 4-5 rows with varied heights, irregular tile spans.
+      // Area letters map to tiles in order (a=tile0, b=tile1, etc.)
+      var desktopLayouts = [
+        // Big hero top-left, tall right column
+        { cols: '2fr 1fr 1fr 1.3fr', rows: '1.3fr 0.8fr 1fr 1.1fr',
+          areas: '"a a b c" "a a d c" "e f d g" "e h i g"' },
+        // Big hero center-right, scattered left
+        { cols: '1fr 1.2fr 1.5fr 1.5fr', rows: '1.1fr 0.7fr 0.9fr 1.3fr',
+          areas: '"a b c c" "a d c c" "e d f g" "h h i g"' },
+        // Panoramic top strip, gallery below
+        { cols: '1fr 1fr 1.3fr 0.8fr 1fr', rows: '1.4fr 1fr 1fr',
+          areas: '"a a a b b" "c d e e f" "c g g h i"' },
+        // L-shaped hero bottom-left
+        { cols: '1.5fr 1.5fr 1fr 1fr', rows: '0.9fr 1fr 1.3fr 0.8fr',
+          areas: '"a b c d" "a b c e" "f f g g" "f f h i"' },
+        // Tall left column spanning 3 rows
+        { cols: '1.3fr 0.8fr 1.2fr 1fr', rows: '1fr 1.2fr 0.8fr 1fr',
+          areas: '"a b c c" "a d e f" "a d g f" "h h g i"' },
+        // Center hero with frame
+        { cols: '1fr 1.5fr 1.5fr 1fr', rows: '1fr 1.2fr 1.2fr 0.7fr',
+          areas: '"a b b c" "d e e f" "g e e h" "g i i i"' },
+        // Diagonal stepping pattern
+        { cols: '1.4fr 1fr 1fr 1.4fr', rows: '1.2fr 0.8fr 0.8fr 1.2fr',
+          areas: '"a a b c" "d e b c" "d e f f" "g h h i"' },
+        // 5-col staggered bricks
+        { cols: '1fr 1fr 1.2fr 1.2fr 0.8fr', rows: '1.1fr 0.9fr 1fr 1fr',
+          areas: '"a a b c c" "d d b e e" "f g g g h" "f i i i h"' },
+        // Tall columns with small fills
+        { cols: '1fr 1.1fr 1.1fr 1fr', rows: '1.1fr 0.6fr 1fr 1.3fr',
+          areas: '"a b b c" "a d e c" "f d e g" "f h i g"' },
+        // Big hero top-right
+        { cols: '1fr 0.8fr 1.5fr 1.5fr', rows: '0.9fr 1.2fr 0.8fr 1.1fr',
+          areas: '"a b c c" "d e c c" "d e f g" "h h i g"' },
+      ];
+
+      var tabletLayouts = [
+        // 7 tiles (a-g), 3 cols, 4 rows
+        { cols: '1.2fr 1fr 1.1fr', rows: '1.2fr 0.8fr 1fr 1.1fr',
+          areas: '"a a b" "c d b" "c d e" "f f g"' },
+        { cols: '1fr 1.3fr 0.9fr', rows: '0.9fr 1fr 1fr 1.1fr',
+          areas: '"a b b" "c d e" "c d e" "f f g"' },
+        { cols: '0.9fr 1.1fr 1.2fr', rows: '1.1fr 1fr 0.7fr 1.2fr',
+          areas: '"a b c" "a d c" "e d f" "e g g"' },
+        { cols: '1.2fr 0.8fr 1fr', rows: '0.8fr 1.2fr 1fr 1fr',
+          areas: '"a b b" "a c d" "e c d" "e f g"' },
+        { cols: '1fr 1.2fr 1fr', rows: '1fr 0.7fr 1.2fr 1.1fr',
+          areas: '"a a b" "c d b" "c e e" "f f g"' },
+      ];
+
+      var mobileLayouts = [
+        // 5 tiles (a-e), 2 cols, 4 rows
+        { cols: '1fr 1.2fr', rows: '1.3fr 0.8fr 1fr 1.1fr',
+          areas: '"a a" "b c" "d c" "d e"' },
+        { cols: '1.1fr 1fr', rows: '1fr 1.3fr 0.7fr 1fr',
+          areas: '"a b" "a c" "d c" "d e"' },
+        { cols: '1fr 1.1fr', rows: '0.8fr 1.1fr 1.2fr 0.9fr',
+          areas: '"a b" "c b" "c d" "e e"' },
+        { cols: '1.2fr 0.9fr', rows: '1.1fr 0.9fr 0.8fr 1.2fr',
+          areas: '"a a" "b c" "b d" "e d"' },
+      ];
+
+      // ── Utilities ──
+      function shuffle(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+        }
+        return a;
+      }
+
+      function getUniqueAreas(areasStr) {
+        var seen = {};
+        var result = [];
+        var letters = areasStr.replace(/["'\s]/g, '');
+        for (var i = 0; i < letters.length; i++) {
+          var ch = letters[i];
+          if (!seen[ch]) {
+            seen[ch] = true;
+            result.push(ch);
+          }
+        }
+        return result;
+      }
+
+      function filenameFromSrc(src) {
+        var parts = src.split('/');
+        return parts[parts.length - 1].toLowerCase();
+      }
+
+      // ── DOM refs ──
+      var grid = document.getElementById('mosaicGrid');
+      var tiles = Array.prototype.slice.call(document.querySelectorAll('.mosaic-tile'));
+      var heroLogo = document.getElementById('heroLogo');
+      var heroTagline = document.getElementById('heroTagline');
+      var scrollCue = document.getElementById('scrollCue');
+
+      // ── Pick random layout for viewport ──
+      var w = window.innerWidth;
+      var layouts = w <= 640 ? mobileLayouts : w <= 1024 ? tabletLayouts : desktopLayouts;
+      var layout = layouts[Math.floor(Math.random() * layouts.length)];
+      var uniqueAreas = getUniqueAreas(layout.areas);
+      var tileCount = uniqueAreas.length;
+
+      // Apply grid template
+      grid.style.gridTemplateColumns = layout.cols;
+      grid.style.gridTemplateRows = layout.rows;
+      grid.style.gridTemplateAreas = layout.areas;
+
+      // Assign grid-area to each visible tile, hide the rest
+      for (var i = 0; i < tiles.length; i++) {
+        if (i < tileCount) {
+          tiles[i].style.gridArea = uniqueAreas[i];
+          tiles[i].style.display = '';
+        } else {
+          tiles[i].style.display = 'none';
+        }
+      }
+
+      // ── Assign random images (no duplicates across visible tiles) ──
+      var shuffledPhotos = shuffle(allPhotos);
+
+      for (var i = 0; i < tileCount; i++) {
+        var layers = tiles[i].querySelectorAll('.tile-layer');
+        // Two unique images per tile (front + back for crossfade)
+        var photo1 = shuffledPhotos[i * 2 % shuffledPhotos.length];
+        var photo2 = shuffledPhotos[(i * 2 + 1) % shuffledPhotos.length];
+        if (layers[0]) layers[0].src = photo1;
+        if (layers[1]) layers[1].src = photo2;
+      }
+
+      // ── Random crop per tile (object-position for variety) ──
+      for (var i = 0; i < tileCount; i++) {
+        var posX = 25 + Math.random() * 50; // 25-75%
+        var posY = 15 + Math.random() * 45; // 15-60% (biased up for faces)
+        var layers = tiles[i].querySelectorAll('.tile-layer');
+        for (var j = 0; j < layers.length; j++) {
+          layers[j].style.objectPosition = posX.toFixed(0) + '% ' + posY.toFixed(0) + '%';
+        }
+      }
+
+      // ── Staggered reveal ──
+      var revealOrder = [];
+      for (var i = 0; i < tileCount; i++) revealOrder.push(i);
+      revealOrder = shuffle(revealOrder);
+
+      revealOrder.forEach(function (tileIdx, orderIdx) {
+        setTimeout(function () {
+          tiles[tileIdx].classList.add('is-revealed');
+        }, 100 + orderIdx * 100 + Math.random() * 80);
+      });
+
+      var maxRevealTime = tileCount * 100 + 200;
+      setTimeout(function () {
+        heroLogo.classList.add('is-visible');
+        heroTagline.classList.add('is-visible');
+      }, maxRevealTime + 300);
+
+      setTimeout(function () {
+        scrollCue.classList.add('is-visible');
+      }, maxRevealTime + 1200);
+
+      // ── Crossfade engine (global deduplication) ──
+      var tileState = [];
+      for (var i = 0; i < tiles.length; i++) tileState.push(0);
+
+      // Preload all photos
+      allPhotos.forEach(function (src) {
+        var img = new Image();
+        img.src = src;
+      });
+
+      function getAllVisibleFilenames() {
+        var names = [];
+        for (var i = 0; i < tileCount; i++) {
+          var layers = tiles[i].querySelectorAll('.tile-layer');
+          var visIdx = tileState[i];
+          // Only count the currently-visible layer
+          if (layers[visIdx] && layers[visIdx].src) {
+            names.push(filenameFromSrc(layers[visIdx].src));
+          }
+        }
+        return names;
+      }
+
+      function getRandomPhoto(excludeFilenames) {
+        var candidates = allPhotos.filter(function (p) {
+          return excludeFilenames.indexOf(filenameFromSrc(p)) === -1;
+        });
+        if (candidates.length === 0) candidates = allPhotos;
+        return candidates[Math.floor(Math.random() * candidates.length)];
+      }
+
+      function crossfadeTile(index) {
+        if (index >= tileCount) return;
+        var tile = tiles[index];
+        if (!tile || tile.style.display === 'none') return;
+
+        var layers = tile.querySelectorAll('.tile-layer');
+        if (layers.length < 2) return;
+
+        var visibleIndex = tileState[index];
+        var hiddenIndex = visibleIndex === 0 ? 1 : 0;
+
+        // Exclude ALL currently visible images across all tiles
+        var excludeList = getAllVisibleFilenames();
+        var newPhoto = getRandomPhoto(excludeList);
+
+        // Set new photo on hidden layer with a fresh random crop
+        layers[hiddenIndex].src = newPhoto;
+        var posX = 25 + Math.random() * 50;
+        var posY = 15 + Math.random() * 45;
+        layers[hiddenIndex].style.objectPosition = posX.toFixed(0) + '% ' + posY.toFixed(0) + '%';
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            layers[visibleIndex].classList.add('is-hidden');
+            layers[hiddenIndex].classList.remove('is-hidden');
+            tileState[index] = hiddenIndex;
+          });
+        });
+      }
+
+      var isMobile = w <= 640;
+
+      function startCrossfade() {
+        for (var i = 0; i < tileCount; i++) {
+          (function (idx) {
+            var initialDelay = 2000 + Math.random() * 4000;
+            var baseInterval = isMobile ? 5000 : 3500;
+            var variance = isMobile ? 3000 : 3500;
+            var interval = baseInterval + Math.random() * variance;
+
+            setTimeout(function () {
+              crossfadeTile(idx);
+              setInterval(function () {
+                crossfadeTile(idx);
+              }, interval);
+            }, initialDelay);
+          })(i);
+        }
+      }
+
+      if (document.readyState === 'complete') {
+        setTimeout(startCrossfade, 1500);
+      } else {
+        window.addEventListener('load', function () {
+          setTimeout(startCrossfade, 1500);
+        });
+      }
+    })();
+
+    // ================================================================
+    // FAQ ACCORDION
+    // ================================================================
+    (function () {
+      var faqItems = document.querySelectorAll('.faq-item');
+
+      faqItems.forEach(function (item) {
+        var toggle = item.querySelector('.faq-toggle');
+
+        toggle.addEventListener('click', function () {
+          var isOpen = item.classList.contains('is-open');
+
+          // Close all others
+          faqItems.forEach(function (other) {
+            if (other !== item) {
+              other.classList.remove('is-open');
+              other.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
+            }
+          });
+
+          // Toggle this one
+          if (isOpen) {
+            item.classList.remove('is-open');
+            toggle.setAttribute('aria-expanded', 'false');
+          } else {
+            item.classList.add('is-open');
+            toggle.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    })();
+
+    // ================================================================
+    // SCROLL REVEAL — Intersection Observer for sections
+    // ================================================================
+    (function () {
+      if (!('IntersectionObserver' in window)) {
+        // Fallback: just show everything
+        document.querySelectorAll('.reveal-section').forEach(function (el) {
+          el.classList.add('is-in-view');
+        });
+        return;
+      }
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('.reveal-section').forEach(function (section) {
+        observer.observe(section);
+      });
+    })();
+  </script>
+
 </body>
 </html>
