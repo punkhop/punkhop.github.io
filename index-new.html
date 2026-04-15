@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="facebook-domain-verification" content="1bim11dw7ulo3ta8ep6h6f25ms22nn" />
+  <title>Jetpack Comedy — Stand-Up Comedy Every Friday in West Hollywood</title>
+  <meta name="description" content="Seventy seats. Twenty dollars. No drink minimum. The best-reviewed stand-up comedy show in West Hollywood. Every Friday at Bar Lubitsch. 4.9★ on Google. Since 2012.">
+  <meta name="theme-color" content="#0e0a0b">
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9MV3236KH3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9MV3236KH3');
+  </script>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Jetpack Comedy — Every Friday in West Hollywood">
+  <meta property="og:description" content="Seventy seats. Twenty dollars. No drink minimum. The best stand-up comedy show in West Hollywood. 4.9★ on Google. Every Friday at Bar Lubitsch.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jetpackcomedy.com">
+  <meta property="og:image" content="https://jetpackcomedy.com/og-image.jpg">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jetpack Comedy — Every Friday in West Hollywood">
+  <meta name="twitter:description" content="Seventy seats. Twenty dollars. No drink minimum. 4.9★ on Google.">
+  <meta name="twitter:image" content="https://jetpackcomedy.com/og-image.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Preload hero image -->
+  <link rel="preload" as="image" href="images/webp/venue/hero-mid-lg.webp" media="(min-width: 769px)">
+  <link rel="preload" as="image" href="images/webp/venue/hero-mid-sm.webp" media="(max-width: 768px)">
+
+  <style>
+    /* ================================================================
+       RESET & BASE
+       ================================================================ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      background: #0e0a0b;
+      color: #F5F0EB;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ================================================================
+       HERO
+       ================================================================ */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      min-height: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 40%;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background:
+        linear-gradient(to bottom,
+          rgba(14,10,11,0.3) 0%,
+          rgba(14,10,11,0.15) 30%,
+          rgba(14,10,11,0.15) 50%,
+          rgba(14,10,11,0.5) 75%,
+          rgba(14,10,11,1) 100%
+        );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      padding: 0 24px;
+      max-width: 800px;
+    }
+
+    .hero-selling-line {
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 40px rgba(0,0,0,0.8);
+    }
+
+    .hero-selling-line span {
+      color: #E60A0C;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: rgba(245,240,235,0.75);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+      text-shadow: 0 1px 20px rgba(0,0,0,0.9);
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #E60A0C;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 14px 36px;
+      border-radius: 6px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: background 0.2s ease, transform 0.15s ease;
+      text-shadow: none;
+    }
+
+    .hero-cta:hover {
+      background: #cc0000;
+      transform: translateY(-1px);
+    }
+
+    .hero-cta svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .hero-cta:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* ================================================================
+       PROOF BAR
+       ================================================================ */
+    .proof-bar {
+      background: #171213;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 18px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      color: rgba(245,240,235,0.7);
+      letter-spacing: 0.02em;
+    }
+
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .proof-item strong {
+      color: #F5F0EB;
+      font-weight: 600;
+    }
+
+    .proof-star {
+      color: #d4a96a;
+    }
+
+    .proof-divider {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(245,240,235,0.25);
+      flex-shrink: 0;
+    }
+
+    /* ================================================================
+       PITCH SECTION
+       ================================================================ */
+    .pitch {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 72px 24px 48px;
+      text-align: center;
+    }
+
+    .pitch h1 {
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 20px;
+      color: #F5F0EB;
+    }
+
+    .pitch p {
+      font-size: clamp(0.95rem, 2vw, 1.08rem);
+      color: rgba(245,240,235,0.7);
+      line-height: 1.7;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* Press logos */
+    .press {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+
+    .press img {
+      height: auto;
+      opacity: 0.55;
+      transition: opacity 0.3s ease;
+    }
+
+    .press img:hover {
+      opacity: 0.8;
+    }
+
+    .press-nyt { width: 180px; }
+    .press-law { width: 140px; }
+    .press-niaj { width: 72px; }
+
+    /* ================================================================
+       ROOM SECTION (photo grid)
+       ================================================================ */
+    .room {
+      padding: 24px 16px 64px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      grid-template-rows: 220px 220px;
+      gap: 8px;
+    }
+
+    .room-grid picture {
+      display: block;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .room-grid picture.featured {
+      grid-row: span 2;
+    }
+
+    .room-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ================================================================
+       SHOWS SECTION
+       ================================================================ */
+    .shows {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    .shows h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+      color: #F5F0EB;
+    }
+
+    .shows-sub {
+      text-align: center;
+      color: rgba(245,240,235,0.5);
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+    }
+
+    .shows-iframe-wrap {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .shows-iframe-wrap iframe {
+      width: 100%;
+      min-height: 200px;
+      border: none;
+      transition: height 0.2s ease;
+    }
+
+    /* ================================================================
+       REVIEWS
+       ================================================================ */
+    .reviews {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 24px 72px;
+    }
+
+    .reviews h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      color: rgba(245,240,235,0.5);
+      margin-bottom: 40px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+
+    .review {
+      padding: 0;
+    }
+
+    .review-stars {
+      color: #d4a96a;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .review-text {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: rgba(245,240,235,0.85);
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+
+    .review-author {
+      font-size: 0.82rem;
+      color: rgba(245,240,235,0.4);
+      font-weight: 500;
+    }
+
+    /* ================================================================
+       FOOTER
+       ================================================================ */
+    .footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 48px 24px;
+      text-align: center;
+      color: rgba(245,240,235,0.45);
+    }
+
+    .footer-brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #F5F0EB;
+      margin-bottom: 4px;
+    }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: rgba(245,240,235,0.4);
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    .footer-details {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .footer-details a {
+      color: rgba(245,240,235,0.45);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-details a:hover {
+      color: #F5F0EB;
+    }
+
+    .footer-time {
+      font-size: 0.85rem;
+      color: rgba(245,240,235,0.35);
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+
+    .footer-links a {
+      color: #C5975B;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #d4a96a;
+    }
+
+    /* ================================================================
+       STICKY CTA (mobile)
+       ================================================================ */
+    .sticky-cta {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      background: rgba(14,10,11,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .sticky-cta.is-visible {
+      transform: translateY(0);
+    }
+
+    .sticky-cta a {
+      display: block;
+      background: #E60A0C;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .sticky-cta-sub {
+      font-size: 0.75rem;
+      color: rgba(245,240,235,0.5);
+      margin-top: 4px;
+    }
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+
+    /* Desktop: taller grid */
+    @media (min-width: 769px) {
+      .room-grid {
+        grid-template-rows: 260px 260px;
+      }
+    }
+
+    /* Tablet */
+    @media (max-width: 768px) {
+      .hero {
+        min-height: 500px;
+      }
+
+      .proof-bar {
+        padding: 14px 16px;
+        gap: 8px;
+        font-size: 0.8rem;
+      }
+
+      .proof-divider:nth-child(4) {
+        display: none;
+      }
+
+      .press {
+        gap: 20px;
+      }
+
+      .press-nyt { width: 130px; }
+      .press-law { width: 110px; }
+      .press-niaj { width: 56px; }
+
+      .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .sticky-cta {
+        display: block;
+      }
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+      .hero {
+        min-height: 440px;
+      }
+
+      .hero-bg img {
+        object-position: 50% 35%;
+      }
+
+      .hero-selling-line {
+        font-size: 1.7rem;
+      }
+
+      .hero-cta {
+        padding: 12px 28px;
+        font-size: 0.95rem;
+      }
+
+      .pitch {
+        padding: 56px 20px 40px;
+      }
+
+      .room-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 6px;
+      }
+
+      .room-grid picture.featured {
+        grid-row: span 1;
+      }
+
+      .room-grid picture {
+        aspect-ratio: 16/10;
+      }
+
+      .shows-iframe-wrap {
+        /* height auto-set via postMessage */
+      }
+
+      .footer {
+        padding: 36px 20px;
+      }
+    }
+
+    /* ================================================================
+       REVEAL ANIMATIONS
+       ================================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero-content {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+    }
+
+    .hero-content.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ================================================================
+       STRUCTURED DATA
+       ================================================================ */
+  </style>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '4310041135918044');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=4310041135918044&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+
+<body>
+
+  <!-- ================================================================
+       HERO
+       ================================================================ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <picture>
+        <source srcset="images/webp/venue/hero-mid-sm.webp" media="(max-width: 768px)">
+        <img src="images/webp/venue/hero-mid-lg.webp"
+             alt="Jetpack Comedy stage at Bar Lubitsch — neon sign on red velvet curtains with crystal chandeliers"
+             fetchpriority="high"
+             decoding="async">
+      </picture>
+    </div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content" id="heroContent">
+      <h2 class="hero-selling-line">
+        Seventy seats.<br>
+        <span>Twenty dollars.</span><br>
+        Every Friday.
+      </h2>
+      <p class="hero-sub">The anti-club comedy club &mdash; Bar Lubitsch, West Hollywood</p>
+      <a href="#shows" class="hero-cta">
+        This Friday
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       PROOF BAR
+       ================================================================ -->
+  <div class="proof-bar">
+    <div class="proof-item">
+      <span class="proof-star">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <strong>4.9</strong> on Google
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-item"><strong>116</strong> reviews</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item"><strong>13</strong> years running</div>
+    <div class="proof-divider"></div>
+    <div class="proof-item">No drink minimum</div>
+  </div>
+
+  <!-- ================================================================
+       PITCH
+       ================================================================ -->
+  <section class="pitch reveal">
+    <h1>Stand-up comedy every Friday in West Hollywood</h1>
+    <p>Every week, 6&ndash;8 handpicked comedians perform in a 70-seat velvet cocktail bar. No two-drink minimum. No tourist trap. Just sharp, curated comedy fifteen feet from your drink &mdash; for less than a movie ticket.</p>
+
+    <div class="press">
+      <img src="netflix-is-a-joke-fest.png" alt="Part of Netflix Is A Joke Fest" class="press-niaj" loading="lazy">
+      <img src="nytimes.png" alt="Featured in The New York Times" class="press-nyt" loading="lazy">
+      <img src="laweekly.png" alt="Featured in LA Weekly" class="press-law" loading="lazy">
+    </div>
+  </section>
+
+  <!-- ================================================================
+       THE ROOM (photo grid)
+       ================================================================ -->
+  <section class="room reveal">
+    <div class="room-grid">
+      <!-- Featured: packed crowd showing the room alive -->
+      <picture class="featured landscape">
+        <source srcset="images/webp/room/crowd-packed-sm.webp" media="(max-width: 480px)">
+        <img src="images/webp/room/crowd-packed-lg.webp"
+             alt="Packed audience at Jetpack Comedy — crowd laughing in an intimate room with chandeliers and brick walls"
+             loading="lazy">
+      </picture>
+
+      <!-- Side 1: friends with cocktails -->
+      <picture class="side landscape">
+        <source srcset="images/webp/room/cocktails-sm.webp" media="(max-width: 480px)">
+        <img src="images/webp/room/cocktails-lg.webp"
+             alt="Friends enjoying cocktails at Jetpack Comedy — drinks on table at Bar Lubitsch"
+             loading="lazy">
+      </picture>
+
+      <!-- Side 2: two friends laughing -->
+      <picture class="side landscape">
+        <source srcset="images/webp/room/friends-laughing-sm.webp" media="(max-width: 480px)">
+        <img src="images/webp/room/friends-laughing-lg.webp"
+             alt="Two friends laughing at Jetpack Comedy"
+             loading="lazy">
+      </picture>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       UPCOMING SHOWS
+       ================================================================ -->
+  <section class="shows" id="shows">
+    <h2>Upcoming shows</h2>
+    <p class="shows-sub">Doors 8pm &middot; Show 8:30 &middot; Bar Lubitsch, 7702 Santa Monica Blvd</p>
+    <div class="shows-iframe-wrap">
+      <iframe id="jetbookiframe"
+              allow="clipboard-read; clipboard-write"
+              src="https://jetbook.co/embed_dark/jetpack-comedy-9yo7g"
+              scrolling="no"
+              allowfullscreen
+              loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <!-- postMessage auto-resize for embed_dark iframe -->
+  <script>
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'jetbook-resize') {
+        var iframe = document.getElementById('jetbookiframe');
+        if (iframe) iframe.style.height = e.data.height + 'px';
+      }
+      if (e.data && e.data.type === 'jetbook-purchase') {
+        // Fire GA4 + Meta Pixel purchase events
+        if (typeof gtag === 'function') {
+          gtag('event', 'purchase', { value: e.data.total, currency: 'USD' });
+        }
+        if (typeof fbq === 'function') {
+          fbq('track', 'Purchase', { value: e.data.total, currency: 'USD' });
+        }
+      }
+    });
+  </script>
+
+  <!-- ================================================================
+       REVIEWS
+       ================================================================ -->
+  <section class="reviews reveal">
+    <h2>What people say</h2>
+    <div class="reviews-grid">
+      <div class="review">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"My face was literally sore the next day from laughing so hard. The venue is beautiful, the drinks are great, and the comedians were absolutely hilarious."</p>
+        <p class="review-author">Google Review</p>
+      </div>
+      <div class="review">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"Non-stop laughs at a hip bar. Such a unique Friday night experience. Way better than the big comedy clubs &mdash; more intimate, funnier, and you actually feel like you're part of it."</p>
+        <p class="review-author">Google Review</p>
+      </div>
+      <div class="review">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"I've been to Jetpack three times now and the lineup is consistently killer. It's $20 with no drink minimum. That's unheard of in LA."</p>
+        <p class="review-author">Google Review</p>
+      </div>
+      <div class="review">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"The best-kept secret in WeHo. Small room, amazing comedians, gorgeous bar. We go almost every month now. If you haven't been, just go."</p>
+        <p class="review-author">Google Review</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================
+       FOOTER
+       ================================================================ -->
+  <footer class="footer">
+    <p class="footer-brand">Jetpack Comedy</p>
+    <p class="footer-tagline">The anti-club comedy club</p>
+    <p class="footer-details">
+      <a href="https://maps.google.com/?q=7702+Santa+Monica+Blvd+West+Hollywood+CA" target="_blank" rel="noopener">7702 Santa Monica Blvd, West Hollywood, CA 90046</a>
+    </p>
+    <p class="footer-time">Every Friday &middot; Doors 8pm &middot; Show 8:30pm &middot; $20</p>
+    <div class="footer-links">
+      <a href="mailto:shows@jetpackcomedy.com">shows@jetpackcomedy.com</a>
+      <a href="https://instagram.com/jetpackcomedy" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://facebook.com/jetpackcomedy" target="_blank" rel="noopener">Facebook</a>
+    </div>
+  </footer>
+
+  <!-- ================================================================
+       STICKY CTA (mobile — appears after scrolling past hero)
+       ================================================================ -->
+  <div class="sticky-cta" id="stickyCta">
+    <a href="#shows">This Friday &mdash; Get Tickets</a>
+    <p class="sticky-cta-sub">$20 &middot; No drink minimum &middot; Bar Lubitsch</p>
+  </div>
+
+  <!-- ================================================================
+       STRUCTURED DATA (LocalBusiness + Event)
+       ================================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ComedyClub",
+    "name": "Jetpack Comedy",
+    "description": "The anti-club comedy club. Handpicked stand-up comedy every Friday at Bar Lubitsch in West Hollywood. 70 seats, $20, no drink minimum.",
+    "url": "https://jetpackcomedy.com",
+    "telephone": "(424) 241-2142",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "7702 Santa Monica Blvd",
+      "addressLocality": "West Hollywood",
+      "addressRegion": "CA",
+      "postalCode": "90046",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 34.0907,
+      "longitude": -118.3567
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "116",
+      "bestRating": "5"
+    },
+    "priceRange": "$20",
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Friday",
+      "opens": "20:00",
+      "closes": "22:00"
+    },
+    "image": "https://jetpackcomedy.com/images/webp/venue/hero-mid-lg.webp",
+    "sameAs": [
+      "https://instagram.com/jetpackcomedy",
+      "https://facebook.com/jetpackcomedy"
+    ],
+    "foundingDate": "2012",
+    "keywords": "comedy show, stand-up comedy, west hollywood comedy, bar lubitsch, live comedy, friday night comedy, weho comedy"
+  }
+  </script>
+
+  <!-- ================================================================
+       JAVASCRIPT
+       ================================================================ -->
+  <script>
+  (function() {
+    // Hero content reveal
+    requestAnimationFrame(function() {
+      setTimeout(function() {
+        document.getElementById('heroContent').classList.add('is-visible');
+      }, 300);
+    });
+
+    // Scroll reveal for sections
+    var reveals = document.querySelectorAll('.reveal');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach(function(el) { observer.observe(el); });
+
+    // Sticky CTA — show after scrolling past hero
+    var stickyCta = document.getElementById('stickyCta');
+    var hero = document.getElementById('hero');
+    if (stickyCta && hero) {
+      var stickyObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            stickyCta.classList.remove('is-visible');
+          } else {
+            stickyCta.classList.add('is-visible');
+          }
+        });
+      }, { threshold: 0 });
+      stickyObserver.observe(hero);
+    }
+  })();
+  </script>
+
+</body>
+</html>
