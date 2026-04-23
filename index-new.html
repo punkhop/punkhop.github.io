@@ -814,7 +814,7 @@
         events.forEach(function(ev, i) {
           var date = formatDate(ev.Date_Start);
           var poster = posterUrl(ev.Event_Poster);
-          var link = CHECKOUT_BASE + '?event=' + ev.Slug;
+          var link = '/event.html?slug=' + ev.Slug;
           if (i === 0) {
             // Hero card — next show
             var heroClass = poster ? 'event-card hero' : 'event-card hero no-poster';

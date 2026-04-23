@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event — Jetpack Comedy</title>
+  <meta name="theme-color" content="#0e0a0b">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0e0a0b; color: #fafafa; min-height: 100vh;
+    }
+    a { color: #e4002b; text-decoration: none; }
+
+    /* Header */
+    .back-bar {
+      padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+      max-width: 1080px; margin: 0 auto;
+    }
+    .back-bar a { font-size: 0.9rem; color: #888; }
+    .back-bar a:hover { color: #fafafa; }
+
+    /* Hero */
+    .hero-img {
+      width: 100%; max-height: 400px; object-fit: cover; display: block;
+    }
+
+    /* Layout */
+    .event-layout {
+      max-width: 1080px; margin: 0 auto; padding: 0 1.5rem 6rem;
+      display: flex; gap: 2.5rem; align-items: flex-start;
+    }
+    .event-main { flex: 1; min-width: 0; }
+    .event-sidebar {
+      width: 360px; flex-shrink: 0; position: sticky; top: 1.5rem;
+      background: #141010; border-radius: 16px; padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    @media (max-width: 800px) {
+      .event-layout { flex-direction: column; gap: 1.5rem; }
+      .event-sidebar { width: 100%; position: static; }
+    }
+
+    /* Event info */
+    .event-date-line {
+      font-size: 0.85rem; font-weight: 600; color: #e4002b;
+      text-transform: uppercase; letter-spacing: 0.04em; margin-top: 1.5rem;
+    }
+    .event-title { font-size: 2rem; font-weight: 800; margin: 0.4rem 0; line-height: 1.2; }
+    .event-venue-line { font-size: 1rem; color: #888; margin-bottom: 1.5rem; }
+    .section-title {
+      font-size: 0.8rem; font-weight: 600; color: #666; text-transform: uppercase;
+      letter-spacing: 0.08em; margin: 2rem 0 0.75rem; padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .event-description { font-size: 0.95rem; color: #ccc; line-height: 1.6; }
+
+    /* Sidebar */
+    .sidebar-date { font-size: 0.85rem; font-weight: 600; color: #e4002b; text-transform: uppercase; }
+    .sidebar-title { font-size: 1.1rem; font-weight: 700; margin: 0.3rem 0; }
+    .sidebar-venue { font-size: 0.85rem; color: #888; margin-bottom: 1rem; }
+    .sidebar-divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 1rem 0; }
+
+    /* Ticket cards */
+    .ticket-card {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .ticket-card:last-child { border-bottom: none; }
+    .ticket-name { font-weight: 600; font-size: 0.95rem; }
+    .ticket-price { font-size: 0.85rem; color: #ccc; }
+    .ticket-fee { font-size: 0.75rem; color: #666; }
+    .qty-control {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .qty-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15); background: transparent;
+      color: #fafafa; font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qty-btn:hover { border-color: #e4002b; color: #e4002b; }
+    .qty-btn:disabled { opacity: 0.3; cursor: default; }
+    .qty-btn:disabled:hover { border-color: rgba(255,255,255,0.15); color: #fafafa; }
+    .qty-value { font-size: 1rem; font-weight: 600; min-width: 24px; text-align: center; }
+
+    /* Order summary */
+    .order-summary { margin-top: 1rem; }
+    .order-line {
+      display: flex; justify-content: space-between; font-size: 0.9rem;
+      padding: 0.2rem 0; color: #ccc;
+    }
+    .order-total {
+      display: flex; justify-content: space-between; font-size: 1.1rem;
+      font-weight: 700; padding-top: 0.5rem; margin-top: 0.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* CTA */
+    .checkout-cta {
+      display: block; width: 100%; padding: 0.9rem; margin-top: 1rem;
+      background: #e4002b; color: #fff; border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      text-align: center; text-decoration: none; transition: background 0.15s;
+    }
+    .checkout-cta:hover { background: #c8001f; }
+    .checkout-cta:disabled { opacity: 0.4; cursor: default; }
+    .checkout-cta:disabled:hover { background: #e4002b; }
+
+    /* Mobile fixed CTA */
+    .mobile-cta {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: #141010; border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 0.75rem 1.5rem; z-index: 100;
+    }
+    .mobile-cta-inner {
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1080px; margin: 0 auto;
+    }
+    .mobile-cta-text { font-size: 0.9rem; color: #ccc; }
+    .mobile-cta-text strong { color: #fafafa; }
+    .mobile-cta .checkout-cta { width: auto; padding: 0.75rem 1.5rem; margin: 0; }
+    @media (max-width: 800px) {
+      .mobile-cta.has-tickets { display: block; }
+      .event-sidebar .checkout-cta { display: none; }
+    }
+
+    /* Loading */
+    .event-loading {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 60vh; color: #666; font-size: 1.1rem;
+    }
+    .event-error { text-align: center; padding: 4rem 1rem; color: #888; }
+  </style>
+</head>
+<body>
+
+  <div class="back-bar">
+    <a href="/index-new.html">&larr; All shows</a>
+  </div>
+
+  <div id="event-content">
+    <div class="event-loading">Loading event...</div>
+  </div>
+
+  <div id="mobile-cta" class="mobile-cta">
+    <div class="mobile-cta-inner">
+      <div class="mobile-cta-text" id="mobile-cta-text"></div>
+      <a id="mobile-cta-btn" class="checkout-cta" href="#">Checkout</a>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var API_LIVE = 'https://jetbook.co/api/1.1/obj/V2_Event';
+      var API_TEST = 'https://jetbook.co/version-test/api/1.1/obj/V2_Event';
+      // TODO: Switch to API_LIVE after deploying Bubble
+      var API = API_TEST;
+      var SLUG = 'jetpack-comedy-9yo7g';
+      var CHECKOUT_BASE = 'https://jetbook.co/o_iframe/' + SLUG;
+
+      // Get event slug from URL
+      var params = new URLSearchParams(location.search);
+      var eventSlug = params.get('slug') || params.get('event');
+
+      if (!eventSlug) {
+        document.getElementById('event-content').innerHTML =
+          '<div class="event-error">No event specified. <a href="/index-new.html">Browse shows</a></div>';
+        return;
+      }
+
+      function formatDate(iso) {
+        if (!iso) return 'Date TBA';
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return 'Date TBA';
+        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+      }
+
+      function formatTime(iso) {
+        if (!iso) return '';
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return '';
+        return d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+      }
+
+      function formatShortDate(iso) {
+        if (!iso) return 'DATE TBA';
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return 'DATE TBA';
+        var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+        var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+        return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ' · ' + formatTime(iso);
+      }
+
+      function posterUrl(raw) {
+        if (!raw) return '';
+        var url = raw.startsWith('//') ? 'https:' + raw : raw;
+        // Bubble S3 URLs: use Cloudflare image resizing if available
+        if (url.includes('appforest_uf')) {
+          return url.replace('//s3.amazonaws.com/appforest_uf/', '//s3.amazonaws.com/appforest_uf/');
+        }
+        return url;
+      }
+
+      function formatCurrency(cents) {
+        return '$' + (cents / 100).toFixed(2);
+      }
+
+      // State
+      var quantities = {};
+      var ticketTypes = [];
+
+      function updateUI() {
+        var totalQty = 0;
+        var totalPrice = 0;
+        ticketTypes.forEach(function(t) {
+          var qty = quantities[t._id] || 0;
+          totalQty += qty;
+          totalPrice += qty * (t.Ticket_Price || 0) * 100;
+        });
+
+        // Update qty displays
+        ticketTypes.forEach(function(t) {
+          var qty = quantities[t._id] || 0;
+          var el = document.getElementById('qty-' + t._id);
+          if (el) el.textContent = qty;
+          var minBtn = document.getElementById('min-' + t._id);
+          if (minBtn) minBtn.disabled = qty <= 0;
+        });
+
+        // Update order summary
+        var summaryEl = document.getElementById('order-summary');
+        if (totalQty === 0) {
+          summaryEl.style.display = 'none';
+        } else {
+          summaryEl.style.display = 'block';
+          var lines = '';
+          ticketTypes.forEach(function(t) {
+            var qty = quantities[t._id] || 0;
+            if (qty > 0) {
+              var subtotal = qty * (t.Ticket_Price || 0);
+              lines += '<div class="order-line"><span>' + qty + 'x ' + (t.Name || 'Ticket') + '</span><span>$' + subtotal.toFixed(2) + '</span></div>';
+            }
+          });
+          var total = 0;
+          ticketTypes.forEach(function(t) { total += (quantities[t._id] || 0) * (t.Ticket_Price || 0); });
+          lines += '<div class="order-total"><span>Total</span><span>$' + total.toFixed(2) + '</span></div>';
+          summaryEl.innerHTML = lines;
+        }
+
+        // Update CTAs
+        var ctaBtn = document.getElementById('checkout-btn');
+        var mobileCta = document.getElementById('mobile-cta');
+        var mobileCtatext = document.getElementById('mobile-cta-text');
+        var mobileCtaBtn = document.getElementById('mobile-cta-btn');
+
+        if (totalQty > 0) {
+          var total = 0;
+          ticketTypes.forEach(function(t) { total += (quantities[t._id] || 0) * (t.Ticket_Price || 0); });
+          ctaBtn.textContent = 'Checkout · $' + total.toFixed(2);
+          ctaBtn.disabled = false;
+          ctaBtn.href = CHECKOUT_BASE + '?event=' + eventSlug;
+          mobileCta.classList.add('has-tickets');
+          mobileCtatext.innerHTML = '<strong>' + totalQty + ' ticket' + (totalQty > 1 ? 's' : '') + '</strong> · $' + total.toFixed(2);
+          mobileCtaBtn.href = CHECKOUT_BASE + '?event=' + eventSlug;
+        } else {
+          ctaBtn.textContent = 'Select tickets';
+          ctaBtn.disabled = true;
+          ctaBtn.href = '#';
+          mobileCta.classList.remove('has-tickets');
+        }
+      }
+
+      function renderEvent(ev) {
+        var poster = posterUrl(ev.Event_Poster);
+        var date = formatDate(ev.Date_Start);
+        var time = formatTime(ev.Date_Start);
+        var shortDate = formatShortDate(ev.Date_Start);
+
+        // Mock ticket types for now (API may not return nested data)
+        // TODO: Fetch V2_newTypes for this event
+        ticketTypes = [
+          { _id: 'ga', Name: 'General Admission', Ticket_Price: 20, fee: 2.85 },
+          { _id: 'vip', Name: 'VIP Booth Seat', Ticket_Price: 30, fee: 3.46 }
+        ];
+        ticketTypes.forEach(function(t) { quantities[t._id] = 0; });
+
+        var html = '';
+
+        // Hero image
+        if (poster) {
+          html += '<img class="hero-img" src="' + poster + '" alt="' + ev.Name + '">';
+        }
+
+        html += '<div class="event-layout">';
+
+        // Left column — event info
+        html += '<div class="event-main">';
+        html += '<div class="event-date-line">' + shortDate + '</div>';
+        html += '<h1 class="event-title">' + ev.Name + '</h1>';
+        html += '<div class="event-venue-line">Jetpack Comedy · Bar Lubitsch, West Hollywood</div>';
+
+        if (ev.Description) {
+          html += '<div class="section-title">About</div>';
+          html += '<div class="event-description">' + ev.Description + '</div>';
+        }
+
+        html += '<div class="section-title">Venue</div>';
+        html += '<div class="event-description">Bar Lubitsch · 7702 Santa Monica Blvd, West Hollywood, CA 90046<br>Doors 8pm · Show 8:30pm · Ages 21+ · No drink minimum</div>';
+
+        html += '</div>'; // .event-main
+
+        // Right column — tickets sidebar
+        html += '<div class="event-sidebar">';
+        html += '<div class="sidebar-date">' + shortDate + '</div>';
+        html += '<div class="sidebar-title">' + ev.Name + '</div>';
+        html += '<div class="sidebar-venue">Jetpack Comedy · West Hollywood</div>';
+        html += '<hr class="sidebar-divider">';
+        html += '<div class="section-title" style="margin-top:0">Tickets</div>';
+
+        ticketTypes.forEach(function(t) {
+          html += '<div class="ticket-card">';
+          html += '<div><div class="ticket-name">' + t.Name + '</div>';
+          html += '<div class="ticket-price">$' + t.Ticket_Price.toFixed(2) + '</div>';
+          html += '<div class="ticket-fee">incl $' + t.fee.toFixed(2) + ' fee</div></div>';
+          html += '<div class="qty-control">';
+          html += '<button class="qty-btn" id="min-' + t._id + '" disabled onclick="window._changeQty(\'' + t._id + '\',-1)">−</button>';
+          html += '<span class="qty-value" id="qty-' + t._id + '">0</span>';
+          html += '<button class="qty-btn" onclick="window._changeQty(\'' + t._id + '\',1)">+</button>';
+          html += '</div></div>';
+        });
+
+        html += '<div id="order-summary" class="order-summary" style="display:none"></div>';
+        html += '<a id="checkout-btn" class="checkout-cta" href="#" disabled>Select tickets</a>';
+        html += '</div>'; // .event-sidebar
+
+        html += '</div>'; // .event-layout
+
+        document.getElementById('event-content').innerHTML = html;
+        document.title = ev.Name + ' — Jetpack Comedy';
+
+        // Update meta
+        var metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) { metaDesc = document.createElement('meta'); metaDesc.name = 'description'; document.head.appendChild(metaDesc); }
+        metaDesc.content = ev.Name + ' — ' + date + ' at ' + time + '. Jetpack Comedy, West Hollywood.';
+      }
+
+      // Global qty change handler
+      window._changeQty = function(id, delta) {
+        var current = quantities[id] || 0;
+        var newQty = Math.max(0, Math.min(10, current + delta));
+        quantities[id] = newQty;
+        updateUI();
+      };
+
+      // Fetch event by slug
+      var constraints = JSON.stringify([{key: 'Slug', constraint_type: 'equals', value: eventSlug}]);
+      var url = API + '?constraints=' + encodeURIComponent(constraints);
+
+      fetch(url)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var events = (data.response && data.response.results) || [];
+          if (events.length === 0) {
+            document.getElementById('event-content').innerHTML =
+              '<div class="event-error">Event not found. <a href="/index-new.html">Browse shows</a></div>';
+            return;
+          }
+          renderEvent(events[0]);
+        })
+        .catch(function(err) {
+          console.error('Failed to load event:', err);
+          document.getElementById('event-content').innerHTML =
+            '<div class="event-error">Unable to load event. <a href="/index-new.html">Browse shows</a></div>';
+        });
+    })();
+  </script>
+</body>
+</html>
