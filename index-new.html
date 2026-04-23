@@ -839,10 +839,12 @@
         list.innerHTML = html;
       }
 
-      // Fetch future events from Bubble Data API
+      // Fetch future Jetpack events from Bubble Data API
+      var JETPACK_USER_ID = '1660767602575x145348606959675870';
       var now = new Date().toISOString();
       var constraints = JSON.stringify([
-        {key: 'Date_Start', constraint_type: 'greater than', value: now}
+        {key: 'Date_Start', constraint_type: 'greater than', value: now},
+        {key: 'User_Owner', constraint_type: 'equals', value: JETPACK_USER_ID}
       ]);
       var url = API + '?limit=10&sort_field=Date_Start&descending=false&constraints=' + encodeURIComponent(constraints);
 
