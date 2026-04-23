@@ -722,114 +722,145 @@
        ================================================================ -->
   <section class="shows" id="shows">
     <h2>Upcoming shows</h2>
-    <p class="shows-sub">Doors 8pm &middot; Show 8:30 &middot; Bar Lubitsch, 7702 Santa Monica Blvd</p>
-    <div id="event-list" class="event-list">
-      <div class="event-loading">Loading shows...</div>
+    <p class="shows-sub">Every Friday &middot; Doors 8pm &middot; Show 8:30 &middot; $20</p>
+    <div id="event-list" class="ev-list">
+      <div class="ev-loading">Loading shows...</div>
     </div>
   </section>
 
   <style>
-    .event-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 1px; }
-    .event-loading { color: #888; text-align: center; padding: 3rem 1rem; font-size: 1.1rem; }
-    .event-card {
-      display: flex; gap: 1rem; padding: 1rem; border-radius: 12px;
-      background: #141010; transition: background 0.15s;
-      cursor: pointer; text-decoration: none; color: #fafafa;
+    .ev-list { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+    .ev-loading { color: #888; text-align: center; padding: 3rem 1rem; }
+    .ev-empty { color: #666; text-align: center; padding: 3rem 1rem; }
+
+    /* Next show — prominent */
+    .ev-next {
+      display: flex; align-items: center; gap: 1rem;
+      background: #141010; border-radius: 12px; padding: 1.25rem;
+      text-decoration: none; color: #fafafa; transition: background 0.15s;
+      border: 1px solid rgba(228,0,43,0.2);
     }
-    .event-card:hover { background: #1a1416; }
-    .event-card.featured .event-cta {
-      display: inline-block; background: #e4002b; color: #fff;
-      padding: 0.35rem 1rem; border-radius: 6px; font-weight: 600;
-      font-size: 0.8rem; margin-top: 0.4rem; border: none; cursor: pointer;
-      text-decoration: none;
+    .ev-next:hover { background: #1a1416; }
+    .ev-next-poster {
+      width: 80px; height: 80px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
     }
-    .event-card.featured .event-cta:hover { background: #c8001f; }
-    .event-poster {
-      width: 100px; height: 100px; border-radius: 8px;
-      object-fit: cover; flex-shrink: 0; background: #1a1416;
+    .ev-next-info { flex: 1; min-width: 0; }
+    .ev-next-label {
+      font-size: 0.7rem; font-weight: 700; color: #e4002b;
+      text-transform: uppercase; letter-spacing: 0.1em;
     }
-    .event-info { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-    .event-date {
+    .ev-next-date {
+      font-size: 1.15rem; font-weight: 700; margin: 0.15rem 0;
+    }
+    .ev-next-time { font-size: 0.85rem; color: #999; }
+    .ev-next-cta {
+      flex-shrink: 0; background: #e4002b; color: #fff;
+      padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700;
+      font-size: 0.85rem; text-decoration: none; white-space: nowrap;
+    }
+    .ev-next-cta:hover { background: #c8001f; }
+
+    /* Future shows — compact date rows */
+    .ev-future-label {
+      font-size: 0.7rem; font-weight: 600; color: #555;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin: 1.25rem 0 0.5rem; padding-left: 0.25rem;
+    }
+    .ev-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 1rem; border-radius: 8px;
+      text-decoration: none; color: #fafafa;
+      transition: background 0.15s;
+    }
+    .ev-row:hover { background: #141010; }
+    .ev-row-date { font-size: 0.95rem; font-weight: 600; }
+    .ev-row-time { font-size: 0.85rem; color: #888; margin-left: 0.5rem; }
+    .ev-row-cta {
       font-size: 0.8rem; font-weight: 600; color: #e4002b;
-      text-transform: uppercase; letter-spacing: 0.04em;
+      white-space: nowrap;
     }
-    .event-title {
-      font-size: 1.1rem; font-weight: 700; color: #fafafa;
-      margin: 0.2rem 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .event-venue { font-size: 0.85rem; color: #888; }
-    .event-price { font-size: 0.85rem; color: #ccc; margin-top: 0.15rem; }
-    .event-empty { color: #666; text-align: center; padding: 3rem 1rem; }
+    .ev-row:hover .ev-row-cta { color: #ff1a44; }
+
     @media (max-width: 600px) {
-      .event-card { padding: 0.75rem; gap: 0.75rem; }
-      .event-poster { width: 80px; height: 80px; }
-      .event-title { font-size: 1rem; }
-      .event-card.featured .event-poster { width: 100px; height: 100px; }
-      .event-card.featured .event-title { font-size: 1.1rem; }
+      .ev-next { padding: 1rem; gap: 0.75rem; }
+      .ev-next-poster { width: 64px; height: 64px; }
+      .ev-next-date { font-size: 1.05rem; }
+      .ev-next-cta { padding: 0.5rem 1rem; font-size: 0.8rem; }
     }
   </style>
 
   <script>
     (function() {
-      // Bubble Data API — switch to live after deploying V2_Event API exposure
-      var API_LIVE = 'https://jetbook.co/api/1.1/obj/V2_Event';
-      var API_TEST = 'https://jetbook.co/version-test/api/1.1/obj/V2_Event';
-      var API = API_LIVE; // Use live API (needs Deploy in Bubble)
+      var API = 'https://jetbook.co/api/1.1/obj/V2_Event';
       var SLUG = 'jetpack-comedy-9yo7g';
-      // Checkout: links to working o_iframe for now
-      // TODO: Replace with embed_event/{slug} page once built
       var CHECKOUT_BASE = 'https://jetbook.co/o_iframe/' + SLUG;
+      var JETPACK_USER_ID = '1660767602575x145348606959675870';
 
-      function formatDate(iso) {
+      function fmtDay(iso) {
+        var d = new Date(iso);
+        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+      }
+      function fmtShortDay(iso) {
         var d = new Date(iso);
         var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ' · ' +
-          d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+        return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
       }
-
+      function fmtTime(iso) {
+        return new Date(iso).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+      }
       function posterUrl(raw) {
         if (!raw) return '';
-        var url = raw.startsWith('//') ? 'https:' + raw : raw;
-        return url.replace('/f1', '/cdn-cgi/image/w=400,h=400,f=auto,fit=cover/f1');
+        return (raw.startsWith('//') ? 'https:' + raw : raw);
+      }
+      function isThisWeek(iso) {
+        var d = new Date(iso), now = new Date();
+        var diff = (d - now) / (1000*60*60*24);
+        return diff >= 0 && diff < 7;
       }
 
       function renderEvents(events) {
         var list = document.getElementById('event-list');
         if (!events.length) {
-          list.innerHTML = '<div class="event-empty">No upcoming shows — check back soon!</div>';
+          list.innerHTML = '<div class="ev-empty">No upcoming shows — check back soon!</div>';
           return;
         }
         var html = '';
-        events.forEach(function(ev, i) {
-          var date = formatDate(ev.Date_Start);
-          var poster = posterUrl(ev.Event_Poster);
-          var link = '/event.html?slug=' + ev.Slug;
-          if (i === 0) {
-            // Hero card — next show (same row layout, slightly larger)
-            html += '<a class="event-card featured" href="' + link + '">' +
-              (poster ? '<img class="event-poster" src="' + poster + '" alt="' + ev.Name + '" loading="lazy">' : '<div class="event-poster"></div>') +
-              '<div class="event-info">' +
-                '<div class="event-date">' + date + '</div>' +
-                '<div class="event-title">' + ev.Name + '</div>' +
-                '<div class="event-venue">Jetpack Comedy · West Hollywood</div>' +
-                '<span class="event-cta">Get Tickets</span>' +
-              '</div></a>';
-          } else {
-            html += '<a class="event-card" href="' + link + '">' +
-              (poster ? '<img class="event-poster" src="' + poster + '" alt="' + ev.Name + '" loading="lazy">' : '<div class="event-poster"></div>') +
-              '<div class="event-info">' +
-                '<div class="event-date">' + date + '</div>' +
-                '<div class="event-title">' + ev.Name + '</div>' +
-                '<div class="event-venue">Jetpack Comedy · West Hollywood</div>' +
-              '</div></a>';
+        var first = events[0];
+        var poster = posterUrl(first.Event_Poster);
+        var link = '/event.html?slug=' + first.Slug;
+        var label = isThisWeek(first.Date_Start) ? 'This Friday' : 'Next Show';
+
+        // NEXT SHOW — prominent card
+        html += '<a class="ev-next" href="' + link + '">';
+        if (poster) html += '<img class="ev-next-poster" src="' + poster + '" alt="" loading="lazy">';
+        html += '<div class="ev-next-info">';
+        html += '<div class="ev-next-label">' + label + '</div>';
+        html += '<div class="ev-next-date">' + fmtDay(first.Date_Start) + '</div>';
+        html += '<div class="ev-next-time">' + fmtTime(first.Date_Start) + ' · Doors 8pm</div>';
+        html += '</div>';
+        html += '<span class="ev-next-cta">Tickets</span>';
+        html += '</a>';
+
+        // FUTURE SHOWS — compact rows
+        if (events.length > 1) {
+          html += '<div class="ev-future-label">More dates</div>';
+          for (var i = 1; i < events.length; i++) {
+            var ev = events[i];
+            var evLink = '/event.html?slug=' + ev.Slug;
+            html += '<a class="ev-row" href="' + evLink + '">';
+            html += '<div><span class="ev-row-date">' + fmtShortDay(ev.Date_Start) + '</span>';
+            html += '<span class="ev-row-time">' + fmtTime(ev.Date_Start) + '</span></div>';
+            html += '<span class="ev-row-cta">Tickets →</span>';
+            html += '</a>';
           }
-        });
+        }
         list.innerHTML = html;
       }
 
-      // Fetch future Jetpack events from Bubble Data API
-      var JETPACK_USER_ID = '1660767602575x145348606959675870';
       var now = new Date().toISOString();
       var constraints = JSON.stringify([
         {key: 'Date_Start', constraint_type: 'greater than', value: now},
@@ -839,24 +870,16 @@
 
       fetch(url)
         .then(function(r) { return r.json(); })
-        .then(function(data) {
-          var events = (data.response && data.response.results) || [];
-          renderEvents(events);
-        })
-        .catch(function(err) {
-          console.error('Failed to load events:', err);
+        .then(function(data) { renderEvents((data.response && data.response.results) || []); })
+        .catch(function() {
           document.getElementById('event-list').innerHTML =
-            '<div class="event-empty">Unable to load shows. <a href="' + CHECKOUT_BASE + '" style="color:#e4002b">View on Jetbook</a></div>';
+            '<div class="ev-empty">Unable to load shows. <a href="' + CHECKOUT_BASE + '" style="color:#e4002b">View on Jetbook</a></div>';
         });
 
-      // GA4 + Meta Pixel tracking for clicks
       document.getElementById('event-list').addEventListener('click', function(e) {
-        var card = e.target.closest('.event-card');
+        var card = e.target.closest('a');
         if (card && typeof gtag === 'function') {
-          gtag('event', 'select_content', {
-            content_type: 'event',
-            content_id: card.getAttribute('href')
-          });
+          gtag('event', 'select_content', { content_type: 'event', content_id: card.href });
         }
       });
     })();
