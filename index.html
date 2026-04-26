@@ -323,26 +323,20 @@
 
     .shows-iframe-wrap {
       width: 100%;
-      height: 820px;
       overflow: hidden;
       border-radius: 12px;
-      /* Mask the empty profile header that the iframe renders at the top */
     }
 
     .shows-iframe-wrap iframe {
       width: 100%;
-      height: 1100px;
-      margin-top: -280px;     /* crop out empty profile band */
+      height: 820px;
+      min-height: 700px;
       border: none;
       display: block;
     }
 
     @media (max-width: 600px) {
-      .shows-iframe-wrap { height: 1100px; }
-      .shows-iframe-wrap iframe {
-        height: 1380px;
-        margin-top: -280px;
-      }
+      .shows-iframe-wrap iframe { height: 1100px; }
     }
 
     /* ================================================================
