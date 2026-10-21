@@ -13,7 +13,7 @@
   // Widgets, with jetpackcomedy.com on its allowed list); without one the API answers 403 and the
   // server-rendered cards stay up, linking to the Jetpack page on Micdrop.
   var API = 'https://get-micdrop.com/api/v2/public/events/venue/1?limit=100';
-  var WIDGET_KEY = '';
+  var WIDGET_KEY = 'wk_6b89d4e8aeeb2981ce399083eda2a1a4'; // public embed key, allows jetpackcomedy.com and its subdomains
   var TZ = 'America/Los_Angeles';
   // Micdrop's buyer fee per ticket face, as checkout charges it today ($20 GA → $2.85, $30 VIP → $3.46).
   // The public API doesn't carry fees yet; a face price missing here shows without a fee line.
@@ -105,8 +105,19 @@
       var bar = document.querySelector('[data-buybar] > div');
       if (bar) bar.innerHTML = '<b>' + rel(next) + ' · ' + d.wd.slice(0, 3) + ', ' + d.md + '</b><small>Show ' + clock(next.startDateTime) + ' · ' + p.total + '</small>';
     }
+    embeds(feat, slot);
     watchBar();
     reveal(document.querySelector('[data-micdrop-slot="list"]'));
+  }
+  /* ?widgets=micdrop puts Micdrop's own embeds in the two slots, to compare them with the stand-ins.
+     List is saved widget 1; there's no saved Featured widget yet, so it runs unthemed by venue. */
+  function embeds(feat, slot) {
+    if (!/[?&]widgets=micdrop\b/.test(location.search)) return;
+    var k = ' data-widget-key="' + WIDGET_KEY + '"';
+    if (feat) feat.innerHTML = '<micdrop-calendar view="featured" venue-id="1"' + k + '></micdrop-calendar>';
+    if (slot) slot.innerHTML = '<micdrop-calendar widget-id="1" max-items="5"' + k + '></micdrop-calendar>';
+    var sc = document.createElement('script'); sc.defer = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
+    document.head.appendChild(sc);
   }
   function load() {
     var h = WIDGET_KEY ? { 'X-Widget-Key': WIDGET_KEY } : {};
