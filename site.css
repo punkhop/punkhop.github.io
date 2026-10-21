@@ -343,7 +343,7 @@ em { font-style: normal; color: var(--red); }
 .j-lights.j-intro .j-proof { animation: j-rise .45s var(--ease-smooth) calc(3.55s * var(--sp) + .6s) both; }
 .j-lights.j-intro :is(#app, #main) > :not(.a-hero):not(main):not(.j-hdr):not(.j-proof), .j-lights.j-intro .j-buybar { animation: mw-fade .6s var(--ease-smooth) calc(3.55s * var(--sp) + .75s) both; }
 /* A5 · The whole room: the lit room fills the first screen; headline and ticket sit on its lower edge. */
-.a-a5 { min-height: calc(100vh - var(--hdr) - var(--labh)); min-height: calc(100svh - var(--hdr) - var(--labh)); display: flex; align-items: flex-end; padding: 0 0 56px; }
+.a-a5 { box-sizing: border-box; min-height: calc(100vh - var(--hdr) - var(--labh)); min-height: calc(100svh - var(--hdr) - var(--labh)); display: flex; align-items: flex-end; padding: 0 0 56px; }
 .a-a5 .a-hero-media { left: 0; width: 100%; }
 .a-a5 .a-hero-img { object-position: 50% 42%; }
 .a-a5 .a-hero-media::after { background: linear-gradient(90deg, rgba(14, 10, 11, .9) 0%, rgba(14, 10, 11, .5) 32%, transparent 58%), linear-gradient(0deg, var(--ink) 0%, rgba(14, 10, 11, .4) 22%, transparent 45%); }
@@ -384,3 +384,19 @@ html { scroll-behavior: smooth; }
   .j-faq-q { min-height: 44px; align-items: center; }
 }
 @media (max-width: 720px) { .j-press p, .j-find-park, .j-foot-brand p, .j-foot-col span { font-size: 16px; } }
+
+/* Hero placement trials (?hero=up | center), for Peet to compare on the preview; the losers go once he picks. */
+.hero-up .a-a5 { padding-bottom: 17vh; padding-bottom: 17svh; }
+.hero-up .a-a5 .a-hero-media::after { background: linear-gradient(90deg, rgba(14, 10, 11, .9) 0%, rgba(14, 10, 11, .5) 32%, transparent 58%), linear-gradient(0deg, var(--ink) 0%, rgba(14, 10, 11, .5) 30%, transparent 60%); }
+.hero-center .a-a5 .a-hero-media::after { background: linear-gradient(0deg, var(--ink) 0%, rgba(14, 10, 11, .78) 30%, rgba(14, 10, 11, .25) 55%, transparent 70%); }
+.hero-center .a-a5 .a-hero-grid { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 28px; }
+.hero-center .a-a5 .a-hero-ticket { width: 100%; max-width: 440px; text-align: left; }
+@media (max-width: 900px) {
+  .hero-up .a-a5 { padding-bottom: 48px; }
+  .hero-up .a-a5 .a-hero-media { height: 58vh; height: 58svh; }
+  .hero-up .a-a5 .a-hero-img { object-position: 50% 30%; }
+  .hero-up .a-a5 .a-hero-media::after { background: linear-gradient(0deg, var(--ink) 10%, rgba(14, 10, 11, .6) 42%, transparent 66%); }
+  .hero-up .a-a5 .a-hero-grid { margin-top: -190px; }
+  .hero-center .a-a5 .a-hero-grid { gap: 22px; }
+  .hero-center .a-a5 .a-hero-ticket { max-width: none; }
+}
