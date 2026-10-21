@@ -8,18 +8,18 @@ The live marketing site at jetpackcomedy.com. Static HTML/CSS/JS deployed to Git
 
 | File | Purpose |
 |------|---------|
-| `index.html` | The landing page. Cinematic hero, proof bar, pitch + press, rotating room/comic photo grid, embedded Jetbook iframe, reviews, sticky mobile CTA, Schema.org rich snippets. Ships Meta Pixel + GA4. |
-| `cal.html` | Alternate calendar listing view. |
-| `success.html` | Draft from abandoned custom checkout (2026-04). Not in any active funnel — keep for reference or delete. |
+| `index.html` | The landing page (2026-10 redesign): lights-first hero intro, next-show ticket card, upcoming shows, About photos fading through, reviews, FAQ, find us, sticky phone buy bar, Schema.org rich snippets. Ships Meta Pixel + GA4. |
+| `site.css` / `site.js` | The one stylesheet and the one script (intro, Micdrop slots, buy bar, menu, FAQ, GA4 ticket event). |
+| `images/falls/` | About photos, `-s` (≤800px) and `-l` (1600px) per photo. |
 | `images/` | Webp + originals. `images/webp/comics/_originals/` holds pre-crop versions of comic headshots; the visible files were auto-cropped to faces via OpenCV on 2026-04-24. |
 | `CNAME`, `.nojekyll` | GitHub Pages config — DO NOT delete. |
 | `Jetpack Logo Solo Straight.png`, press logos, `test*.png`, comic `.jpg`s at root | Legacy assets. Some still referenced. Run `grep` before deleting any. |
 
 ## Architecture
 
-Single static HTML page. No build step. No framework. Inline `<style>` and `<script>` blocks per section. The hero rotation, room grid crossfade, and Schema.org JSON-LD are all in `index.html`.
+Single static HTML page. No build step. No framework. Markup and Schema.org JSON-LD in `index.html`, styles in `site.css`, behaviour in `site.js`.
 
-The "Upcoming shows" section embeds Jetbook's iframe (`https://jetbook.co/o_iframe/jetpack-comedy-9yo7g`) — that handles ticket selection and checkout.
+Tickets sell on Micdrop. Two marked slots (`<div data-micdrop-slot="featured">` in the hero, `<div data-micdrop-slot="list">` under Upcoming shows) hold server-rendered cards linking to the Jetpack page on Micdrop; `site.js` fills them from Micdrop's public events API (venue 1) and every Get tickets opens that show's Micdrop event page. Swap each slot for the Micdrop embed when it ships. The API needs a widget key for this domain (`WIDGET_KEY` in `site.js`).
 
 ## Deploy
 
@@ -33,7 +33,7 @@ GitHub Pages picks it up in ~30 seconds. CNAME points jetpackcomedy.com → punk
 ## When editing the site
 
 1. Use the existing visual language: red velvet / cinematic / `#0e0a0b` background, `#e4002b` accent (Jetpack red), Inter font.
-2. The mission is conversion: every change should support funneling visitors toward the iframe ticket purchase.
+2. The mission is conversion: every change should support funneling visitors toward a Get tickets click.
 3. Test changes via `browser-harness` (NOT `dev-browser` without `--connect`).
 4. Image alt text should be descriptive — Google reads it for SEO.
 5. Maintain the Schema.org `ComedyClub` JSON-LD; it powers Google rich snippets.
@@ -41,9 +41,9 @@ GitHub Pages picks it up in ~30 seconds. CNAME points jetpackcomedy.com → punk
 ## Tracking
 
 - **Meta Pixel** ID `4310041135918044` — fires PageView. `_fbp`/`_fbc` cookies set correctly.
-- **GA4** `G-9MV3236KH3` — fires PageView + custom `select_content` event on event card clicks.
+- **GA4** `G-9MV3236KH3` — fires PageView + custom `select_content` event on every Get tickets click (`item_id` = Micdrop event id).
 - **NO Google Ads tag installed** (none running yet).
-- Conversion events do NOT fire here — purchase happens on jetbook.co (different domain). See `../CLAUDE.md` "Critical limitation" section.
+- Conversion events do NOT fire here — purchase happens on get-micdrop.com (different domain).
 
 ## Recent changes worth knowing
 
