@@ -7,9 +7,6 @@
   var root = document.documentElement;
   var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   window.JP_MOTION = true;
-  // Hero placement trial on the preview: ?hero=up or ?hero=center (Peet picks, then this goes).
-  var heroTrial = (location.search.match(/[?&]hero=(up|center)\b/) || [])[1];
-  if (heroTrial) root.classList.add('hero-' + heroTrial);
 
   /* ---------- Micdrop: the two widget slots ----------------------------------------------------- */
   // Venue 1 is Bar Lubitsch. A site outside get-micdrop.com needs its widget key (Micdrop dashboard →
