@@ -115,12 +115,12 @@
       .catch(function () { /* the server-rendered cards stay */ });
   }
 
-  /* ---------- the sticky phone buy bar: hidden while a ticket button is on screen -------------- */
+  /* ---------- the sticky phone buy bar: hidden while the ticket card or a ticket button is on screen */
   var barIO = null;
   function watchBar() {
     var bar = document.querySelector('[data-buybar]'); if (!bar || !('IntersectionObserver' in window)) return;
     if (barIO) barIO.disconnect();
-    var zones = document.querySelectorAll('[data-micdrop-slot] .mw-btn:not(.off):not(.ghost)'), seen = new Set();
+    var zones = document.querySelectorAll('[data-micdrop-slot="featured"] > *, [data-micdrop-slot] .mw-btn:not(.off):not(.ghost)'), seen = new Set();
     barIO = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target); });
       var hide = seen.size > 0;
