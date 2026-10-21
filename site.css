@@ -158,6 +158,8 @@ em { font-style: normal; color: var(--red); }
 .j-foot-links a { display: flex; align-items: center; gap: 10px; min-height: 44px; color: var(--cream); }
 .j-signup label { display: block; color: var(--cream); font-weight: 600; margin-bottom: 10px; }
 .j-signup div { display: flex; gap: 8px; }
+.j-signup-msg { margin-top: 10px; font-size: 16px; color: var(--cream); }
+.j-signup button:disabled { opacity: .6; }
 .j-signup input { flex: 1; min-width: 0; height: 44px; border-radius: 8px; border: 1px solid var(--line2); background: var(--ink2); color: var(--cream); padding: 0 18px; font: inherit; }
 @media (max-width: 1000px) { .j-foot-in { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 720px) { .j-foot-in { grid-template-columns: 1fr; gap: 24px; } .j-foot { padding-bottom: 120px; } }

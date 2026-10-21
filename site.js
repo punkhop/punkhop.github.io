@@ -294,8 +294,23 @@
     o.observe(f);
   }
 
+  /* ---------- the mailing list form: /api/signup (a Worker on the same address) adds to SendGrid -- */
+  function signup() {
+    var f = document.querySelector('[data-signup]'); if (!f) return;
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var btn = f.querySelector('button'), msg = f.querySelector('.j-signup-msg');
+      if (!msg) { msg = document.createElement('p'); msg.className = 'j-signup-msg'; msg.setAttribute('role', 'status'); f.appendChild(msg); }
+      btn.disabled = true; msg.textContent = '';
+      fetch('/api/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value }) })
+        .then(function (r) { if (!r.ok) throw r.status; f.querySelector('div').remove(); msg.textContent = 'You\u2019re on the list.'; }) // Micdrop site builder's site_mailing_success
+        .catch(function () { btn.disabled = false; msg.textContent = 'That didn\u2019t go through. Try again in a minute.'; }); // new words
+    });
+  }
+
   intro();
   map();
+  signup();
   reveal();
   fades();
   watchBar();
