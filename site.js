@@ -232,10 +232,18 @@
     else { img.addEventListener('load', start); img.addEventListener('error', start); }
     setTimeout(start, 3000);
   }
+  // The lamps stay lit once the intro is over, held at their final glow and kept over the photo as it resizes.
   function end() {
     introDone = true;
     root.classList.remove('j-intro', 'j-intro-wait', 'j-lights');
-    var l = document.querySelector('.j-lamps'); if (l) l.remove();
+    var l = document.querySelector('.j-lamps');
+    if (!l) return;
+    l.classList.add('j-lit');
+    var media = l.parentNode, img = media.querySelector('.a-hero-img');
+    addEventListener('resize', function () {
+      var r = place(media, img);
+      Object.keys(r).forEach(function (k) { l.style[k] = r[k] + 'px'; });
+    });
   }
   // Each word of the headline rises on its own, 100ms apart.
   function words(h) {

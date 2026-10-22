@@ -293,6 +293,7 @@ em { font-style: normal; color: var(--red); }
 .j-lamps { position: absolute; pointer-events: none; }
 .j-lamps i { position: absolute; inset: 0; background-size: 100% 100%; opacity: 0; animation: j-lamp .5s var(--ease-smooth) both; filter: brightness(1.15); }
 .j-lamps i.neon { animation: j-neon 1s linear 1.15s both; filter: brightness(1.3); }
+.j-lamps.j-lit i { opacity: 1; animation: none; }
 .j-intro .a-hero-img { animation: j-room .9s var(--ease-smooth) 1.45s both; }
 .j-intro .a-hero .j-word { display: inline-block; animation: j-word .45s var(--ease-smooth) both; animation-delay: calc(.15s + var(--wi) * .1s); }
 .j-intro .a-hero .j-lede, .j-intro .a-hero-ticket { animation: j-rise .45s var(--ease-smooth) .7s both; }
