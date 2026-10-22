@@ -385,3 +385,5 @@ html { scroll-behavior: smooth; }
 }
 @media (max-width: 720px) { .j-press p, .j-find-park, .j-foot-brand p, .j-foot-col span { font-size: 16px; } }
 
+/* Stopgap until the Widgets builder can hide it (Peet, 2026-10-21): no "Powered by Micdrop" row under the embeds. */
+.micdrop-calendar-container > div:last-child:has(> a[href="https://get-micdrop.com"]) { display: none; }
