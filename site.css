@@ -376,9 +376,6 @@ html { scroll-behavior: smooth; }
 /* Stopgap until the Widgets builder can hide it (Peet, 2026-10-21): no "Powered by Micdrop" row under the embeds. */
 .micdrop-calendar-container > div:last-child:has(> a[href="https://get-micdrop.com"]) { display: none; }
 /* The widget paints its own page colour, plus a 16px inset, around the card; over the hero photo that shows as a dark box. */
-.a-hero-ticket .micdrop-calendar-container { background: transparent; }
-.a-hero-ticket .micdrop-calendar-container > main { margin-top: 0; }
-.a-hero-ticket .look-widget { padding-left: 0; padding-right: 0; }
 /* A phone held sideways: the photo takes most of the short screen and the headline sits under the neon, not on it. */
 @media (max-width: 900px) and (max-height: 500px) {
   .a-a5 .a-hero-media { height: 78vh; height: 78svh; }

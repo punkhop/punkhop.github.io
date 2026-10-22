@@ -115,7 +115,7 @@
   function embeds(feat, slot) {
     if (/[?&]widgets=standin\b/.test(location.search)) return;
     var k = ' data-widget-key="' + WIDGET_KEY + '"';
-    if (feat) feat.innerHTML = '<micdrop-calendar widget-id="2"' + k + '></micdrop-calendar>';
+    if (feat) feat.innerHTML = '<micdrop-calendar widget-id="2" show-background="false"' + k + '></micdrop-calendar>';
     if (slot) slot.innerHTML = '<micdrop-calendar widget-id="3"' + k + '></micdrop-calendar>';
     var sc = document.createElement('script'); sc.defer = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
     document.head.appendChild(sc);
