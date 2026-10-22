@@ -162,8 +162,10 @@
         if (go) go.click();
         // Measured once the show has drawn, i.e. the widget has grown (opening it moves the widget up the hero), and only when its
         // top isn't already just under the header.
+        // The newer widget opens the show as its own full-window page instead; then there's nothing to scroll to.
         var tries = 0, h0 = w.offsetHeight;
         (function land() {
+          if (document.querySelector('dialog[open]')) return;
           if (go && w.offsetHeight < h0 + 100 && ++tries < 40) return setTimeout(land, 50);
           var hd = document.querySelector('header'), h = hd ? hd.offsetHeight : 0, top = w.getBoundingClientRect().top;
           if (top < h || top > innerHeight * 0.3) scrollTo({ top: top + scrollY - h - 12, behavior: still ? 'auto' : 'smooth' });
