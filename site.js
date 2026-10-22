@@ -237,7 +237,7 @@
   }
 
   /* ---------- sections rise in as they scroll into view; siblings follow 70ms apart ------------- */
-  var REVEAL = '.j-sec h2, .j-sub, .mw-rows .mw-row, .a-room-grid figure, .a-room-txt .j-body, .j-press, .j-rev, .j-faq-item, ' +
+  var REVEAL = '.j-sec h2, .j-sub, .mw-rows .mw-row, .a-room-grid figure, .a-room-txt .j-body, .j-rev, .j-faq-item, ' +
     '.j-find-txt > *, .j-find-map, .j-find-photo, .j-foot-in > *';
   var io = null;
   function reveal(scope) {

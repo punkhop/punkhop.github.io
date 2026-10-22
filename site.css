@@ -81,24 +81,20 @@ em { font-style: normal; color: var(--red); }
 .j-proof-g a:hover b { text-decoration: underline; }
 .j-proof-f { display: contents; }
 .j-proof-f span { white-space: nowrap; }
+/* The press logos sit in the bar, where the old "14 years running" was (Peet, 2026-10-21, variant A) */
+.j-proof-press { display: flex; align-items: center; gap: 20px; }
+.j-proof-press img { height: 22px; width: auto; display: block; border-radius: 3px; }
+.j-proof-press img:first-child { height: 30px; }
 @media (max-width: 720px) {
-  /* Google and its review count read as one group on the left; the two facts stack on the right */
-  .j-proof-in { display: grid; grid-template-columns: auto auto; justify-content: space-between; align-items: start; gap: 16px; font-size: 14px; padding-top: 18px; padding-bottom: 18px; }
+  /* Google and its review count on the left, No drink minimum on the right, the logos on their own row under */
+  .j-proof-in { display: grid; grid-template-columns: auto auto; justify-content: space-between; align-items: start; gap: 14px 16px; font-size: 14px; padding-top: 18px; padding-bottom: 18px; }
   .j-proof-g { display: grid; grid-template-columns: auto; gap: 4px; }
   .j-proof-g a::before { content: none; }
-  .j-proof-f { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+  .j-proof-f span { grid-column: 2; grid-row: 1; text-align: right; }
+  .j-proof-press { grid-column: 1 / -1; grid-row: 2; gap: 18px; }
+  .j-proof-press img { height: 18px; }
+  .j-proof-press img:first-child { height: 26px; }
 }
-
-/* ---------- press ---------- */
-.j-press { margin-top: 36px; }
-.j-press p { font-size: 14px; color: var(--muted); max-width: 46ch; margin-bottom: 16px; }
-.j-press-logos { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
-.j-press-logos img { height: 42px; width: auto; border-radius: 4px; }
-.j-press-logos img:first-child { height: 54px; }
-@media (max-width: 720px) { .j-press-logos { gap: 18px; } .j-press-logos img { height: 30px; } .j-press-logos img:first-child { height: 40px; } }
-.j-press.center { text-align: center; }
-.j-press.center p { margin-left: auto; margin-right: auto; }
-.j-press.center .j-press-logos { justify-content: center; }
 
 /* ---------- reviews ---------- */
 .j-rev { background: var(--ink2); border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: flex; flex-direction: column; gap: 12px; }
@@ -268,7 +264,6 @@ em { font-style: normal; color: var(--red); }
 .a-room-grid img { width: 100%; height: 100%; object-fit: cover; }
 .a-room-txt { display: grid; grid-template-columns: 1fr 1fr; gap: 0 64px; align-items: start; }
 .a-room-txt h2 { grid-row: span 2; }
-.a-room-txt .j-press { margin-top: 28px; }
 .a-rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
 @media (max-width: 900px) {
   .a-hero { padding: 0 0 48px; }
@@ -383,7 +378,7 @@ html { scroll-behavior: smooth; }
   .j-logo, .j-proof-g a { display: inline-flex; align-items: center; min-height: 44px; margin: -12px 0; }
   .j-faq-q { min-height: 44px; align-items: center; }
 }
-@media (max-width: 720px) { .j-press p, .j-find-park, .j-foot-brand p, .j-foot-col span { font-size: 16px; } }
+@media (max-width: 720px) { .j-find-park, .j-foot-brand p, .j-foot-col span { font-size: 16px; } }
 
 /* Stopgap until the Widgets builder can hide it (Peet, 2026-10-21): no "Powered by Micdrop" row under the embeds. */
 .micdrop-calendar-container > div:last-child:has(> a[href="https://get-micdrop.com"]) { display: none; }
