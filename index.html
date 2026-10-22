@@ -37,8 +37,9 @@
 
   <link rel="stylesheet" href="site.css">
 
-  <!-- The lights-first intro starts dark before the first paint; site.js runs it. If site.js never arrives the page comes up anyway. -->
-  <script>
+  <!-- The lights-first intro starts dark before the first paint; site.js runs it. If site.js never arrives the page comes up anyway.
+       data-cfasync="false" keeps Cloudflare's Rocket Loader from deferring it past the first paint (the page flashed lit, then went dark). -->
+  <script data-cfasync="false">
     (function (r) {
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       r.classList.add('j-lights', 'j-intro-wait'); r.style.setProperty('--sp', (4000 - 1400) / 3550);
