@@ -100,10 +100,10 @@
     if (slot) slot.innerHTML = list.length ? rows(list.filter(function (e) { return e !== next && e !== sold; })) : '';
     if (!next) { var b0 = document.querySelector('[data-buybar]'); if (b0) b0.remove(); }
     if (next) {
-      var p = price(next), d = day(next.startDateTime);
+      var d = day(next.startDateTime);
       [].forEach.call(document.querySelectorAll('[data-next]'), function (a) { a.href = href(next); a.setAttribute('data-event', next.id); });
       var bar = document.querySelector('[data-buybar] > div');
-      if (bar) bar.innerHTML = '<b>' + rel(next) + ' · ' + d.wd.slice(0, 3) + ', ' + d.md + '</b><small>Show ' + clock(next.startDateTime) + ' · ' + p.total + '</small>';
+      if (bar) bar.innerHTML = '<b>' + rel(next) + ' · ' + d.wd.slice(0, 3) + ', ' + d.md + '</b><small>Show ' + clock(next.startDateTime) + '</small>';
     }
     embeds(feat, slot);
     watchBar();
@@ -151,6 +151,24 @@
       var item = t.closest('.j-faq-item'), o = item.classList.toggle('open'); t.setAttribute('aria-expanded', o);
     } else if (t.closest('.j-menu')) {
       root.classList.remove('j-menu-open'); document.querySelector('.j-menu-btn').setAttribute('aria-expanded', 'false');
+    }
+    // The header and phone-bar Get tickets open the next show in the top widget, on this page, the way
+    // tapping the widget's own button does (setting the address instead opens it in both widgets).
+    if (t.hasAttribute('data-next')) {
+      var w = document.querySelector('[data-micdrop-slot="featured"] micdrop-calendar');
+      var go = w && !/Go back/.test(w.innerText) && [].filter.call(w.querySelectorAll('a, button'), function (x) { return x.textContent.trim() === 'Get tickets'; })[0];
+      if (w && (go || /Go back/.test(w.innerText))) {
+        ev.preventDefault();
+        if (go) go.click();
+        // Measured once the show has drawn, i.e. the widget has grown (opening it moves the widget up the hero), and only when its
+        // top isn't already just under the header.
+        var tries = 0, h0 = w.offsetHeight;
+        (function land() {
+          if (go && w.offsetHeight < h0 + 100 && ++tries < 40) return setTimeout(land, 50);
+          var hd = document.querySelector('header'), h = hd ? hd.offsetHeight : 0, top = w.getBoundingClientRect().top;
+          if (top < h || top > innerHeight * 0.3) scrollTo({ top: top + scrollY - h - 12, behavior: still ? 'auto' : 'smooth' });
+        })();
+      }
     }
     if (t.tagName === 'A' && /get-micdrop\.com\//.test(t.href) && typeof gtag === 'function') {
       gtag('event', 'select_content', { content_type: 'event', item_id: t.getAttribute('data-event') || 'jetpack-comedy' });
