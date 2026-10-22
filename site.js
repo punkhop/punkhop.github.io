@@ -109,13 +109,14 @@
     watchBar();
     reveal(document.querySelector('[data-micdrop-slot="list"]'));
   }
-  /* ?widgets=micdrop puts Micdrop's own embeds in the two slots, to compare them with the stand-ins.
-     List is saved widget 1; there's no saved Featured widget yet, so it runs unthemed by venue. */
+  /* Micdrop's own saved widgets fill the two slots: widget 2 "Jetpack site · Next show" (Featured,
+     Date range Next show) and widget 3 "Jetpack site · Upcoming shows" (List). ?widgets=standin keeps
+     the hand-drawn stand-ins above, to compare. */
   function embeds(feat, slot) {
-    if (!/[?&]widgets=micdrop\b/.test(location.search)) return;
+    if (/[?&]widgets=standin\b/.test(location.search)) return;
     var k = ' data-widget-key="' + WIDGET_KEY + '"';
-    if (feat) feat.innerHTML = '<micdrop-calendar view="featured" venue-id="1"' + k + '></micdrop-calendar>';
-    if (slot) slot.innerHTML = '<micdrop-calendar widget-id="1" max-items="5"' + k + '></micdrop-calendar>';
+    if (feat) feat.innerHTML = '<micdrop-calendar widget-id="2"' + k + '></micdrop-calendar>';
+    if (slot) slot.innerHTML = '<micdrop-calendar widget-id="3"' + k + '></micdrop-calendar>';
     var sc = document.createElement('script'); sc.defer = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
     document.head.appendChild(sc);
   }
