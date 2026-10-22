@@ -28,7 +28,7 @@ cd /Users/peet/dev/personal/jetpack/web
 git add -A && git commit -m "..." && git push
 ```
 
-GitHub Pages picks it up in ~30 seconds. CNAME points jetpackcomedy.com → punkhop.github.io.
+GitHub Pages picks it up in ~30 seconds. Cloudflare caches `site.css` and `site.js` for 4 hours, so `index.html` links them as `site.css?v=<commit>` / `site.js?v=<commit>`: bump that value whenever either file changes, or visitors keep the old one. CNAME points jetpackcomedy.com → punkhop.github.io.
 
 ## When editing the site
 
