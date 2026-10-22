@@ -73,7 +73,7 @@ em { font-style: normal; color: var(--red); }
 
 /* ---------- proof bar ---------- */
 .j-proof { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--ink2); }
-.j-proof-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 22px; padding-bottom: 22px; font-size: 15px; color: var(--muted); }
+.j-proof-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 16px; padding-bottom: 16px; font-size: 15px; color: var(--muted); }
 .j-proof-in b { color: var(--cream); font-weight: 700; margin-right: 4px; }
 .j-proof-g { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .j-proof-g a { color: inherit; }
@@ -81,19 +81,17 @@ em { font-style: normal; color: var(--red); }
 .j-proof-g a:hover b { text-decoration: underline; }
 .j-proof-f { display: contents; }
 .j-proof-f span { white-space: nowrap; }
-/* The press logos sit in the bar, where the old "14 years running" was (Peet, 2026-10-21, variant A) */
-.j-proof-press { display: flex; align-items: center; gap: 20px; }
+/* Rating on the left, the press logos on the right (Peet, 2026-10-21); on a phone both rows centre */
+.j-proof-press { display: flex; align-items: center; gap: 24px; }
 .j-proof-press img { height: 22px; width: auto; display: block; border-radius: 3px; }
 .j-proof-press img:first-child { height: 30px; }
+.j-proof-press img[alt="The New York Times"] { height: 19px; }
 @media (max-width: 720px) {
-  /* Google and its review count on the left, No drink minimum on the right, the logos on their own row under */
-  .j-proof-in { display: grid; grid-template-columns: auto auto; justify-content: space-between; align-items: start; gap: 14px 16px; font-size: 14px; padding-top: 18px; padding-bottom: 18px; }
-  .j-proof-g { display: grid; grid-template-columns: auto; gap: 4px; }
-  .j-proof-g a::before { content: none; }
-  .j-proof-f span { grid-column: 2; grid-row: 1; text-align: right; }
-  .j-proof-press { grid-column: 1 / -1; grid-row: 2; gap: 18px; }
+  .j-proof-in { flex-direction: column; justify-content: center; gap: 12px; font-size: 14px; padding-top: 16px; padding-bottom: 16px; }
+  .j-proof-press { gap: 20px; }
   .j-proof-press img { height: 18px; }
   .j-proof-press img:first-child { height: 26px; }
+  .j-proof-press img[alt="The New York Times"] { height: 15px; }
 }
 
 /* ---------- reviews ---------- */
@@ -235,8 +233,6 @@ em { font-style: normal; color: var(--red); }
 }
 
 @keyframes mw-fade { from { opacity: 0; } }
-
-}
 
 /* =============================== A · Ticket first ================================ */
 .a-hero { position: relative; padding: 56px 0 88px; }
@@ -382,3 +378,7 @@ html { scroll-behavior: smooth; }
 
 /* Stopgap until the Widgets builder can hide it (Peet, 2026-10-21): no "Powered by Micdrop" row under the embeds. */
 .micdrop-calendar-container > div:last-child:has(> a[href="https://get-micdrop.com"]) { display: none; }
+/* The widget paints its own page colour, plus a 16px inset, around the card; over the hero photo that shows as a dark box. */
+.a-hero-ticket .micdrop-calendar-container { background: transparent; }
+.a-hero-ticket .micdrop-calendar-container > main { margin-top: 0; }
+.a-hero-ticket .look-widget { padding-left: 0; padding-right: 0; }
