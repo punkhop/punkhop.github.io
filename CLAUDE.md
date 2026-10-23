@@ -10,6 +10,7 @@ The live marketing site at jetpackcomedy.com. Static HTML/CSS/JS deployed to Git
 |------|---------|
 | `index.html` | The landing page (2026-10 redesign): lights-first hero intro, next-show ticket card, upcoming shows, About photos fading through, reviews, FAQ, find us, sticky phone buy bar, Schema.org rich snippets. Ships Meta Pixel + GA4. |
 | `site.css` / `site.js` | The one stylesheet and the one script (intro, gliding scroll, Micdrop slots, buy bar, menu, FAQ, GA4 ticket event). |
+| `og-image.jpg`, `og-video.mp4` | Link previews. iMessage plays the MP4 (the intro filmed at 1200 × 630, muted, looping); every other app shows the JPG. Re-film after any intro change with `~/sync/memory/sessions/2026-10-23-jetpack-og-video/film.cjs`. |
 | `images/intro/` | The sign masks the intro lights the LED sign with. |
 | `vendor/` | Self-hosted third-party scripts (Lenis). |
 | `images/falls/` | About photos, `-s` (≤800px) and `-l` (1600px) per photo. |
