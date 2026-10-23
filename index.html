@@ -35,24 +35,35 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="site.css?v=20261022-lock2">
+  <link rel="stylesheet" href="site.css?v=20261022-intro">
 
   <!-- The lights-first intro starts dark before the first paint; site.js runs it. If site.js never arrives the page comes up anyway.
-       data-cfasync="false" keeps Cloudflare's Rocket Loader from deferring it past the first paint (the page flashed lit, then went dark). -->
+       data-cfasync="false" keeps Cloudflare's Rocket Loader from deferring it past the first paint (the page flashed lit, then went dark).
+       When it plays (Peet, 2026-10-22: a reload froze him mid-page with no intro to watch): once per tab, on a fresh arrival at
+       the top. A reload, Back/Forward, a link to a section or a show, a background tab, or reduced motion skips it, and the page
+       is simply there, where the browser left it. Scrolling is held only while the intro really plays, and never past 6s. -->
   <script data-cfasync="false">
     (function (r) {
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var nav = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).type, seen;
+      try { seen = sessionStorage.getItem('jp-intro'); } catch (e) {}
+      if (seen || nav === 'reload' || nav === 'back_forward' || location.hash || /[?&]m=/.test(location.search) || scrollY > 0 ||
+          document.visibilityState === 'hidden' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      try { sessionStorage.setItem('jp-intro', '1'); } catch (e) {}
       r.classList.add('j-lights', 'j-intro-wait', 'j-lock'); r.style.setProperty('--sp', (4000 - 1400) / 3550);
-      setTimeout(function () { if (!r.classList.contains('j-intro') && !window.JP_MOTION) r.classList.remove('j-lights', 'j-intro-wait', 'j-lock'); }, 4000);
-      // No scrolling while the intro plays (site.js end() lifts j-lock; 6s is the backstop).
-      // A reload starts at the top too. A show opened from a link scrolls inside its own window, so it's left alone.
-      if (!location.hash && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
+      // Ends the intro at once: site.js's end() once it has loaded, else just the classes.
+      var stop = function () { if (window.JP_END) window.JP_END(); else r.classList.remove('j-lights', 'j-intro-wait', 'j-lock'); };
       var hold = function (e) {
-        if (!r.classList.contains('j-lock') || (e.target.closest && e.target.closest('dialog'))) return;
+        if (!r.classList.contains('j-lock')) return;
         if (e.type !== 'keydown' || /^(ArrowDown|ArrowUp|PageDown|PageUp|End|Home| )$/.test(e.key)) e.preventDefault();
       };
       ['touchmove', 'wheel', 'keydown'].forEach(function (t) { addEventListener(t, hold, { passive: false }); });
-      setTimeout(function () { r.classList.remove('j-lock'); }, 6000);
+      // Leaving mid-intro, or the page moving off the top, ends it: nobody comes back to a frozen page.
+      addEventListener('pagehide', stop);
+      document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') stop(); });
+      addEventListener('scroll', function () { if (scrollY > 0 && r.classList.contains('j-lock')) stop(); });
+      // site.js starts the intro within 2.5s or the page comes up without it; 6s is the hard stop.
+      setTimeout(function () { if (!r.classList.contains('j-intro')) stop(); }, 2500);
+      setTimeout(stop, 6000);
     })(document.documentElement);
   </script>
 
@@ -128,7 +139,7 @@
   }
   </script>
 
-  <script defer data-cfasync="false" src="site.js?v=20261022-lock2"></script>
+  <script defer data-cfasync="false" src="site.js?v=20261022-intro"></script>
 </head>
 <body>
 <a class="j-skip" href="#main">Skip to content</a>

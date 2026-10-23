@@ -30,6 +30,17 @@ git add -A && git commit -m "..." && git push
 
 GitHub Pages picks it up in ~30 seconds. Cloudflare caches `site.css` and `site.js` for 4 hours, so `index.html` links them as `site.css?v=…` / `site.js?v=…`: change that value whenever either file changes, or visitors keep the old one. CNAME points jetpackcomedy.com → punkhop.github.io.
 
+## The intro: when it plays, what loads when
+
+One set of rules, in the head script of `index.html` (it decides) and `site.js` `intro()`/`end()` (they run it):
+
+- **Plays** once per tab, on a fresh arrival at the top: lamps blink on over the dark room, then the header and page rise in. Scrolling is held only while it plays (about 4.3s).
+- **Skips** on a reload, Back/Forward, a second visit in the same tab, a link to a section or a show (`#…`, `?m=`), a background tab, reduced motion, or a hero photo not in by 1.5s. The page is simply there, where the browser left it, lamps lit.
+- **Ends at once** if the visitor leaves mid-intro or the page moves off the top; 6s is the hard stop.
+- **Show widgets** load on their own clock and never hold the page: the hand-made cards stay until a Micdrop widget has drawn.
+
+Check every path with `/tmp/jpwork/proof/intro-rules.cjs` (or rewrite it: first visit, reload mid-page, away and Back, leave mid-intro, home again, `#shows`, slow hero photo).
+
 ## When editing the site
 
 1. Use the existing visual language: red velvet / cinematic / `#0e0a0b` background, `#e4002b` accent (Jetpack red), Inter font.

@@ -225,6 +225,21 @@
     var s = Math.max(w / iw, h / ih), rw = iw * s, rh = ih * s;
     return { left: (w - rw) * pos[0] / 100, top: (h - rh) * pos[1] / 100, width: rw, height: rh };
   }
+  function fit(l, media, img) {
+    var r = place(media, img);
+    Object.keys(r).forEach(function (k) { l.style[k] = r[k] + 'px'; });
+  }
+  function lamps(media, img) {
+    var src = img.currentSrc || img.src, l = document.createElement('div');
+    l.className = 'j-lamps';
+    fit(l, media, img);
+    SCONCES.concat(CHANDELIERS).forEach(function (s) { l.appendChild(glow(s, src)); });
+    var neon = glow(NEON, src); neon.className = 'neon'; l.appendChild(neon);
+    media.appendChild(l);
+    return l;
+  }
+  // The head script decides whether the intro plays (j-intro-wait). It plays only once the hero photo is in:
+  // a photo still missing after 1.5s skips it, so a slow phone gets the page, not a long dark wait.
   function intro() {
     var hero = document.querySelector('.a-hero');
     if (!hero || still || !root.classList.contains('j-intro-wait')) return end();
@@ -232,37 +247,35 @@
     root.style.setProperty('--sp', K);
     words(hero.querySelector('h1'));
     var go = function () {
-      if (introDone) return;
-      var src = img.currentSrc || img.src, r = place(media, img);
-      var lamps = document.createElement('div');
-      lamps.className = 'j-lamps';
-      Object.keys(r).forEach(function (k) { lamps.style[k] = r[k] + 'px'; });
-      SCONCES.forEach(function (l, i) { var d = glow(l, src); d.style.animationDelay = SCONCE_AT[i] * K + 'ms'; lamps.appendChild(d); });
-      CHANDELIERS.forEach(function (l, i) { var d = glow(l, src); d.style.animationDelay = CHAND_AT[i] * K + 'ms'; lamps.appendChild(d); });
-      var neon = glow(NEON, src); neon.className = 'neon'; lamps.appendChild(neon);
-      media.appendChild(lamps);
+      if (introDone || !root.classList.contains('j-intro-wait')) return end();
+      var at = SCONCE_AT.concat(CHAND_AT);
+      [].forEach.call(lamps(media, img).children, function (d, i) { if (at[i] != null) d.style.animationDelay = at[i] * K + 'ms'; });
       root.classList.remove('j-intro-wait');
       root.classList.add('j-intro');
       setTimeout(end, 3550 * K + 1400);
     };
-    var started = false, start = function () { if (!started) { started = true; requestAnimationFrame(go); } };
-    if (img.complete && img.naturalWidth) start();
+    var ready = function () { return img.complete && img.naturalWidth; }, started = false;
+    var start = function () { if (!started) { started = true; ready() ? requestAnimationFrame(go) : end(); } };
+    if (ready()) start();
     else { img.addEventListener('load', start); img.addEventListener('error', start); }
-    setTimeout(start, 3000);
+    setTimeout(start, 1500);
   }
-  // The lamps stay lit once the intro is over, held at their final glow and kept over the photo as it resizes.
+  // The page as it is after the intro, and as a reload or Back finds it: everything in place, the lamps lit
+  // over the photo and kept there as it resizes. Safe to call more than once.
   function end() {
-    introDone = true;
     root.classList.remove('j-intro', 'j-intro-wait', 'j-lock', 'j-lights');
-    var l = document.querySelector('.j-lamps');
-    if (!l) return;
-    l.classList.add('j-lit');
-    var media = l.parentNode, img = media.querySelector('.a-hero-img');
-    addEventListener('resize', function () {
-      var r = place(media, img);
-      Object.keys(r).forEach(function (k) { l.style[k] = r[k] + 'px'; });
-    });
+    if (introDone) return;
+    introDone = true;
+    var media = document.querySelector('.a-hero-media'), img = media && media.querySelector('.a-hero-img');
+    if (!img) return;
+    var lit = function () {
+      var l = media.querySelector('.j-lamps') || lamps(media, img);
+      l.classList.add('j-lit');
+      addEventListener('resize', function () { fit(l, media, img); });
+    };
+    if (img.complete && img.naturalWidth) lit(); else img.addEventListener('load', lit);
   }
+  window.JP_END = end;
   // Each word of the headline rises on its own, 100ms apart.
   function words(h) {
     if (!h) return;
