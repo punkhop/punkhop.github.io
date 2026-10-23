@@ -21,7 +21,7 @@ The live marketing site at jetpackcomedy.com. Static HTML/CSS/JS deployed to Git
 
 Single static HTML page. No build step. No framework. Markup and Schema.org JSON-LD in `index.html`, styles in `site.css`, behaviour in `site.js`.
 
-Tickets sell on Micdrop. Two marked slots (`<div data-micdrop-slot="featured">` in the hero, `<div data-micdrop-slot="list">` under Upcoming shows) hold server-rendered cards linking to the Jetpack page on Micdrop; `site.js` fills them from Micdrop's public events API (venue 1) and every Get tickets opens that show's Micdrop event page. Swap each slot for the Micdrop embed when it ships. The API needs a widget key for this domain (`WIDGET_KEY` in `site.js`).
+Tickets sell on Micdrop. Two marked slots (`<div data-micdrop-slot="featured">` in the hero, `<div data-micdrop-slot="list">` under Upcoming shows) hold the page's own hand-made cards; `site.js` `embeds()` puts Micdrop's saved widgets in them (`<micdrop-calendar>` widget 2 "Next show" and widget 3 "Upcoming shows"). Micdrop's public events API (venue 1) only sets the phone buy bar and the header's Get tickets, and fills a slot's card from the API where its widget never draws (`?widgets=standin` forces those cards, to compare). The API needs a widget key for this domain (`WIDGET_KEY` in `site.js`).
 
 ## Deploy
 
@@ -36,12 +36,14 @@ GitHub Pages picks it up in ~30 seconds. Cloudflare caches `site.css` and `site.
 
 One set of rules, in the head script of `index.html` (it decides) and `site.js` `intro()`/`end()` (they run it):
 
-- **Plays** once per tab, on a fresh arrival at the top. Scrolling is held only while it plays (3.3s).
-- **Skips** on a reload, Back/Forward, a second visit in the same tab, a link to a section or a show (`#…`, `?m=`), a background tab, reduced motion, or a hero photo not in by 1.5s. The page is simply there, where the browser left it, lamps lit.
+- **Plays** once per tab, on a fresh arrival at the top, and again on any reload (a hard refresh too) made from the top. JS can't tell a hard reload from a normal one, so where the visitor was decides: the head script saves the scroll position on `pagehide` (sessionStorage `jp-y`), and a `reload` replays the intro only if that was under 50px; the once-per-tab flag (`jp-intro`) doesn't count on a reload. Scrolling is held only while it plays (3.3s).
+- **Skips** on a reload from mid-page (the page keeps the visitor's place, no intro, no hold), Back/Forward, a second visit in the same tab, a link to a section or a show (`#…`, `?m=`), a background tab, reduced motion, or a hero photo not in by 1.5s. The page is simply there, where the browser left it, lamps lit. `?m=` counts only on arrival: the Micdrop widget writes its month into the address (`?m=2026-10`) on every load, so every reload carries it.
 - **Ends at once** if the visitor leaves mid-intro or the page moves off the top; 6s is the hard stop. `end()` is safe to call more than once.
 - **Lit after:** the lamps and the LED sign stay lit over the photo for good, re-fitted whenever the photo's box changes size (a ResizeObserver, not only window resize).
 - **No shift when scrolling returns:** `html { scrollbar-gutter: stable }` keeps the scrollbar's room while the hold hides it, so the photo never re-crops.
-- **Show widgets** load on their own clock and never hold the page: the hand-made cards stay until a Micdrop widget has drawn.
+- **Show widgets: one look, never a morph** (Peet, 2026-10-22: the cards "morph… three or four different card formats"). Each widget draws unseen in its slot (`.mw-pending`: stacked over the page's card in the slot's one grid cell, no height, no clicks) through its own stages: "Loading…", an empty box, its first two shows, the rest, then its photos blurring in. `embeds()` shows it only once it has stopped changing (300ms with no change, its photos near the screen in, no fade running). For the first 2.5s both slots show nothing (`j-cards-wait`, set by the head script, which also lifts it if site.js never comes), so a widget settled by then is the only card anyone sees, fading in. A slower one: the page's own card fades in at 2.5s, and the widget takes its place later in one swap (card out, widget in, the slot gliding to its height). A widget that never draws (its script blocked, or 15s) leaves the page's card up, filled from the events API. The API never redraws a card a visitor can see.
+- **The page holds its height around them:** the list slot keeps a screen's room while its widget draws, so the About photos don't show in the gap and then get pushed down. On `pagehide` site.js saves each settled widget's height (sessionStorage `jp-slots`) and on a reload the head script gives the slots those heights (`--mw-featured-h`, `--mw-list-h`) from the first paint, so the browser puts a mid-page reload back exactly where it was (Safari otherwise landed whole sections off). Safari doesn't keep the page still when a slot above the screen changes height, so `swap()` scrolls by the difference itself.
+- Recordings of every load (60fps rAF log + filmstrips, before and after): `~/sync/memory/sessions/2026-10-22-jetpack-card-swap/` (`/tmp/jpwork/swap/rec2.cjs <chromium|webkit> <hero|heroskip|list> <cold|warm> <before|after>`).
 
 **The look (Peet's pick from the intro playground, 2026-10-22, at `len=3.3&flick=60&order=edges&sign=last&look=led&dark=0&pools=0`).** 3.3s in all. Every one of the 18 lights in the photo (mirror shades, wall sconces, chandeliers, lanterns, the bare bulb) comes on one by one from the outer walls in, each with one flicker, spread over the lights actually on screen (a phone starts on its outermost visible light; a short desktop window that crops the bulb ends on the lanterns). The room comes up around a dark sign: only the letters stay dark (the `sign-unlit` mask), no dark patch. Then the sign switches on last as white LED neon on a clear acrylic board: crisp white tubes, a near and a far white bloom, the board's cut edge catching a little. Curtain pools off. The header drops and the page rises in after, its rise-in scaled with the new length.
 
@@ -49,7 +51,7 @@ One set of rules, in the head script of `index.html` (it decides) and `site.js` 
 - The sign masks are `images/intro/sign-tubes.png`, `sign-board.png`, `sign-unlit.png`: alpha cut-outs of the sign's box in hero-mid (930–1530 × 370–570 of 2400 × 1600). A new hero photo needs new masks and new light positions.
 - The playground that drew it: `~/sync/memory/sessions/2026-10-22-jetpack-intro-timings/lab/` (`index.html`).
 
-Check every path with `/tmp/jpwork/proof/intro-rules.cjs` (or rewrite it: first visit, reload mid-page, away and Back, leave mid-intro, home again, `#shows`, slow hero photo).
+Check every path with `/tmp/jpwork/proof/intro-rules.cjs` (`live` for the real site; or rewrite it: first visit, reload at the top, hard reload, reload 30px down, reload mid-page, away and Back, home again, leave mid-intro, `#shows`, `?m=`, reduced motion, slow hero photo) and `/tmp/jpwork/proof/reload-keeps-place.cjs` (the same thing is mid-screen after a mid-page reload).
 
 ## Scrolling
 

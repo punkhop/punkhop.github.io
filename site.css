@@ -320,8 +320,6 @@ em { font-style: normal; color: var(--red); }
 html.j-lock, html.j-lock body { overflow: hidden; overscroll-behavior: none; }
 /* The scrollbar's room is kept while it is hidden, so the page doesn't narrow (and the photo re-crop) when the hold lifts. */
 html { scrollbar-gutter: stable; }
-/* A Micdrop widget draws here, out of sight, until it has shows to take the stand-in's place. */
-.mw-pending { position: absolute; left: -9999px; width: 100%; }
 .j-lights.j-intro-wait .a-hero-img { filter: brightness(.06) saturate(.4); }
 .j-lights.j-intro-wait :is(#app, #main) > :not(.a-hero):not(main), .j-lights.j-intro-wait .j-buybar { opacity: 0; }
 .j-lights.j-intro .a-hero-img { animation: j-dark var(--room-d) var(--ease-smooth) var(--room-t) both; }
@@ -370,7 +368,19 @@ html.lenis, html.lenis body { height: auto; }
 :focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; border-radius: 4px; }
 .j-skip { position: absolute; left: 12px; top: -60px; z-index: 60; background: var(--cream); color: var(--ink); padding: 10px 14px; border-radius: 8px; font-weight: 700; }
 .j-skip:focus { top: 12px; }
-[data-micdrop-slot] { display: contents; }
+/* A slot stacks its children in one grid cell: the page's own card, and the Micdrop widget drawing unseen over it (no
+   height, no clicks) until it has settled and takes the card's place (site.js embeds). For the first 2.5s the slots show
+   nothing (j-cards-wait, from the head script), so a widget settled by then is the first and only card anyone sees. */
+[data-micdrop-slot] { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+[data-micdrop-slot] > * { grid-area: 1 / 1; transition: opacity .25s ease-out; }
+.mw-pending, .j-cards-wait [data-micdrop-slot]:not(.mw-live) > * { opacity: 0; pointer-events: none; }
+.mw-pending { height: 0; overflow: visible; }
+/* The list keeps a screen's room while its widget draws, so what follows (the About photos) doesn't show in the gap and
+   then get pushed down when the shows come in. */
+.j-cards-wait [data-micdrop-slot="list"], [data-micdrop-slot="list"]:has(> .mw-pending) { min-height: var(--mw-list-h, 100vh); }
+/* On a reload both slots keep the height their widgets had last time (--mw-*-h, set by the head script). */
+.j-cards-wait [data-micdrop-slot="featured"], [data-micdrop-slot="featured"]:has(> .mw-pending) { min-height: var(--mw-featured-h, 0); }
+@media (prefers-reduced-motion: reduce) { [data-micdrop-slot] > * { transition: none; } }
 .mw-btn.off { pointer-events: none; }
 .mw-badge.off { background: #3a3132; color: #d9d1ca; }
 .a-room-grid .j-fade { position: relative; }

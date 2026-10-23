@@ -1,5 +1,5 @@
 /* jetpackcomedy.com: the lights-first intro, sections rising in, the About photos fading through,
-   the two Micdrop widget slots filled from Micdrop's public events API, the sticky phone buy bar,
+   the two Micdrop widget slots (one look each, never a morph), the sticky phone buy bar,
    the phone menu, FAQ, and the GA4 select_content event on every Get tickets.
    Built from the 2026-10 redesign prototype (jetpackcomedy repo, 2026-10-20-micdrop-widgets/proto2). */
 (function () {
@@ -96,8 +96,10 @@
     var next = list.filter(function (e) { return state(e).open; })[0];
     // The first Friday sold out: Featured says so and moves on to the next one you can buy.
     var sold = list[0] && state(list[0]).sold && list[0] !== next ? list[0] : null;
-    if (feat) feat.innerHTML = next ? featured(next, sold) : empty();
-    if (slot) slot.innerHTML = list.length ? rows(list.filter(function (e) { return e !== next && e !== sold; })) : '';
+    // The cards themselves are the Micdrop widgets' job (embeds below). These hand-drawn ones only go in where a widget never
+    // settles, or with ?widgets=standin: filled while a widget loads, they were a second card format (and a second price) on screen.
+    cards = { featured: next ? featured(next, sold) : empty(), list: list.length ? rows(list.filter(function (e) { return e !== next && e !== sold; })) : '' };
+    [feat, slot].forEach(function (el) { if (el && (STANDIN || el.hasAttribute('data-gave-up'))) standin(el); });
     if (!next) { var b0 = document.querySelector('[data-buybar]'); if (b0) b0.remove(); }
     if (next) {
       var d = day(next.startDateTime);
@@ -105,32 +107,92 @@
       var bar = document.querySelector('[data-buybar] > div');
       if (bar) bar.innerHTML = '<b>' + rel(next) + ' · ' + d.wd.slice(0, 3) + ', ' + d.md + '</b><small>Show ' + clock(next.startDateTime) + '</small>';
     }
-    embeds(feat, slot);
     watchBar();
-    reveal(document.querySelector('[data-micdrop-slot="list"]'));
   }
   /* Micdrop's own saved widgets fill the two slots: widget 2 "Jetpack site · Next show" (Featured,
      Date range Next show) and widget 3 "Jetpack site · Upcoming shows" (List). ?widgets=standin keeps
-     the hand-drawn stand-ins above, to compare. */
-  function embeds(feat, slot) {
-    if (/[?&]widgets=standin\b/.test(location.search)) return;
-    var k = ' data-widget-key="' + WIDGET_KEY + '"';
-    // Each widget draws out of sight next to the stand-in and takes its place once it shows a show; a widget that never
-    // draws (get-micdrop.com unreachable from that phone) leaves the stand-in up instead of an empty slot.
-    [[feat, '<micdrop-calendar widget-id="2" show-background="false"' + k + '></micdrop-calendar>'],
-     [slot, '<micdrop-calendar widget-id="3"' + k + '></micdrop-calendar>']].forEach(function (x) {
+     the hand-drawn stand-ins above, to compare.
+     One look, never a morph (Peet, 2026-10-22: the cards "morph… three or four different card formats"). Each widget draws
+     unseen in its slot, stacked over the page's own card: its "Loading…", its first two shows, the rest, its photos blurring
+     in. It shows only once it has stopped changing. For the first 2.5s the slots show nothing at all (j-cards-wait, set by the
+     head script), so a widget settled by then is the only card the visitor ever sees, fading in. A slower one: the page's
+     own card fades in at 2.5s and the widget takes its place later in one crossfade. A widget that never settles leaves the
+     page's card up, filled from the events API then. */
+  var STANDIN = /[?&]widgets=standin\b/.test(location.search), cards = null;
+  function standin(el) {
+    el.setAttribute('data-gave-up', '');
+    if (!cards) return; // the events API hasn't answered yet: shows() fills it when it does
+    el.innerHTML = cards[el.getAttribute('data-micdrop-slot')] || '';
+    reveal(el);
+    watchBar();
+  }
+  function embeds() {
+    if (STANDIN) return;
+    var k = ' data-widget-key="' + WIDGET_KEY + '"', boxes = [];
+    [[document.querySelector('[data-micdrop-slot="featured"]'), '<micdrop-calendar widget-id="2" show-background="false"' + k + '></micdrop-calendar>'],
+     [document.querySelector('[data-micdrop-slot="list"]'), '<micdrop-calendar widget-id="3"' + k + '></micdrop-calendar>']].forEach(function (x) {
       var el = x[0]; if (!el || el.querySelector('micdrop-calendar')) return;
-      var box = document.createElement('div'); box.className = 'mw-pending'; box.innerHTML = x[1]; el.appendChild(box);
-      (function swap() {
-        if (!/Get tickets|Sold out|Sales closed/i.test(box.innerText)) return setTimeout(swap, 200);
-        [].slice.call(el.children).forEach(function (c) { if (c !== box) c.remove(); });
-        box.classList.remove('mw-pending');
-        watchBar();
+      // stacked on the card in the slot's one grid cell, invisible and taking no height (site.css), so it draws at the card's
+      // width and its lazy photos load as they would in place
+      var box = document.createElement('div'); box.className = 'mw-pending'; box.innerHTML = x[1];
+      el.appendChild(box); boxes.push([el, box]);
+      var t0 = Date.now(), last = '', still0 = Date.now();
+      (function wait() {
+        if (!box.isConnected) return;
+        var cal = box.firstChild, t = box.innerText, now = Date.now();
+        var look = box.innerHTML.length + '|' + Math.round(cal.getBoundingClientRect().height);
+        if (look !== last) { last = look; still0 = now; }
+        var drawn = !/Loading/i.test(t) && /Get tickets|Sold out|Sales (closed|paused|ended)|On sale/i.test(t);
+        // photos within a screen or so of the visible page are in (ones far below load lazily, as you scroll to them)
+        var photos = [].every.call(box.querySelectorAll('img'), function (i) {
+          var r = i.getBoundingClientRect(); return (i.complete && i.naturalWidth) || r.top > innerHeight * 2 || r.bottom < -innerHeight;
+        });
+        // and no fade is still running in it (a looping one, like a pulse, never ends, so it doesn't count)
+        var moving = box.getAnimations && box.getAnimations({ subtree: true }).some(function (a) {
+          return a.playState === 'running' && !(a.effect && a.effect.getTiming().iterations === Infinity);
+        });
+        var quiet = now - still0;
+        if (drawn && quiet > 300 && ((photos && !moving) || quiet > 2500)) return swap(el, box);
+        if (now - t0 > 15000) return giveUp(el, box);
+        setTimeout(wait, 50);
       })();
     });
     if (document.querySelector('script[src*="venue-calendar.iife"]')) return;
     var sc = document.createElement('script'); sc.defer = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
+    sc.onerror = function () { boxes.forEach(function (x) { giveUp(x[0], x[1]); }); };
     document.head.appendChild(sc);
+  }
+  // The room each settled widget takes, noted as the page goes away, for the head script to keep on a reload.
+  addEventListener('pagehide', function () {
+    var h = {}; [].forEach.call(document.querySelectorAll('[data-micdrop-slot].mw-live'), function (el) { h[el.getAttribute('data-micdrop-slot')] = el.offsetHeight; });
+    try { sessionStorage.setItem('jp-slots', JSON.stringify({ w: innerWidth, h: h })); } catch (e) {}
+  });
+  function giveUp(el, box) { if (!box.isConnected) return; box.remove(); standin(el); }
+  // The settled widget takes the card's place. Unseen (the first 2.5s, or off screen): straight in. Seen: the card fades
+  // out, then the widget fades in where it was while the slot glides to the widget's height (both at once read as a muddle
+  // of two cards' words over each other).
+  function swap(el, box) {
+    var old = [].filter.call(el.children, function (c) { return c !== box; }), r = el.getBoundingClientRect();
+    var seen = !still && !root.classList.contains('j-cards-wait') && old.length && r.bottom > 0 && r.top < innerHeight;
+    el.classList.add('mw-live');
+    if (!seen) {
+      box.classList.remove('mw-pending');
+      old.forEach(function (c) { c.remove(); });
+      // A slot reaching above the screen changed height: Chrome may keep what you're reading in place by itself (d comes back
+      // 0); Safari doesn't, and the page would shift under the visitor (the widget's hero card is 30px taller on a phone).
+      var d = el.getBoundingClientRect().bottom - r.bottom;
+      if (d && r.top < 0) scrollBy({ top: d, behavior: 'instant' });
+    } else {
+      old.forEach(function (c) { c.style.transition = 'opacity .14s ease-in'; c.style.opacity = 0; c.style.pointerEvents = 'none'; });
+      setTimeout(function () {
+        var h0 = el.offsetHeight;
+        old.forEach(function (c) { c.remove(); });
+        box.classList.remove('mw-pending');
+        el.animate([{ height: h0 + 'px' }, { height: box.offsetHeight + 'px' }], { duration: 250, easing: 'cubic-bezier(.3,.7,.4,1)' });
+        watchBar();
+      }, 140);
+    }
+    watchBar();
   }
   // The widgets fetch their own shows, so they go in even when this call fails (it only fills the stand-ins and the
   // phone bar); before, one failed call left the stand-ins up for good. It gets one retry first.
@@ -138,11 +200,7 @@
     var h = WIDGET_KEY ? { 'X-Widget-Key': WIDGET_KEY } : {};
     fetch(API, { headers: h }).then(function (r) { if (!r.ok) throw r.status; return r.json(); })
       .then(function (d) { shows(d.events || []); })
-      .catch(function () {
-        if (!again) return setTimeout(function () { load(true); }, 1500);
-        embeds(document.querySelector('[data-micdrop-slot="featured"]'), document.querySelector('[data-micdrop-slot="list"]'));
-        watchBar();
-      });
+      .catch(function () { if (!again) setTimeout(function () { load(true); }, 1500); });
   }
 
   /* ---------- the sticky phone buy bar: hidden while the ticket card or a ticket button is on screen */
@@ -474,5 +532,6 @@
   reveal();
   fades();
   watchBar();
+  embeds();
   load();
 })();
