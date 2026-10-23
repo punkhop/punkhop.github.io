@@ -352,6 +352,8 @@ html { scrollbar-gutter: stable; }
 /* ---------- site build: links, focus, touch sizes, slots, lazy About photos ---------- */
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+/* A reload or Back puts the page straight back where it was; Chrome would otherwise glide there from the top. */
+html.j-snap { scroll-behavior: auto; }
 /* A slim dark scrollbar: a thin track in the page's ink, a muted cream handle that brightens under the pointer (Peet, 2026-10-22). */
 html::-webkit-scrollbar { width: 10px; height: 10px; background: #0e0a0b; }
 html::-webkit-scrollbar-track { background: #0e0a0b; }
@@ -380,6 +382,11 @@ html.lenis, html.lenis body { height: auto; }
 .j-cards-wait [data-micdrop-slot="list"], [data-micdrop-slot="list"]:has(> .mw-pending) { min-height: var(--mw-list-h, 100vh); }
 /* On a reload both slots keep the height their widgets had last time (--mw-*-h, set by the head script). */
 .j-cards-wait [data-micdrop-slot="featured"], [data-micdrop-slot="featured"]:has(> .mw-pending) { min-height: var(--mw-featured-h, 0); }
+/* While the cards wait they hold that height exactly, not just at least: the page's own card under a waiting widget can be
+   taller (the hero's "Every Friday" card is 253px to the widget's 214), and that difference above the screen was how far a
+   mid-page reload landed off. */
+.j-cards-wait [data-micdrop-slot="featured"]:not(.mw-live) { height: var(--mw-featured-h); overflow: clip; }
+.j-cards-wait [data-micdrop-slot="list"]:not(.mw-live) { height: var(--mw-list-h); overflow: clip; }
 @media (prefers-reduced-motion: reduce) { [data-micdrop-slot] > * { transition: none; } }
 .mw-btn.off { pointer-events: none; }
 .mw-badge.off { background: #3a3132; color: #d9d1ca; }
