@@ -35,15 +35,24 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="site.css?v=84e51f8">
+  <link rel="stylesheet" href="site.css?v=20261022-lock">
 
   <!-- The lights-first intro starts dark before the first paint; site.js runs it. If site.js never arrives the page comes up anyway.
        data-cfasync="false" keeps Cloudflare's Rocket Loader from deferring it past the first paint (the page flashed lit, then went dark). -->
   <script data-cfasync="false">
     (function (r) {
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      r.classList.add('j-lights', 'j-intro-wait'); r.style.setProperty('--sp', (4000 - 1400) / 3550);
-      setTimeout(function () { if (!r.classList.contains('j-intro') && !window.JP_MOTION) r.classList.remove('j-lights', 'j-intro-wait'); }, 4000);
+      r.classList.add('j-lights', 'j-intro-wait', 'j-lock'); r.style.setProperty('--sp', (4000 - 1400) / 3550);
+      setTimeout(function () { if (!r.classList.contains('j-intro') && !window.JP_MOTION) r.classList.remove('j-lights', 'j-intro-wait', 'j-lock'); }, 4000);
+      // No scrolling until the intro is over and the shows have loaded (site.js lifts j-lock; 12s is the backstop).
+      // A reload starts at the top too. A show opened from a link scrolls inside its own window, so it's left alone.
+      if (!location.hash && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
+      var hold = function (e) {
+        if (!r.classList.contains('j-lock') || (e.target.closest && e.target.closest('dialog'))) return;
+        if (e.type !== 'keydown' || /^(ArrowDown|ArrowUp|PageDown|PageUp|End|Home| )$/.test(e.key)) e.preventDefault();
+      };
+      ['touchmove', 'wheel', 'keydown'].forEach(function (t) { addEventListener(t, hold, { passive: false }); });
+      setTimeout(function () { r.classList.remove('j-lock'); }, 12000);
     })(document.documentElement);
   </script>
 
@@ -119,7 +128,7 @@
   }
   </script>
 
-  <script defer src="site.js?v=84e51f8"></script>
+  <script defer data-cfasync="false" src="site.js?v=20261022-lock"></script>
 </head>
 <body>
 <a class="j-skip" href="#main">Skip to content</a>

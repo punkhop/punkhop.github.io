@@ -120,11 +120,17 @@
     var sc = document.createElement('script'); sc.defer = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
     document.head.appendChild(sc);
   }
-  function load() {
+  // The widgets fetch their own shows, so they go in even when this call fails (it only fills the stand-ins and the
+  // phone bar); before, one failed call left the stand-ins up for good. It gets one retry first.
+  function load(again) {
     var h = WIDGET_KEY ? { 'X-Widget-Key': WIDGET_KEY } : {};
     fetch(API, { headers: h }).then(function (r) { if (!r.ok) throw r.status; return r.json(); })
       .then(function (d) { shows(d.events || []); })
-      .catch(function () { /* the server-rendered cards stay */ });
+      .catch(function () {
+        if (!again) return setTimeout(function () { load(true); }, 1500);
+        embeds(document.querySelector('[data-micdrop-slot="featured"]'), document.querySelector('[data-micdrop-slot="list"]'));
+        watchBar();
+      });
   }
 
   /* ---------- the sticky phone buy bar: hidden while the ticket card or a ticket button is on screen */
@@ -236,6 +242,7 @@
   function end() {
     introDone = true;
     root.classList.remove('j-intro', 'j-intro-wait', 'j-lights');
+    unlock();
     var l = document.querySelector('.j-lamps');
     if (!l) return;
     l.classList.add('j-lit');
@@ -244,6 +251,17 @@
       var r = place(media, img);
       Object.keys(r).forEach(function (k) { l.style[k] = r[k] + 'px'; });
     });
+  }
+  // The page holds at the top (the head script locks it) until the intro is over and both widgets have drawn their shows,
+  // or 5s past the intro if a widget never does.
+  function unlock() {
+    var t0 = Date.now();
+    (function check() {
+      var ws = document.querySelectorAll('[data-micdrop-slot] micdrop-calendar');
+      var drawn = ws.length && [].every.call(ws, function (w) { return /Get tickets|Sold out|Sales closed/i.test(w.innerText); });
+      if (drawn || Date.now() - t0 > 5000) return root.classList.remove('j-lock');
+      setTimeout(check, 150);
+    })();
   }
   // Each word of the headline rises on its own, 100ms apart.
   function words(h) {
