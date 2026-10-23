@@ -233,6 +233,10 @@
     var src = img.currentSrc || img.src, l = document.createElement('div');
     l.className = 'j-lamps';
     fit(l, media, img);
+    // Re-fit whenever the photo's box changes size (a window resize, the scrollbar coming back, the phone's
+    // address bar), not only on a window resize: a layer left at the old size draws the lamps and the sign doubled.
+    if ('ResizeObserver' in window) new ResizeObserver(function () { fit(l, media, img); }).observe(media);
+    else addEventListener('resize', function () { fit(l, media, img); });
     SCONCES.concat(CHANDELIERS).forEach(function (s) { l.appendChild(glow(s, src)); });
     var neon = glow(NEON, src); neon.className = 'neon'; l.appendChild(neon);
     media.appendChild(l);
@@ -271,7 +275,7 @@
     var lit = function () {
       var l = media.querySelector('.j-lamps') || lamps(media, img);
       l.classList.add('j-lit');
-      addEventListener('resize', function () { fit(l, media, img); });
+      fit(l, media, img);
     };
     if (img.complete && img.naturalWidth) lit(); else img.addEventListener('load', lit);
   }

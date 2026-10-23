@@ -322,6 +322,8 @@ em { font-style: normal; color: var(--red); }
 .j-lights { --sp: 1; }
 /* No scrolling while the lights intro plays (the head script adds j-lock, site.js end() lifts it). */
 html.j-lock, html.j-lock body { overflow: hidden; overscroll-behavior: none; }
+/* The scrollbar's room is kept while it is hidden, so the page doesn't narrow (and the photo re-crop) when the hold lifts. */
+html { scrollbar-gutter: stable; }
 /* A Micdrop widget draws here, out of sight, until it has shows to take the stand-in's place. */
 .mw-pending { position: absolute; left: -9999px; width: 100%; }
 .j-lights.j-intro-wait .a-hero-img { filter: brightness(.06) saturate(.4); }
