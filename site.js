@@ -101,14 +101,6 @@
     // settles, or with ?widgets=standin: filled while a widget loads, they were a second card format (and a second price) on screen.
     cards = { featured: next ? featured(next, sold) : empty(), list: list.length ? rows(list.filter(function (e) { return e !== next && e !== sold; })) : '' };
     [feat, slot].forEach(function (el) { if (el && (STANDIN || el.hasAttribute('data-gave-up'))) standin(el); });
-    // The page's own list is one undated row, which reads as "one show on sale" while widget 3 is still loading (or never
-    // loads). Every show from this call goes in its place as soon as it answers, unless a visitor can already see it (the API
-    // never redraws a card on screen); the widget still takes over once it settles.
-    var sr = slot && slot.getBoundingClientRect(), seen = sr && !root.classList.contains('j-cards-wait') && sr.bottom > 0 && sr.top < innerHeight;
-    if (slot && list.length && !seen && !STANDIN && !slot.hasAttribute('data-gave-up') && !slot.classList.contains('mw-live')) {
-      [].filter.call(slot.children, function (c) { return !c.classList.contains('mw-pending'); }).forEach(function (c) { c.remove(); });
-      slot.insertAdjacentHTML('afterbegin', rows(list));
-    }
     if (!next) { var b0 = document.querySelector('[data-buybar]'); if (b0) b0.remove(); }
     if (next) {
       var d = day(next.startDateTime);
@@ -123,10 +115,9 @@
      the hand-drawn stand-ins above, to compare.
      One look, never a morph (Peet, 2026-10-22: the cards "morph… three or four different card formats"). Each widget draws
      unseen in its slot, stacked over the page's own card: its "Loading…", its first two shows, the rest, its photos blurring
-     in. It shows only once it has stopped changing. For the first 2.5s the slots show nothing at all (j-cards-wait, set by the
-     head script), so a widget settled by then is the only card the visitor ever sees, fading in. A slower one: the page's
-     own card fades in at 2.5s and the widget takes its place later in one crossfade. A widget that never settles leaves the
-     page's card up, filled from the events API then. */
+     in. It shows only once it has stopped changing, fading in. Until then the slot shows nothing: the page's own card is never
+     shown (Peet, 2026-10-23: no fallback; its button sent a visitor on a slow phone to the Micdrop page). A widget still
+     changing at 15s goes in as it is; one whose script never loads leaves the slot empty. */
   var STANDIN = /[?&]widgets=standin\b/.test(location.search), cards = null;
   function standin(el) {
     el.setAttribute('data-gave-up', '');
@@ -176,7 +167,7 @@
     var h = {}; [].forEach.call(document.querySelectorAll('[data-micdrop-slot].mw-live'), function (el) { h[el.getAttribute('data-micdrop-slot')] = el.offsetHeight; });
     try { sessionStorage.setItem('jp-slots', JSON.stringify({ w: innerWidth, h: h })); } catch (e) {}
   });
-  function giveUp(el, box) { if (!box.isConnected) return; box.remove(); standin(el); }
+  function giveUp(el, box) { if (box.isConnected && /Get tickets|Sold out|Sales|On sale/i.test(box.innerText)) swap(el, box); }
   // The settled widget takes the card's place. Unseen (the first 2.5s, or off screen): straight in. Seen: the card fades
   // out, then the widget fades in where it was while the slot glides to the widget's height (both at once read as a muddle
   // of two cards' words over each other).
@@ -242,7 +233,16 @@
     if (t.hasAttribute('data-next')) {
       var w = document.querySelector('[data-micdrop-slot="featured"] micdrop-calendar');
       var go = w && !/Go back/.test(w.innerText) && [].filter.call(w.querySelectorAll('a, button'), function (x) { return x.textContent.trim() === 'Get tickets'; })[0];
-      if (w && (go || /Go back/.test(w.innerText))) {
+      // Pressed before the widget is ready, it waits for it (up to 15s) rather than leaving for the Micdrop page.
+      if (w && !go && !/Go back/.test(w.innerText)) {
+        ev.preventDefault();
+        var n = 0;
+        (function ready() {
+          var b = w.isConnected && [].filter.call(w.querySelectorAll('a, button'), function (x) { return x.textContent.trim() === 'Get tickets'; })[0];
+          if (b) b.click();
+          else if (++n < 300) setTimeout(ready, 50);
+        })();
+      } else if (w) {
         ev.preventDefault();
         if (go) go.click();
         // Measured once the show has drawn, i.e. the widget has grown (opening it moves the widget up the hero), and only when its

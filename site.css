@@ -371,17 +371,17 @@ html.lenis, html.lenis body { height: auto; }
 .j-skip { position: absolute; left: 12px; top: -60px; z-index: 60; background: var(--cream); color: var(--ink); padding: 10px 14px; border-radius: 8px; font-weight: 700; }
 .j-skip:focus { top: 12px; }
 /* A slot stacks its children in one grid cell: the page's own card, and the Micdrop widget drawing unseen over it (no
-   height, no clicks) until it has settled and takes the card's place (site.js embeds). For the first 2.5s the slots show
-   nothing (j-cards-wait, from the head script), so a widget settled by then is the first and only card anyone sees. */
+   height, no clicks) until it has settled and takes the card's place (site.js embeds). Until then the slot shows nothing (j-cards-wait, from the
+   head script): the widget is the only card anyone sees; the page's own card only holds its room. */
 [data-micdrop-slot] { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
 [data-micdrop-slot] > * { grid-area: 1 / 1; transition: opacity .25s ease-out; }
 .mw-pending, .j-cards-wait [data-micdrop-slot]:not(.mw-live) > * { opacity: 0; pointer-events: none; }
 .mw-pending { height: 0; overflow: visible; }
 /* The list keeps a screen's room while its widget draws, so what follows (the About photos) doesn't show in the gap and
    then get pushed down when the shows come in. */
-.j-cards-wait [data-micdrop-slot="list"], [data-micdrop-slot="list"]:has(> .mw-pending) { min-height: var(--mw-list-h, 100vh); }
+.j-cards-wait [data-micdrop-slot="list"]:not(.mw-live), [data-micdrop-slot="list"]:has(> .mw-pending) { min-height: var(--mw-list-h, 100vh); }
 /* On a reload both slots keep the height their widgets had last time (--mw-*-h, set by the head script). */
-.j-cards-wait [data-micdrop-slot="featured"], [data-micdrop-slot="featured"]:has(> .mw-pending) { min-height: var(--mw-featured-h, 0); }
+.j-cards-wait [data-micdrop-slot="featured"]:not(.mw-live), [data-micdrop-slot="featured"]:has(> .mw-pending) { min-height: var(--mw-featured-h, 0); }
 /* While the cards wait they hold that height exactly, not just at least: the page's own card under a waiting widget can be
    taller (the hero's "Every Friday" card is 253px to the widget's 214), and that difference above the screen was how far a
    mid-page reload landed off. */

@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="site.css?v=20261023-sign-one">
+  <link rel="stylesheet" href="site.css?v=20261023-widget-only">
 
   <!-- The lights-first intro starts dark before the first paint; site.js runs it. If site.js never arrives the page comes up anyway.
        data-cfasync="false" keeps Cloudflare's Rocket Loader from deferring it past the first paint (the page flashed lit, then went dark).
@@ -49,8 +49,8 @@
        made from the top of the page; the page notes where it was as it goes away. A reload from mid-page keeps the visitor's
        place with no intro and no hold. Back/Forward, a link to a section or a show, a background tab, or reduced motion skips
        it, and the page is simply there, where the browser left it. Scrolling is held only while the intro plays, never past 6s.
-       It also keeps the two show slots empty for the first 2.5s (j-cards-wait), so a Micdrop widget that has drawn by then is
-       the only card anyone sees (site.js embeds); if site.js never arrives, the page's own cards show at 2.5s. -->
+       It also keeps the two show slots empty until their Micdrop widget has drawn (j-cards-wait), so the widget is the only
+       card anyone sees (site.js embeds); the page's own cards never show (Peet, 2026-10-23: no fallback). -->
   <script data-cfasync="false">
     (function (r) {
       if (!/[?&]widgets=standin\b/.test(location.search)) {
@@ -61,7 +61,6 @@
           if (hs && hs.w === innerWidth) for (var k in hs.h) r.style.setProperty('--mw-' + k + '-h', hs.h[k] + 'px');
         } catch (e) {}
         r.classList.add('j-cards-wait');
-        setTimeout(function () { r.classList.remove('j-cards-wait'); }, 2500);
       }
       var nav = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).type, seen, at;
       try { seen = sessionStorage.getItem('jp-intro'); at = sessionStorage.getItem('jp-y'); } catch (e) {}
@@ -173,7 +172,7 @@
   }
   </script>
 
-  <script defer data-cfasync="false" src="site.js?v=20261023-list-rows"></script>
+  <script defer data-cfasync="false" src="site.js?v=20261023-widget-only"></script>
 </head>
 <body>
 <a class="j-skip" href="#main">Skip to content</a>
