@@ -200,15 +200,31 @@
   }, { passive: true });
 
   /* ---------- the lights-first intro ------------------------------------------------------------ */
-  // Where the lamps sit in venue/hero-mid (both sizes are 3:2), as % of the photo: x, y, glow width, glow height.
-  var SCONCES = [[11, 15, 7, 10], [16, 16, 6, 9], [21, 17, 5, 8], [79, 16, 5, 8], [86, 15, 6, 9], [90, 16, 5, 8]];
-  var CHANDELIERS = [[25, 9, 9, 12], [33, 11, 5, 9], [50.5, 6, 3, 5], [69, 11, 5, 9], [77, 7, 9, 12]];
+  // Peet's pick from the intro playground (2026-10-22): 3.3s in all; every light in the room comes on one by one from
+  // the outer walls in, each with one flicker; the room comes up around a dark sign, then the sign switches on last as
+  // white LED neon on a clear acrylic board. Each lamp is a copy of the photo seen through a soft radial mask, over the
+  // darkened photo; the sign parts are cut by images/intro/sign-*.png, masks made from the photo's own tubes.
+  // Every light in hero-mid, as % of the photo: x, y, glow width, glow height (measured off a 1% grid, 2026-10-22).
+  var LIGHTS = [
+    [7.5, 21.5, 1.6, 4.5], [10.8, 20, 3, 5.5], [12.6, 20, 2.4, 5], [14.2, 20, 3, 5.5], [15.9, 20.3, 2.2, 5], // left mirror
+    [20.9, 20.3, 3, 5.5], [22.6, 20.8, 2.2, 5],                                                             // left wall sconce
+    [24.6, 12.6, 7.5, 9], [33.1, 14.6, 3.6, 7], [50.5, 8.4, 2.6, 4.4], [69.1, 15.2, 3.6, 7], [76.6, 11, 7.5, 9], // ceiling
+    [77.6, 19.8, 2.2, 5], [78.7, 19.6, 3, 5.5],                                                             // right wall sconce
+    [84.2, 19.6, 2.2, 5], [86, 19.2, 3, 5.5], [88.2, 19.8, 2.2, 5], [89.9, 19.2, 3, 5.5]                    // right mirror
+  ];
+  var CENTER = 50.5;                     // the bare bulb over the sign: where the run ends
   var NEON = [51, 29, 17, 9];
-  // Sconces blink on in pairs from the outside in, then the chandeliers from the middle out, then the neon
-  // buzzes and the room comes up; the page arrives after. The whole intro takes 4s: the lamps run at
-  // k × their 3.55s, the page's own rise-in keeps its 1.4s.
-  var SCONCE_AT = [300, 620, 940, 1010, 690, 370], CHAND_AT = [1800, 1600, 1400, 1650, 1850];
-  var K = (4000 - 1400) / 3550;
+  var SIGN_BOX = [38.75, 23.125, 25, 12.5]; // left, top, width, height: the crop the sign masks were cut from
+  var MASKS = 'images/intro/sign-';
+  // The timeline at 3.3s. K stretches the lamp run and the room, PK the page's own rise-in, both from the 4s intro
+  // they replace: the lamps run 300K → 1700K, the room comes up at 1950K, the sign at 2650K, the header drops at 3400K
+  // and the page rises from 3550K, its rise-in PK × 1.4s. site.css carries the same times (.j-lights vars).
+  var LEN = 3300, T = (LEN - 2610) / 1390, K = (1700 + 900 * T) / 3550, PK = 0.65 + 0.35 * T;
+  var ROOM = [1950 * K, 900 * K], SIGN = [2650 * K, 1100 * K];
+  // One lamp's blink: up, one flicker, settled by 42% (the playground's flicker 60).
+  var BLINK = [{ offset: 0, opacity: 0 }, { offset: 0.108, opacity: 0.9 }, { offset: 0.2, opacity: 0 }, { offset: 0.336, opacity: 1 },
+    { offset: 0.372, opacity: 0.83 }, { offset: 0.42, opacity: 1 }, { offset: 1, opacity: 1 }];
+  var EASE = 'cubic-bezier(.45,0,.25,1)';
   var introDone = false;
 
   function glow(l, src) {
@@ -216,6 +232,16 @@
     d.style.backgroundImage = 'url("' + src + '")';
     var m = 'radial-gradient(ellipse ' + l[2] + '% ' + l[3] + '% at ' + l[0] + '% ' + l[1] + '%, #000 30%, rgba(0,0,0,.55) 60%, transparent 100%)';
     d.style.webkitMaskImage = d.style.maskImage = m;
+    return d;
+  }
+  // A piece of the sign: a colour cut out by one of the sign masks, placed on the sign, blurred for the glow.
+  function signPart(mask, color, blur) {
+    var d = document.createElement('i'), s = document.createElement('span'), m = 'url(' + MASKS + mask + '.png) 0 0/100% 100% no-repeat';
+    d.className = 'sign';
+    d.style.cssText = 'inset:auto;left:' + SIGN_BOX[0] + '%;top:' + SIGN_BOX[1] + '%;width:' + SIGN_BOX[2] + '%;height:' + SIGN_BOX[3] + '%;' +
+      'background:none;filter:' + (blur ? 'blur(' + blur + 'px)' : 'none');
+    s.style.cssText = 'position:absolute;inset:0;background:' + color + ';-webkit-mask:' + m + ';mask:' + m;
+    d.appendChild(s);
     return d;
   }
   // The lamp layers sit exactly over the photo as object-fit: cover draws it, so the mask % match the photo.
@@ -229,17 +255,65 @@
     var r = place(media, img);
     Object.keys(r).forEach(function (k) { l.style[k] = r[k] + 'px'; });
   }
-  function lamps(media, img) {
+  // When each light starts: the outermost light on screen first, the one nearest the middle last, evenly spread over
+  // the lights you can see (a phone shows only the middle of the room; the header covers the top). Off-screen ones
+  // start with the first.
+  function starts(media, img) {
+    var r = place(media, img), m = media.getBoundingClientRect(), hd = document.querySelector('.j-hdr');
+    var top = Math.max(0, (hd ? hd.getBoundingClientRect().bottom : 0) - m.top);
+    var vx = [-r.left / r.width * 100, (media.clientWidth - r.left) / r.width * 100];
+    var vy = [(top - r.top) / r.height * 100, (media.clientHeight - r.top) / r.height * 100];
+    var at = LIGHTS.map(function () { return 300 * K; });
+    var on = LIGHTS.map(function (l, i) { return i; }).filter(function (i) {
+      var l = LIGHTS[i];
+      return l[0] + l[2] * 0.3 >= vx[0] && l[0] - l[2] * 0.3 <= vx[1] && l[1] + l[3] * 0.2 >= vy[0] && l[1] - l[3] * 0.2 <= vy[1];
+    }).sort(function (p, q) { return Math.abs(LIGHTS[q][0] - CENTER) - Math.abs(LIGHTS[p][0] - CENTER) || LIGHTS[p][0] - LIGHTS[q][0]; });
+    on.forEach(function (i, n) { at[i] = (300 + 1400 * (on.length > 1 ? n / (on.length - 1) : 1)) * K; });
+    return at;
+  }
+  function play(d, frames, dur, at, ease) {
+    d.style.animation = 'none';
+    d.animate(frames, { duration: Math.round(dur), delay: Math.round(at), fill: 'both', easing: ease || 'linear' });
+  }
+  // The sign: dark letters (the unlit tubes) while the room comes up around them, then white LED neon: the tubes switch on
+  // clean and even, the white glow spreads out of them, and the board's cut edge catches a little of it.
+  // timed = false draws it lit, for the page after the intro.
+  function sign(l, src, timed) {
+    var unlit = signPart('unlit', 'rgb(40,11,13)'), neon = glow(NEON, src);
+    unlit.classList.add('unlit'); neon.className = 'neon';
+    neon.style.filter = 'brightness(1.25) saturate(.7)';
+    l.appendChild(unlit); l.appendChild(neon);
+    var on = [{ opacity: 0 }, { opacity: 1, offset: 0.09 }, { opacity: 1 }];
+    var parts = [[neon, on, 'linear'], [unlit, [{ opacity: 1 }, { opacity: 0, offset: 0.09 }, { opacity: 0 }], 'linear'],
+      [signPart('tubes', '#fff'), [{ opacity: 0 }, { opacity: 0.9, offset: 0.09 }, { opacity: 0.8 }], 'linear'],
+      [signPart('tubes', '#fff', 3), [{ opacity: 0 }, { opacity: 0.35, offset: 0.12 }, { opacity: 0.85, offset: 0.6 }, { opacity: 0.75 }], EASE],
+      [signPart('tubes', '#fff', 16), [{ opacity: 0 }, { opacity: 0, offset: 0.15 }, { opacity: 0.55, offset: 0.8 }, { opacity: 0.5 }], EASE],
+      [signPart('board', '#fff', 0.6), [{ opacity: 0 }, { opacity: 0, offset: 0.2 }, { opacity: 0.16 }], EASE]];
+    parts.forEach(function (p) {
+      if (!p[0].parentNode) l.appendChild(p[0]);
+      if (timed) play(p[0], p[1], SIGN[1], SIGN[0], p[2]);
+      else { p[0].style.animation = 'none'; p[0].style.opacity = p[1][p[1].length - 1].opacity; }
+    });
+    // the unlit tubes come up with the room, so the letters read as dark glass, not a hole
+    if (timed) unlit.animate([{ filter: 'brightness(.06)' }, { filter: 'brightness(1)' }],
+      { duration: Math.round(ROOM[1]), delay: Math.round(ROOM[0]), fill: 'both', easing: 'cubic-bezier(.3,.7,.4,1)' });
+  }
+  function lamps(media, img, timed) {
     var src = img.currentSrc || img.src, l = document.createElement('div');
     l.className = 'j-lamps';
     fit(l, media, img);
+    var at = timed && starts(media, img);
+    LIGHTS.forEach(function (x, i) {
+      var d = glow(x, src);
+      if (timed) play(d, BLINK, 800 * Math.max(K, 0.6), at[i]); else { d.style.animation = 'none'; d.style.opacity = 1; }
+      l.appendChild(d);
+    });
+    sign(l, src, timed);
+    media.appendChild(l);
     // Re-fit whenever the photo's box changes size (a window resize, the scrollbar coming back, the phone's
     // address bar), not only on a window resize: a layer left at the old size draws the lamps and the sign doubled.
     if ('ResizeObserver' in window) new ResizeObserver(function () { fit(l, media, img); }).observe(media);
     else addEventListener('resize', function () { fit(l, media, img); });
-    SCONCES.concat(CHANDELIERS).forEach(function (s) { l.appendChild(glow(s, src)); });
-    var neon = glow(NEON, src); neon.className = 'neon'; l.appendChild(neon);
-    media.appendChild(l);
     return l;
   }
   // The head script decides whether the intro plays (j-intro-wait). It plays only once the hero photo is in:
@@ -248,15 +322,13 @@
     var hero = document.querySelector('.a-hero');
     if (!hero || still || !root.classList.contains('j-intro-wait')) return end();
     var media = hero.querySelector('.a-hero-media'), img = hero.querySelector('.a-hero-img');
-    root.style.setProperty('--sp', K);
     words(hero.querySelector('h1'));
     var go = function () {
       if (introDone || !root.classList.contains('j-intro-wait')) return end();
-      var at = SCONCE_AT.concat(CHAND_AT);
-      [].forEach.call(lamps(media, img).children, function (d, i) { if (at[i] != null) d.style.animationDelay = at[i] * K + 'ms'; });
+      lamps(media, img, true);
       root.classList.remove('j-intro-wait');
       root.classList.add('j-intro');
-      setTimeout(end, 3550 * K + 1400);
+      setTimeout(end, LEN);
     };
     var ready = function () { return img.complete && img.naturalWidth; }, started = false;
     var start = function () { if (!started) { started = true; ready() ? requestAnimationFrame(go) : end(); } };
@@ -264,22 +336,46 @@
     else { img.addEventListener('load', start); img.addEventListener('error', start); }
     setTimeout(start, 1500);
   }
-  // The page as it is after the intro, and as a reload or Back finds it: everything in place, the lamps lit
-  // over the photo and kept there as it resizes. Safe to call more than once.
+  // The page as it is after the intro, and as a reload or Back finds it: everything in place, the lamps and the LED sign
+  // lit over the photo and kept there as it resizes. Safe to call more than once.
   function end() {
     root.classList.remove('j-intro', 'j-intro-wait', 'j-lock', 'j-lights');
     if (introDone) return;
     introDone = true;
+    glide();
     var media = document.querySelector('.a-hero-media'), img = media && media.querySelector('.a-hero-img');
     if (!img) return;
     var lit = function () {
-      var l = media.querySelector('.j-lamps') || lamps(media, img);
+      var l = media.querySelector('.j-lamps');
+      if (l) l.getAnimations({ subtree: true }).forEach(function (a) { a.finish(); }); // cut short: jump to the lit end
+      else l = lamps(media, img, false);
       l.classList.add('j-lit');
       fit(l, media, img);
     };
     if (img.complete && img.naturalWidth) lit(); else img.addEventListener('load', lit);
   }
   window.JP_END = end;
+
+  /* ---------- gliding wheel scroll (Lenis, self-hosted in vendor/) ------------------------------- */
+  // A mouse wheel or trackpad glides the page instead of stepping it (Peet's pick, 2026-10-22). It starts in end(), so
+  // never while the intro holds scrolling, and never for reduced motion or touch-only devices (they keep native scroll).
+  // It leaves the wheel alone over anything that scrolls by itself (a box inside a Micdrop widget) and whenever a dialog
+  // is open: the widget's full-window show page and checkout are modal dialogs, and the page behind must not move.
+  // Menu links keep the browser's own smooth jump, which stops under the header (scroll-padding-top in site.css).
+  function glide() {
+    if (still || window.JP_LENIS || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var s = document.createElement('script');
+    s.src = 'vendor/lenis-1.3.11.min.js';
+    s.onload = function () {
+      if (!window.Lenis) return;
+      window.JP_LENIS = new window.Lenis({
+        autoRaf: true, lerp: 0.1, allowNestedScroll: true,
+        prevent: function (n) { return n.localName === 'dialog'; },
+        virtualScroll: function () { return !document.querySelector('dialog[open]') && !root.classList.contains('j-lock'); }
+      });
+    };
+    document.head.appendChild(s);
+  }
   // Each word of the headline rises on its own, 100ms apart.
   function words(h) {
     if (!h) return;
