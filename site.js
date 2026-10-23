@@ -15,9 +15,9 @@
   var API = 'https://get-micdrop.com/api/v2/public/events/venue/1?limit=100';
   var WIDGET_KEY = 'wk_6b89d4e8aeeb2981ce399083eda2a1a4'; // public embed key, allows jetpackcomedy.com and its subdomains
   var TZ = 'America/Los_Angeles';
-  // Micdrop's buyer fee per ticket face, as checkout charges it today ($20 GA → $2.85, $30 VIP → $3.46).
-  // The public API doesn't carry fees yet; a face price missing here shows without a fee line.
-  var FEES = { 20: 2.85, 30: 3.46 };
+  // Micdrop's buyer fee per ticket face, as checkout charges it today ($20 GA → $3.48, $30 VIP → $4.29).
+  // Used only when the events call leaves a ticket's fee out; a face price missing here shows without a fee line.
+  var FEES = { 20: 3.48, 30: 4.29 };
   // Micdrop's scarcity canon (venue-calendar lib/constants/scarcity.ts): "Selling fast" at 20% left,
   // never above 30 seats or below 6.
   function fast(e) {
@@ -39,7 +39,8 @@
   // The bar's "This Friday / Next Friday / Friday", counted in Los Angeles days.
   function rel(e) { var d = Math.round((ymd(e.startDateTime) - ymd(new Date())) / 864e5); return d < 7 ? 'This ' + day(e.startDateTime).wd : d < 14 ? 'Next ' + day(e.startDateTime).wd : day(e.startDateTime).wd; }
   function price(e) {
-    var face = e.minPrice, fee = FEES[face];
+    var face = e.minPrice, t = (e.availableTickets || []).filter(function (x) { return x.price === face && x.fee != null; })[0];
+    var fee = t ? t.fee : FEES[face];
     return fee == null ? { total: money(face), cap: '' } : { total: money(face + fee), cap: 'incl. ' + money(fee) + ' fee' };
   }
   // Micdrop's ticket-button canon (venue-calendar lib/api/cta.ts): open, or why not.
@@ -100,6 +101,14 @@
     // settles, or with ?widgets=standin: filled while a widget loads, they were a second card format (and a second price) on screen.
     cards = { featured: next ? featured(next, sold) : empty(), list: list.length ? rows(list.filter(function (e) { return e !== next && e !== sold; })) : '' };
     [feat, slot].forEach(function (el) { if (el && (STANDIN || el.hasAttribute('data-gave-up'))) standin(el); });
+    // The page's own list is one undated row, which reads as "one show on sale" while widget 3 is still loading (or never
+    // loads). Every show from this call goes in its place as soon as it answers, unless a visitor can already see it (the API
+    // never redraws a card on screen); the widget still takes over once it settles.
+    var sr = slot && slot.getBoundingClientRect(), seen = sr && !root.classList.contains('j-cards-wait') && sr.bottom > 0 && sr.top < innerHeight;
+    if (slot && list.length && !seen && !STANDIN && !slot.hasAttribute('data-gave-up') && !slot.classList.contains('mw-live')) {
+      [].filter.call(slot.children, function (c) { return !c.classList.contains('mw-pending'); }).forEach(function (c) { c.remove(); });
+      slot.insertAdjacentHTML('afterbegin', rows(list));
+    }
     if (!next) { var b0 = document.querySelector('[data-buybar]'); if (b0) b0.remove(); }
     if (next) {
       var d = day(next.startDateTime);
