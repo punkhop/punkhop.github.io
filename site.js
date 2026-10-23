@@ -115,8 +115,20 @@
   function embeds(feat, slot) {
     if (/[?&]widgets=standin\b/.test(location.search)) return;
     var k = ' data-widget-key="' + WIDGET_KEY + '"';
-    if (feat) feat.innerHTML = '<micdrop-calendar widget-id="2" show-background="false"' + k + '></micdrop-calendar>';
-    if (slot) slot.innerHTML = '<micdrop-calendar widget-id="3"' + k + '></micdrop-calendar>';
+    // Each widget draws out of sight next to the stand-in and takes its place once it shows a show; a widget that never
+    // draws (get-micdrop.com unreachable from that phone) leaves the stand-in up instead of an empty slot.
+    [[feat, '<micdrop-calendar widget-id="2" show-background="false"' + k + '></micdrop-calendar>'],
+     [slot, '<micdrop-calendar widget-id="3"' + k + '></micdrop-calendar>']].forEach(function (x) {
+      var el = x[0]; if (!el || el.querySelector('micdrop-calendar')) return;
+      var box = document.createElement('div'); box.className = 'mw-pending'; box.innerHTML = x[1]; el.appendChild(box);
+      (function swap() {
+        if (!/Get tickets|Sold out|Sales closed/i.test(box.innerText)) return setTimeout(swap, 200);
+        [].slice.call(el.children).forEach(function (c) { if (c !== box) c.remove(); });
+        box.classList.remove('mw-pending');
+        watchBar();
+      })();
+    });
+    if (document.querySelector('script[src*="venue-calendar.iife"]')) return;
     var sc = document.createElement('script'); sc.defer = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
     document.head.appendChild(sc);
   }
@@ -241,8 +253,7 @@
   // The lamps stay lit once the intro is over, held at their final glow and kept over the photo as it resizes.
   function end() {
     introDone = true;
-    root.classList.remove('j-intro', 'j-intro-wait', 'j-lights');
-    unlock();
+    root.classList.remove('j-intro', 'j-intro-wait', 'j-lock', 'j-lights');
     var l = document.querySelector('.j-lamps');
     if (!l) return;
     l.classList.add('j-lit');
@@ -251,17 +262,6 @@
       var r = place(media, img);
       Object.keys(r).forEach(function (k) { l.style[k] = r[k] + 'px'; });
     });
-  }
-  // The page holds at the top (the head script locks it) until the intro is over and both widgets have drawn their shows,
-  // or 5s past the intro if a widget never does.
-  function unlock() {
-    var t0 = Date.now();
-    (function check() {
-      var ws = document.querySelectorAll('[data-micdrop-slot] micdrop-calendar');
-      var drawn = ws.length && [].every.call(ws, function (w) { return /Get tickets|Sold out|Sales closed/i.test(w.innerText); });
-      if (drawn || Date.now() - t0 > 5000) return root.classList.remove('j-lock');
-      setTimeout(check, 150);
-    })();
   }
   // Each word of the headline rises on its own, 100ms apart.
   function words(h) {

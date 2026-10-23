@@ -320,8 +320,10 @@ em { font-style: normal; color: var(--red); }
 @keyframes j-dark { from { filter: brightness(.06) saturate(.4); } }
 @keyframes j-drop { from { opacity: 0; transform: translateY(-100%); } }
 .j-lights { --sp: 1; }
-/* No scrolling until the intro is over and the shows have loaded (see the head script and unlock() in site.js). */
+/* No scrolling while the lights intro plays (the head script adds j-lock, site.js end() lifts it). */
 html.j-lock, html.j-lock body { overflow: hidden; overscroll-behavior: none; }
+/* A Micdrop widget draws here, out of sight, until it has shows to take the stand-in's place. */
+.mw-pending { position: absolute; left: -9999px; width: 100%; }
 .j-lights.j-intro-wait .a-hero-img { filter: brightness(.06) saturate(.4); }
 .j-lights.j-intro-wait :is(#app, #main) > :not(.a-hero):not(main), .j-lights.j-intro-wait .j-buybar { opacity: 0; }
 .j-lights .j-lamps i { animation-name: j-blink; animation-duration: calc(.8s * max(var(--sp), .6)); animation-timing-function: linear; }
