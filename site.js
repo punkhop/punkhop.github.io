@@ -333,20 +333,20 @@
     d.style.animation = 'none';
     d.animate(frames, { duration: Math.round(dur), delay: Math.round(at), fill: 'both', easing: ease || 'linear' });
   }
-  // The sign: dark letters (the unlit tubes) while the room comes up around them, then white LED neon: the tubes switch on
-  // clean and even, the white glow spreads out of them, and the board's cut edge catches a little of it.
-  // timed = false draws it lit, for the page after the intro.
+  // The sign: dark letters (the unlit tubes) while the room comes up around them, then white LED neon. It switches on in
+  // one stage (Peet, 2026-10-23: the letters lit first and the glow after read as two): the tubes, both blooms, the
+  // photo's glow and the board's cut edge all fade up together on one curve while the dark letters fade out.
+  // The glow layers run at half the playground's strength (Peet, 2026-10-23). timed = false draws it lit.
   function sign(l, src, timed) {
     var unlit = signPart('unlit', 'rgb(40,11,13)'), neon = glow(NEON, src);
     unlit.classList.add('unlit'); neon.className = 'neon';
     neon.style.filter = 'brightness(1.25) saturate(.7)';
     l.appendChild(unlit); l.appendChild(neon);
-    var on = [{ opacity: 0 }, { opacity: 0.5, offset: 0.09 }, { opacity: 0.5 }]; // the glow at half (Peet, 2026-10-23)
-    var parts = [[neon, on, 'linear'], [unlit, [{ opacity: 1 }, { opacity: 0, offset: 0.09 }, { opacity: 0 }], 'linear'],
-      [signPart('tubes', '#fff'), [{ opacity: 0 }, { opacity: 0.9, offset: 0.09 }, { opacity: 0.8 }], 'linear'],
-      [signPart('tubes', '#fff', 3), [{ opacity: 0 }, { opacity: 0.175, offset: 0.12 }, { opacity: 0.425, offset: 0.6 }, { opacity: 0.375 }], EASE],
-      [signPart('tubes', '#fff', 16), [{ opacity: 0 }, { opacity: 0, offset: 0.15 }, { opacity: 0.275, offset: 0.8 }, { opacity: 0.25 }], EASE],
-      [signPart('board', '#fff', 0.6), [{ opacity: 0 }, { opacity: 0, offset: 0.2 }, { opacity: 0.08 }], EASE]];
+    var ONE = 'cubic-bezier(.3,.6,.35,1)';
+    var parts = [[neon, 0.5], [signPart('tubes', '#fff'), 0.8], [signPart('tubes', '#fff', 3), 0.375],
+      [signPart('tubes', '#fff', 16), 0.25], [signPart('board', '#fff', 0.6), 0.08]]
+      .map(function (p) { return [p[0], [{ opacity: 0 }, { opacity: p[1] }], ONE]; });
+    parts.push([unlit, [{ opacity: 1 }, { opacity: 0 }], ONE]);
     parts.forEach(function (p) {
       if (!p[0].parentNode) l.appendChild(p[0]);
       if (timed) play(p[0], p[1], SIGN[1], SIGN[0], p[2]);
