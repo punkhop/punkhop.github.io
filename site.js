@@ -136,8 +136,10 @@
       var el = x[0]; if (!el || el.querySelector('micdrop-calendar')) return;
       // stacked on the card in the slot's one grid cell, invisible and taking no height (site.css), so it draws at the card's
       // width and its lazy photos load as they would in place
-      var box = document.createElement('div'); box.className = 'mw-pending'; box.innerHTML = x[1];
-      el.appendChild(box); boxes.push([el, box]);
+      // The unseen state is inline, not a class (Safari kept a removed class's height: 0 on a phone, so the drawn widget
+      // took no room and painted over the sections below it).
+      var box = document.createElement('div'); box.className = 'mw-pending'; box.style.cssText = PENDING; box.innerHTML = x[1];
+      el.appendChild(box); el.classList.add('mw-wait'); boxes.push([el, box]);
       var t0 = Date.now(), last = '', still0 = Date.now();
       (function wait() {
         if (!box.isConnected) return;
@@ -171,6 +173,8 @@
     var h = {}; [].forEach.call(document.querySelectorAll('[data-micdrop-slot].mw-live'), function (el) { h[el.getAttribute('data-micdrop-slot')] = el.offsetHeight; });
     try { sessionStorage.setItem('jp-slots', JSON.stringify({ w: innerWidth, h: h })); } catch (e) {}
   });
+  var PENDING = 'height: 0; overflow: visible; opacity: 0; pointer-events: none';
+  function shown(el, box) { box.classList.remove('mw-pending'); box.removeAttribute('style'); el.classList.remove('mw-wait'); }
   function giveUp(el, box) { if (box.isConnected && /Get tickets|Sold out|Sales|On sale/i.test(box.innerText)) swap(el, box); }
   // The settled widget takes the card's place. Unseen (the first 2.5s, or off screen): straight in. Seen: the card fades
   // out, then the widget fades in where it was while the slot glides to the widget's height (both at once read as a muddle
@@ -180,7 +184,7 @@
     var seen = !still && !root.classList.contains('j-cards-wait') && old.length && r.bottom > 0 && r.top < innerHeight;
     el.classList.add('mw-live');
     if (!seen) {
-      box.classList.remove('mw-pending');
+      shown(el, box);
       old.forEach(function (c) { c.remove(); });
       // A slot reaching above the screen changed height: Chrome may keep what you're reading in place by itself (d comes back
       // 0); Safari doesn't, and the page would shift under the visitor (the widget's hero card is 30px taller on a phone).
@@ -191,7 +195,7 @@
       setTimeout(function () {
         var h0 = el.offsetHeight;
         old.forEach(function (c) { c.remove(); });
-        box.classList.remove('mw-pending');
+        shown(el, box);
         el.animate([{ height: h0 + 'px' }, { height: box.offsetHeight + 'px' }], { duration: 250, easing: 'cubic-bezier(.3,.7,.4,1)' });
         watchBar();
       }, 140);
@@ -577,5 +581,3 @@
     document.body.appendChild(d);
   }, 20000);
 })();
-;(function(){ if(!/diag/.test(location.search)) return; var p=document.createElement('pre'); p.style.cssText='position:fixed;left:4px;right:4px;bottom:90px;z-index:99999;background:#fff;color:#000;font:10px/1.25 monospace;white-space:pre-wrap;padding:6px;max-height:55vh;overflow:auto'; document.body.appendChild(p); var t0=Date.now();
-setInterval(function(){ var L=['t '+Math.round((Date.now()-t0)/1000)+' root '+document.documentElement.className+' style '+document.documentElement.getAttribute('style')]; [].forEach.call(document.querySelectorAll('[data-micdrop-slot]'),function(el){ var cs=getComputedStyle(el); L.push(el.getAttribute('data-micdrop-slot')+' cls['+el.className+'] h'+el.offsetHeight+' cs.h '+cs.height+' minh '+cs.minHeight+' disp '+cs.display+' ovf '+cs.overflow); [].forEach.call(el.children,function(c){ var cc=getComputedStyle(c); var t=c.innerText||''; L.push('  kid['+c.className+'] h'+c.offsetHeight+' cs.h '+cc.height+' op '+cc.opacity+' txtlen '+t.length+' drawn '+(!/Loading/i.test(t)&&/Get tickets|Sold out|On sale/i.test(t))+' load '+/Loading/i.test(t)+' "'+t.replace(/\s+/g,' ').slice(0,70)+'"'); var cal=c.querySelector('micdrop-calendar'); if(cal && /kick/.test(location.search) && !c._k && Date.now()-t0>20000){ c._k=1; c.style.display='none'; c.offsetHeight; c.style.display=''; L.push('   KICKED'); } if(cal) L.push('   box pos '+cc.position+' disp '+cc.display+' style['+c.getAttribute('style')+'] cal pos '+getComputedStyle(cal).position+' disp '+getComputedStyle(cal).display+' anims '+(el.getAnimations?el.getAnimations().length:'?')); if(cal) L.push('   cal h'+cal.offsetHeight+' tc '+(cal.textContent||'').replace(/\s+/g,' ').slice(0,60)); }); }); p.textContent=L.join('\n'); },1000); })();

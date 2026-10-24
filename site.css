@@ -375,13 +375,12 @@ html.lenis, html.lenis body { height: auto; }
    head script): the widget is the only card anyone sees; the page's own card only holds its room. */
 [data-micdrop-slot] { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
 [data-micdrop-slot] > * { grid-area: 1 / 1; transition: opacity .25s ease-out; }
-.mw-pending, .j-cards-wait [data-micdrop-slot]:not(.mw-live) > * { opacity: 0; pointer-events: none; }
-.mw-pending { height: 0; overflow: visible; }
+.j-cards-wait [data-micdrop-slot]:not(.mw-live) > * { opacity: 0; pointer-events: none; }
 /* The list keeps a screen's room while its widget draws, so what follows (the About photos) doesn't show in the gap and
    then get pushed down when the shows come in. */
-.j-cards-wait [data-micdrop-slot="list"]:not(.mw-live), [data-micdrop-slot="list"]:has(> .mw-pending) { min-height: var(--mw-list-h, 100vh); }
+.j-cards-wait [data-micdrop-slot="list"]:not(.mw-live), [data-micdrop-slot="list"].mw-wait { min-height: var(--mw-list-h, 100vh); }
 /* On a reload both slots keep the height their widgets had last time (--mw-*-h, set by the head script). */
-.j-cards-wait [data-micdrop-slot="featured"]:not(.mw-live), [data-micdrop-slot="featured"]:has(> .mw-pending) { min-height: var(--mw-featured-h, 0); }
+.j-cards-wait [data-micdrop-slot="featured"]:not(.mw-live), [data-micdrop-slot="featured"].mw-wait { min-height: var(--mw-featured-h, 0); }
 /* While the cards wait they hold that height exactly, not just at least: the page's own card under a waiting widget can be
    taller (the hero's "Every Friday" card is 253px to the widget's 214), and that difference above the screen was how far a
    mid-page reload landed off. */
