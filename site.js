@@ -239,6 +239,10 @@
   }
   addEventListener('scroll', watchBar, { passive: true });
   addEventListener('resize', watchBar);
+  // and as the intro's header drop and the page's rise-in finish: a widget that landed mid-intro had its button pushed
+  // 24px down past the screen's edge, and once the page rose into place nothing looked again (Android, 2026-10-24)
+  addEventListener('animationend', watchBar);
+  addEventListener('transitionend', watchBar);
   // and whenever a slot changes size under a still page (a widget landing, its photos coming in)
   if ('ResizeObserver' in window) {
     var barRO = new ResizeObserver(watchBar);
