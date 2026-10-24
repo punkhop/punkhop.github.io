@@ -373,7 +373,7 @@ html.lenis, html.lenis body { height: auto; }
 /* A slot stacks its children in one grid cell: the page's own card, and the Micdrop widget drawing unseen over it (no
    height, no clicks) until it has settled and takes the card's place (site.js embeds). Until then the slot shows nothing (j-cards-wait, from the
    head script): the widget is the only card anyone sees; the page's own card only holds its room. */
-[data-micdrop-slot] { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+[data-micdrop-slot] { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
 [data-micdrop-slot] > * { grid-area: 1 / 1; transition: opacity .25s ease-out; }
 .j-cards-wait [data-micdrop-slot]:not(.mw-live) > * { opacity: 0; pointer-events: none; }
 /* The list keeps a screen's room while its widget draws, so what follows (the About photos) doesn't show in the gap and

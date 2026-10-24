@@ -136,8 +136,8 @@
       var el = x[0]; if (!el || el.querySelector('micdrop-calendar')) return;
       // stacked on the card in the slot's one grid cell, invisible and taking no height (site.css), so it draws at the card's
       // width and its lazy photos load as they would in place
-      // The unseen state is inline, not a class (Safari kept a removed class's height: 0 on a phone, so the drawn widget
-      // took no room and painted over the sections below it).
+      // Unseen, it lies over the card out of the flow, not in it at height 0: iPhone Safari never grew a grid item back from
+      // height 0, so the live widget took no room and painted over the About photos and reviews below it.
       var box = document.createElement('div'); box.className = 'mw-pending'; box.style.cssText = PENDING; box.innerHTML = x[1];
       el.appendChild(box); el.classList.add('mw-wait'); boxes.push([el, box]);
       var t0 = Date.now(), last = '', still0 = Date.now();
@@ -173,7 +173,7 @@
     var h = {}; [].forEach.call(document.querySelectorAll('[data-micdrop-slot].mw-live'), function (el) { h[el.getAttribute('data-micdrop-slot')] = el.offsetHeight; });
     try { sessionStorage.setItem('jp-slots', JSON.stringify({ w: innerWidth, h: h })); } catch (e) {}
   });
-  var PENDING = 'height: 0; overflow: visible; opacity: 0; pointer-events: none';
+  var PENDING = 'position: absolute; top: 0; left: 0; right: 0; opacity: 0; pointer-events: none';
   function shown(el, box) { box.classList.remove('mw-pending'); box.removeAttribute('style'); el.classList.remove('mw-wait'); }
   function giveUp(el, box) { if (box.isConnected && /Get tickets|Sold out|Sales|On sale/i.test(box.innerText)) swap(el, box); }
   // The settled widget takes the card's place. Unseen (the first 2.5s, or off screen): straight in. Seen: the card fades
