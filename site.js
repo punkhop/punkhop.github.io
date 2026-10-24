@@ -94,7 +94,9 @@
         e.status !== 'ended' && new Date(e.startDateTime).getTime() > now - 3 * 36e5;
     }).sort(function (a, b) { return new Date(a.startDateTime) - new Date(b.startDateTime); });
     var feat = document.querySelector('[data-micdrop-slot="featured"]'), slot = document.querySelector('[data-micdrop-slot="list"]');
-    var next = list.filter(function (e) { return state(e).open; })[0];
+    // Next is the first show you can still buy before it starts, the one Micdrop's top widget shows: once tonight's show
+    // has started the widget moves on to next Friday, and the phone bar has to say that Friday, not tonight.
+    var next = list.filter(function (e) { return state(e).open && new Date(e.startDateTime).getTime() > now; })[0];
     // The first Friday sold out: Featured says so and moves on to the next one you can buy.
     var sold = list[0] && state(list[0]).sold && list[0] !== next ? list[0] : null;
     // The cards themselves are the Micdrop widgets' job (embeds below). These hand-drawn ones only go in where a widget never
@@ -152,9 +154,11 @@
           return a.playState === 'running' && !(a.effect && a.effect.getTiming().iterations === Infinity);
         });
         var quiet = now - still0;
-        if (drawn && quiet > 300 && ((photos && !moving) || quiet > 2500)) return swap(el, box);
-        if (now - t0 > 15000) return giveUp(el, box);
-        setTimeout(wait, 50);
+        // On a slow phone it can take longer than 15s: past that it goes in the moment it has drawn, however long that
+        // takes (it used to stop watching at 15s and leave the slot empty for good).
+        var late = now - t0 > 15000;
+        if (drawn && (late || (quiet > 300 && ((photos && !moving) || quiet > 2500)))) return swap(el, box);
+        setTimeout(wait, late ? 250 : 50);
       })();
     });
     if (document.querySelector('script[src*="venue-calendar.iife"]')) return;
@@ -233,14 +237,14 @@
     if (t.hasAttribute('data-next')) {
       var w = document.querySelector('[data-micdrop-slot="featured"] micdrop-calendar');
       var go = w && !/Go back/.test(w.innerText) && [].filter.call(w.querySelectorAll('a, button'), function (x) { return x.textContent.trim() === 'Get tickets'; })[0];
-      // Pressed before the widget is ready, it waits for it (up to 15s) rather than leaving for the Micdrop page.
+      // Pressed before the widget is ready, it waits for it (up to 60s) rather than leaving for the Micdrop page.
       if (w && !go && !/Go back/.test(w.innerText)) {
         ev.preventDefault();
         var n = 0;
         (function ready() {
           var b = w.isConnected && [].filter.call(w.querySelectorAll('a, button'), function (x) { return x.textContent.trim() === 'Get tickets'; })[0];
           if (b) b.click();
-          else if (++n < 300) setTimeout(ready, 50);
+          else if (++n < 1200) setTimeout(ready, 50);
         })();
       } else if (w) {
         ev.preventDefault();
