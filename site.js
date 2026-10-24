@@ -211,19 +211,38 @@
       .catch(function () { if (!again) setTimeout(function () { load(true); }, 1500); });
   }
 
-  /* ---------- the sticky phone buy bar: hidden while the ticket card or a ticket button is on screen */
-  var barIO = null;
+  /* ---------- the sticky phone buy bar: hidden while a widget's own Get tickets button is on screen */
+  // It counts the buttons themselves, wholly in view, never the card around them: on a fresh iPhone visit the top card
+  // showed but its button sat under Safari's toolbar, and the bar stayed hidden, so no Get tickets was on screen at all
+  // (2026-10-24). The widgets' buttons are the page's to find by their words: they re-draw them as they please, so it
+  // looks again on every scroll instead of watching nodes that go away. (It used to look for the page's own card buttons
+  // only, so over the Upcoming shows list the bar covered rows that had their own Get tickets.)
+  var barQueued = false;
   function watchBar() {
-    var bar = document.querySelector('[data-buybar]'); if (!bar || !('IntersectionObserver' in window)) return;
-    if (barIO) barIO.disconnect();
-    var zones = document.querySelectorAll('[data-micdrop-slot="featured"] > *, [data-micdrop-slot] .mw-btn:not(.off):not(.ghost)'), seen = new Set();
-    barIO = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target); });
-      var hide = seen.size > 0;
+    var bar = document.querySelector('[data-buybar]'); if (!bar || barQueued) return;
+    barQueued = true;
+    requestAnimationFrame(function () {
+      barQueued = false;
+      var hd = document.querySelector('.j-hdr'), top = hd ? hd.getBoundingClientRect().bottom : 0;
+      // the top card still drawing and on screen: no bar yet either, or it would come up and go again as the card lands
+      var f = document.querySelector('[data-micdrop-slot="featured"]'), fr = f && f.getBoundingClientRect();
+      var waiting = f && !f.classList.contains('mw-live') && root.classList.contains('j-cards-wait') && fr.bottom > top && fr.top < innerHeight;
+      var hide = waiting || [].some.call(document.querySelectorAll('[data-micdrop-slot] a, [data-micdrop-slot] button'), function (b) {
+        if (b.textContent.trim() !== 'Get tickets' || b.closest('.mw-pending')) return false;
+        if (root.classList.contains('j-cards-wait') && !b.closest('.mw-live')) return false; // the page's own unseen cards
+        var r = b.getBoundingClientRect();
+        return r.height > 0 && r.top >= top && r.bottom <= innerHeight - 8;
+      });
       bar.classList.toggle('on', !hide);
       root.classList.toggle('j-bar-on', !hide);
-    }, { threshold: 0 });
-    [].forEach.call(zones, function (z) { barIO.observe(z); });
+    });
+  }
+  addEventListener('scroll', watchBar, { passive: true });
+  addEventListener('resize', watchBar);
+  // and whenever a slot changes size under a still page (a widget landing, its photos coming in)
+  if ('ResizeObserver' in window) {
+    var barRO = new ResizeObserver(watchBar);
+    [].forEach.call(document.querySelectorAll('[data-micdrop-slot]'), function (el) { barRO.observe(el); });
   }
 
   /* ---------- clicks: menu, FAQ, and the GA4 ticket event --------------------------------------- */
