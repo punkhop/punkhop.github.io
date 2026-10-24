@@ -541,14 +541,24 @@
 
   // The ticket widgets start first, and every part runs on its own: one part failing on some phone (friends' iPhones on fast
   // wifi, 2026-10-23) must never leave the show slots empty, which it did when the widgets came last.
-  var oops = [];
+  var oops = [], WHY = /[?&]why\b/.test(location.search), calls = [];
+  // ?why also logs every request to Micdrop: what it asked for, its answer and how long it took, or that it never answered
+  if (WHY && window.fetch) {
+    var f0 = window.fetch;
+    window.fetch = function (u, o) {
+      var url = String(u && u.url || u), c = { u: url.replace(/^https:\/\/get-micdrop\.com/, '').slice(0, 70), t: Date.now(), s: 'waiting' };
+      if (/micdrop/.test(url)) calls.push(c);
+      return f0.apply(this, arguments).then(function (r) { c.s = r.status + ' ' + (Date.now() - c.t) + 'ms'; return r; },
+        function (e) { c.s = 'FAILED ' + (Date.now() - c.t) + 'ms ' + (e && e.message); throw e; });
+    };
+  }
   addEventListener('error', function (e) { oops.push((e.message || 'load failed: ' + ((e.target && (e.target.src || e.target.href)) || '?')).slice(0, 160)); }, true);
   addEventListener('unhandledrejection', function (e) { oops.push('promise: ' + String(e.reason && (e.reason.message || e.reason)).slice(0, 160)); });
   [['embeds', embeds], ['load', load], ['intro', intro], ['map', map], ['signup', signup], ['reveal', reveal], ['fades', fades], ['watchBar', watchBar]]
     .forEach(function (x) { try { x[1](); } catch (e) { oops.push(x[0] + ': ' + e.message); } });
 
   // ?why: what the widgets did on this phone, written on the page after 20s, to screenshot when the shows don't appear
-  if (/[?&]why\b/.test(location.search)) setTimeout(function () {
+  if (WHY) setTimeout(function () {
     var sc = document.querySelector('script[src*="venue-calendar.iife"]');
     var lines = [navigator.userAgent, 'script: ' + (sc ? 'added' : 'missing') + ' · element: ' + (window.customElements && customElements.get('micdrop-calendar') ? 'defined' : 'NOT defined'),
       'root: ' + root.className];
@@ -557,6 +567,10 @@
       lines.push(el.getAttribute('data-micdrop-slot') + ': ' + el.className + ' · h ' + el.offsetHeight + ' · ' + (cal ? 'widget h ' + cal.offsetHeight + ' "' + (cal.innerText || '').replace(/\s+/g, ' ').slice(0, 90) + '"' : 'no widget'));
     });
     lines = lines.concat(oops.length ? oops : ['no errors']);
+    lines = lines.concat(calls.map(function (c) { return c.s + ' · ' + c.u; }));
+    if (performance.getEntriesByType) [].forEach.call(performance.getEntriesByType('resource'), function (r) {
+      if (/micdrop/.test(r.name) && r.initiatorType !== 'fetch') lines.push((r.responseStatus || '') + ' ' + Math.round(r.duration) + 'ms ' + r.initiatorType + ' · ' + r.name.replace(/^https:\/\/get-micdrop\.com/, '').slice(0, 70));
+    });
     var d = document.createElement('pre');
     d.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;max-height:60vh;overflow:auto;white-space:pre-wrap;font:11px/1.35 ui-monospace,monospace;background:#fff;color:#000;padding:10px;border-radius:8px';
     d.textContent = lines.join('\n');
