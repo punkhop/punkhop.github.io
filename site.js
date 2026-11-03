@@ -202,12 +202,47 @@
     }
     watchBar();
   }
+  /* ---------- Google: one schema.org Event per upcoming Friday, from the same Micdrop call -------------------------
+     Google reads JSON-LD that a script adds (developers.google.com/search/docs/appearance/structured-data/generate-structured-data-with-javascript).
+     Each Event points at its own Micdrop show page, the single-show page Google's event results want; the ComedyClub
+     block in index.html carries them as its events. */
+  function events(list) {
+    var now = Date.now(), club = 'https://jetpackcomedy.com/#club';
+    var place = { '@type': 'Place', name: 'Bar Lubitsch', address: { '@type': 'PostalAddress', streetAddress: '7702 Santa Monica Blvd',
+      addressLocality: 'West Hollywood', addressRegion: 'CA', postalCode: '90046', addressCountry: 'US' } };
+    var items = list.filter(function (e) {
+      return e.visibility === 'public' && e.isPublished !== false && e.status !== 'canceled' && e.status !== 'ended' &&
+        new Date(e.startDateTime).getTime() > now;
+    }).slice(0, 12).map(function (e) {
+      var s = state(e), img = e.image && (/^https?:/.test(e.image) ? e.image : 'https://micdrop-uploads.sfo2.digitaloceanspaces.com' + e.image);
+      var o = { '@context': 'https://schema.org', '@type': 'ComedyEvent', name: e.title, url: href(e),
+        startDate: e.startDateTime, eventStatus: e.status === 'postponed' ? 'https://schema.org/EventPostponed' : 'https://schema.org/EventScheduled',
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode', location: place,
+        organizer: { '@type': 'Organization', '@id': club, name: 'Jetpack Comedy', url: 'https://jetpackcomedy.com/' },
+        description: 'Stand-up comedy every Friday in the back room of Bar Lubitsch, West Hollywood. No drink minimum. 21+.',
+        image: [img || 'https://jetpackcomedy.com/og-image.jpg'],
+        typicalAgeRange: '21-' };
+      if (e.endDateTime) o.endDate = e.endDateTime;
+      if (e.doorsOpenTime) o.doorTime = e.doorsOpenTime;
+      if (e.minPrice != null) o.offers = { '@type': 'Offer', url: href(e), price: String(e.minPrice), priceCurrency: 'USD',
+        availability: s.sold ? 'https://schema.org/SoldOut' : s.open ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+        validFrom: firstSale(e) || e.createdAt };
+      var who = (e.performers || []).map(function (p) { return p.displayName; }).filter(Boolean);
+      if (who.length) o.performer = who.map(function (n) { return { '@type': 'Person', name: n }; });
+      return o;
+    });
+    if (!items.length) return;
+    var tag = document.createElement('script');
+    tag.type = 'application/ld+json';
+    tag.textContent = JSON.stringify(items);
+    document.head.appendChild(tag);
+  }
   // The widgets fetch their own shows, so they go in even when this call fails (it only fills the stand-ins and the
   // phone bar); before, one failed call left the stand-ins up for good. It gets one retry first.
   function load(again) {
     var h = WIDGET_KEY ? { 'X-Widget-Key': WIDGET_KEY } : {};
     fetch(API, { headers: h }).then(function (r) { if (!r.ok) throw r.status; return r.json(); })
-      .then(function (d) { shows(d.events || []); })
+      .then(function (d) { shows(d.events || []); events(d.events || []); })
       .catch(function () { if (!again) setTimeout(function () { load(true); }, 1500); });
   }
 
