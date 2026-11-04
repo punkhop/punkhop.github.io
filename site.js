@@ -130,7 +130,10 @@
   }
   function embeds() {
     if (STANDIN) return;
-    var k = ' data-widget-key="' + WIDGET_KEY + '"', boxes = [];
+    // consent-required="false": the widget's own Meta Pixel (its Purchase on checkout) waits for a consent banner by default;
+    // this site has no banner and already loads the pixel for every visitor, as the privacy page says. A visitor's Global
+    // Privacy Control still turns the widget's pixel off.
+    var k = ' data-widget-key="' + WIDGET_KEY + '" consent-required="false"', boxes = [];
     [[document.querySelector('[data-micdrop-slot="featured"]'), '<micdrop-calendar widget-id="2" show-background="false"' + k + '></micdrop-calendar>'],
      [document.querySelector('[data-micdrop-slot="list"]'), '<micdrop-calendar widget-id="3"' + k + '></micdrop-calendar>']].forEach(function (x) {
       var el = x[0]; if (!el || el.querySelector('micdrop-calendar')) return;
