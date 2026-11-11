@@ -44,7 +44,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 
-  <link rel="stylesheet" href="site.css?v=20261111-comedians">
+  <link rel="stylesheet" href="site.css?v=20261111-showlink">
 
   <!-- The lights-first intro starts dark before the first paint; site.js runs it. If site.js never arrives the page comes up anyway.
        data-cfasync="false" keeps Cloudflare's Rocket Loader from deferring it past the first paint (the page flashed lit, then went dark).
@@ -56,6 +56,22 @@
        card anyone sees (site.js embeds); the page's own cards never show (Peet, 2026-10-23: no fallback). -->
   <script data-cfasync="false">
     (function (r) {
+      // A link to one show (#31-big-comics, from a Micdrop promo link) opens straight on that show: the page stays covered
+      // in its own dark (j-show-wait) until the widget's show page opens over it, so the homepage never flashes up first.
+      // Lifted the moment that show page is open, the link turns out not to be a show, or after 8s whatever happens.
+      var isShow = function () { return /^#\d+(-|$)/.test(location.hash); };
+      if (isShow()) {
+        r.classList.add('j-show-wait');
+        var lift = function () { r.classList.remove('j-show-wait'); watch.disconnect(); };
+        var watch = new MutationObserver(function () {
+          if (!isShow() || document.querySelector('dialog.show-panel-root[open]')) lift();
+        });
+        watch.observe(r, { subtree: true, childList: true, attributes: true, attributeFilter: ['open'] });
+        setTimeout(lift, 8000);
+        // and the widget code starts loading now rather than after site.js (embeds() sees it there and doesn't add another)
+        var sc = document.createElement('script'); sc.async = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
+        document.head.appendChild(sc);
+      }
       if (!/[?&]widgets=standin\b/.test(location.search)) {
         // and on a reload they keep the room the widgets took last time (site.js notes it as the page goes away), so the page
         // is its final height from the start and the browser puts the visitor back where they were
