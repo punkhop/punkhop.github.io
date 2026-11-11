@@ -412,3 +412,15 @@ html.lenis, html.lenis body { height: auto; }
   .a-a5 .a-hero-grid { margin-top: -84px; }
   .a-hero-copy h1 { font-size: 44px; }
 }
+
+/* comedians page */
+.c-h1 { font-size: 56px; line-height: 1.02; letter-spacing: -.035em; font-weight: 800; margin-bottom: 14px; text-wrap: balance; }
+.c-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin: 40px 0 72px; }
+.c-card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px; background: #1a1314; }
+.c-card figcaption { margin-top: 10px; font-weight: 700; font-size: 16px; }
+.c-names { columns: 3 200px; column-gap: 32px; font-size: 18px; line-height: 2; color: #d9d1ca; }
+.c-cta { margin-top: 40px; }
+@media (max-width: 720px) {
+  .c-h1 { font-size: 38px; }
+  .c-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+}
