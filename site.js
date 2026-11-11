@@ -166,7 +166,7 @@
         setTimeout(wait, late ? 250 : 50);
       })();
     });
-    if (document.querySelector('script[src*="venue-calendar.iife"]')) return;
+    if (!boxes.length || document.querySelector('script[src*="venue-calendar.iife"]')) return; // a page with no slots needs no widget code
     var sc = document.createElement('script'); sc.defer = true; sc.src = 'https://get-micdrop.com/embed/venue-calendar.iife.js';
     sc.onerror = function () { boxes.forEach(function (x) { giveUp(x[0], x[1]); }); };
     document.head.appendChild(sc);
@@ -245,7 +245,7 @@
   function load(again) {
     var h = WIDGET_KEY ? { 'X-Widget-Key': WIDGET_KEY } : {};
     fetch(API, { headers: h }).then(function (r) { if (!r.ok) throw r.status; return r.json(); })
-      .then(function (d) { shows(d.events || []); events(d.events || []); })
+      .then(function (d) { shows(d.events || []); if (document.querySelector('[data-micdrop-slot]')) events(d.events || []); }) // the shows' schema.org Events stay on the home page
       .catch(function () { if (!again) setTimeout(function () { load(true); }, 1500); });
   }
 
