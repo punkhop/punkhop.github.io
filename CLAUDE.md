@@ -15,6 +15,7 @@ The live marketing site at jetpackcomedy.com. Static HTML/CSS/JS deployed to Git
 | `vendor/` | Self-hosted third-party scripts (Lenis). |
 | `images/falls/` | About photos, `-s` (≤800px) and `-l` (1600px) per photo. |
 | `images/` | Webp + originals. `images/webp/comics/_originals/` holds pre-crop versions of comic headshots; the visible files were auto-cropped to faces via OpenCV on 2026-04-24. |
+| `lineup/` | Peet's weekly lineup posts tool (unlisted, noindex): jetpackcomedy.com/lineup/ draws the Instagram square + story from Micdrop's lineup on the Airtable backgrounds (`square.webp`, `story.webp`); drag to swap comics or move text, downloads 1080 PNGs. Must live on this domain: the Micdrop API key only answers jetpackcomedy.com. |
 | `CNAME`, `.nojekyll` | GitHub Pages config — DO NOT delete. |
 | `Jetpack Logo Solo Straight.png`, press logos, `test*.png`, comic `.jpg`s at root | Legacy assets. Some still referenced. Run `grep` before deleting any. |
 

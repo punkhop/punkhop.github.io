@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Lineup posts · Jetpack</title>
+<link rel="icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400..1000&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0f17;--panel:#171925;--line:#2a2d3d;--text:#eceef6;--mute:#8b90a6;--red:#d0232b}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.35 "Nunito Sans",system-ui,sans-serif}
+body{display:flex;min-height:100vh}
+#side{width:320px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:18px 16px 24px;overflow-y:auto;height:100vh;position:sticky;top:0}
+h1{font-size:18px;font-weight:800;margin:0 0 14px}
+h2{font-size:14px;font-weight:800;margin:20px 0 8px}
+.f{display:block;margin:0 0 10px;color:var(--mute);font-size:12px;font-weight:700}
+.f input,.f select,.f textarea{display:block;width:100%;margin-top:4px;background:#0f1019;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:7px 9px;font:inherit;font-size:14px;font-weight:600}
+.f textarea{resize:vertical;min-height:38px}
+.row{display:flex;gap:8px;align-items:center}
+.row .f{flex:1}
+input[type=range]{width:100%;accent-color:var(--red)}
+.rng{display:flex;justify-content:space-between;color:var(--mute);font-size:12px;font-weight:700}
+#lineup{list-style:none;margin:0;padding:0}
+#lineup li{display:flex;align-items:center;gap:8px;padding:5px 6px;border:1px solid var(--line);border-radius:8px;margin-bottom:5px;background:#12131d;cursor:grab}
+#lineup li.off{opacity:.45}
+#lineup li.over{border-color:var(--red)}
+#lineup li img,#lineup li .ph{width:34px;height:34px;border-radius:5px;object-fit:cover;flex:none;background:#2a2d3d;pointer-events:none}
+#lineup li input[type=text]{flex:1;min-width:0;background:transparent;border:0;color:var(--text);font:inherit;font-weight:700;padding:3px 2px}
+#lineup li input[type=text]:focus{outline:1px solid var(--line);border-radius:4px}
+#lineup li .eye{flex:none;background:none;border:0;color:var(--mute);cursor:pointer;font-size:12px;font-weight:700;padding:4px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px}
+button.b{background:var(--red);color:#fff;border:0;border-radius:8px;padding:10px 8px;font:inherit;font-weight:800;cursor:pointer}
+button.g{background:transparent;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-weight:700;cursor:pointer}
+.btns .wide{grid-column:1/-1}
+#sel{border-top:1px solid var(--line);margin-top:16px;padding-top:2px}
+#sel:empty{display:none}
+#err{color:#ff8a8f;font-weight:700;margin:6px 0}
+#err:empty{display:none}
+main{flex:1;display:flex;gap:28px;align-items:flex-start;justify-content:center;padding:20px;overflow:auto}
+figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+figcaption{color:var(--mute);font-weight:700;font-size:13px}
+canvas{display:block;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5);touch-action:none}
+#c-sq{height:min(calc(100vh - 80px),620px);aspect-ratio:1}
+#c-st{height:calc(100vh - 80px);aspect-ratio:1000/1778}
+@media (max-width:900px){body{flex-direction:column}#side{width:auto;height:auto;position:static}main{flex-direction:column;align-items:center}#c-sq,#c-st{height:auto;width:min(92vw,520px)}}
+</style>
+</head>
+<body>
+<aside id="side">
+  <h1>Lineup posts</h1>
+  <label class="f">Show<select id="show"></select></label>
+  <div id="err"></div>
+  <h2>Lineup</h2>
+  <ol id="lineup"></ol>
+  <h2>Text</h2>
+  <label class="f">Date<textarea id="t-date" rows="1"></textarea></label>
+  <label class="f">Times<textarea id="t-doors" rows="1"></textarea></label>
+  <label class="f">Venue<textarea id="t-venue" rows="1"></textarea></label>
+  <div id="sel"></div>
+  <div class="btns">
+    <button class="b" id="dl-sq">Download square</button>
+    <button class="b" id="dl-st">Download story</button>
+    <button class="g wide" id="reset">Reset layout</button>
+  </div>
+  <input type="file" id="file" accept="image/*" hidden>
+</aside>
+<main>
+  <figure><canvas id="c-sq"></canvas><figcaption>Square</figcaption></figure>
+  <figure><canvas id="c-st"></canvas><figcaption>Story</figcaption></figure>
+</main>
+<script>
+/* Jetpack lineup posts: the Friday square + story, drawn from Micdrop's lineup.
+   One drawing function (draw) makes both the editor view and the downloaded PNG, so what you see is what you get.
+   Lineup order and text are shared by both formats; positions and sizes are per format. Saved in this browser per show. */
+const API='https://get-micdrop.com/api/v2/public/events/venue/1?limit=100';
+const WIDGET_KEY='wk_6b89d4e8aeeb2981ce399083eda2a1a4'; // site.js's public embed key
+const TZ='America/Los_Angeles', RED='#d0232b', FONT='"Nunito Sans"', OUT=1080;
+const FMT={sq:{W:1000,H:1000,bg:'square.webp',name:'square'},st:{W:1000,H:1778,bg:'story.webp',name:'story'}};
+const T=(y,size,weight,color='#ffffff')=>({x:500,y,size,weight,lh:.9,color});
+const BASE={
+  sq:{date:T(330,91,800),doors:T(406,64,700),venue:T(476,44,700,RED),grid:{x:500,y:520,w:760,h:460,gx:52,gy:4,scale:1}},
+  st:{date:T(640,112,800),doors:T(736,78,700),venue:T(818,54,700,RED),grid:{x:500,y:880,w:940,h:800,gx:40,gy:10,scale:1}}
+};
+const TEXTS=['date','doors','venue'], TEXT_NAME={date:'Date',doors:'Times',venue:'Venue'};
+const $=id=>document.getElementById(id);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+let EVENTS=[], EV=null, ST=null, SEL=null, DRAG=null, GUIDE=null;
+const IMG={}; // performer id -> loaded Image (or the replacement photo)
+const BG={};
+
+/* ---------- show data ---------- */
+const parts=(iso,o)=>new Intl.DateTimeFormat('en-US',Object.assign({timeZone:TZ},o)).formatToParts(new Date(iso)).reduce((a,p)=>(a[p.type]=p.value,a),{});
+function clock(iso){const p=parts(iso,{hour:'numeric',minute:'2-digit'});return p.minute==='00'?p.hour:p.hour+':'+p.minute}
+function defaultText(e){const p=parts(e.startDateTime,{weekday:'long',month:'short',day:'numeric'});
+  const doors=e.doorsOpenTime?'DOORS '+clock(e.doorsOpenTime)+' • ':'';
+  return {date:(p.weekday+'  '+p.month+' '+p.day).toUpperCase(),doors:doors+'SHOW '+clock(e.startDateTime),venue:'BAR LUBITSCH WEST HOLLYWOOD'}}
+function showLabel(e){const p=parts(e.startDateTime,{weekday:'short',month:'short',day:'numeric'});return p.weekday+', '+p.month+' '+p.day+' · '+(e.performers||[]).length+' comics'}
+const performers=()=>EV?(EV.performers||[]).filter(p=>p.displayName):[];
+const perf=id=>performers().find(p=>p.id===id);
+const nameOf=id=>(ST.names[id]??perf(id)?.displayName??'').trim();
+const visible=()=>ST.order.filter(id=>!ST.hidden.includes(id)&&perf(id));
+
+async function loadShows(){
+  const r=await fetch(API,{headers:{'X-Widget-Key':WIDGET_KEY}});
+  if(!r.ok)throw new Error('Micdrop answered '+r.status);
+  const d=await r.json(), list=Array.isArray(d)?d:(d.events||d.data||[]);
+  const cut=Date.now()-12*3600e3;
+  EVENTS=list.filter(e=>new Date(e.startDateTime).getTime()>cut).sort((a,b)=>new Date(a.startDateTime)-new Date(b.startDateTime));
+  $('show').innerHTML=EVENTS.map((e,i)=>`<option value="${i}">${showLabel(e)}</option>`).join('');
+  if(EVENTS.length)pickShow(0);else $('err').textContent='No upcoming shows on Micdrop.';
+}
+function pickShow(i){
+  EV=EVENTS[i];SEL=null;
+  const saved=store.get('jpLineup:'+EV.id)||{};
+  const ids=performers().map(p=>p.id);
+  const order=(saved.order||[]).filter(id=>ids.includes(id)).concat(ids.filter(id=>!(saved.order||[]).includes(id)));
+  const lay={};for(const f in BASE){lay[f]={};for(const k in BASE[f])lay[f][k]=Object.assign(clone(BASE[f][k]),(saved.lay?.[f]||{})[k]||{})}
+  ST={order,hidden:saved.hidden||[],names:saved.names||{},text:Object.assign(defaultText(EV),saved.text||{}),crop:saved.crop||{},photo:saved.photo||{},lay};
+  for(const k of TEXTS)$('t-'+k).value=ST.text[k];
+  for(const p of performers())loadPhoto(p.id);
+  paintList();paintSel();drawAll();
+}
+let saveT=0;
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{if(EV)store.set('jpLineup:'+EV.id,ST)},250)}
+
+function loadPhoto(id){
+  const src=ST.photo[id]||perf(id)?.image||perf(id)?.avatar||perf(id)?.profileImage;
+  if(!src){delete IMG[id];return}
+  if(IMG[id]&&IMG[id]._src===src)return;
+  const im=new Image();im.crossOrigin='anonymous';im._src=src;
+  im.onload=()=>{IMG[id]=im;drawAll();paintList()};
+  im.onerror=()=>{if(IMG[id]===im)delete IMG[id]};
+  im.src=src;
+}
+// a replacement photo is shrunk to 900px and kept with the show, so it survives a reload
+function replacePhoto(id,file){
+  const url=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{const k=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    URL.revokeObjectURL(url);ST.photo[id]=c.toDataURL('image/jpeg',.9);delete ST.crop[id];save();loadPhoto(id)};
+  im.src=url;
+}
+
+/* ---------- layout ---------- */
+function colsFor(n,f){if(n<=3)return n;if(n===4)return 2;if(n<=6)return 3;
+  if(f==='sq')return n<=8?4:n===9?3:5; return n<=9?3:4}
+function slots(f){
+  const G=ST.lay[f].grid,ids=visible(),n=ids.length;if(!n)return [];
+  const c=colsFor(n,f),r=Math.ceil(n/c),k=1.135;
+  const s=Math.min((G.w-(c-1)*G.gx)/c,(G.h-(r-1)*G.gy)/r/k)*G.scale,st=s*(k-1);
+  return ids.map((id,i)=>{const row=Math.floor(i/c),inRow=row<r-1?c:n-c*(r-1),col=i-row*c,rowW=inRow*s+(inRow-1)*G.gx;
+    return {id,x:G.x-rowW/2+col*(s+G.gx),y:G.y+row*(s+st+G.gy),s,st}});
+}
+function gridBox(f){const S=slots(f);if(!S.length)return null;
+  return {x:Math.min(...S.map(a=>a.x)),y:S[0].y,x2:Math.max(...S.map(a=>a.x+a.s)),y2:Math.max(...S.map(a=>a.y+a.s+a.st))}}
+function textBox(ctx,f,k){const L=ST.lay[f][k],lines=(ST.text[k]||'').split('\n');ctx.font=`${L.weight} ${L.size}px ${FONT}`;
+  const w=Math.max(...lines.map(l=>ctx.measureText(l).width)),h=L.size*(1+(lines.length-1)*L.lh);
+  return {x:L.x-w/2,y:L.y-h/2,x2:L.x+w/2,y2:L.y+h/2,lines}}
+
+/* ---------- drawing: the same function makes the view and the PNG ---------- */
+function cover(ctx,im,x,y,s,c){
+  const z=c?.z||1,sc=Math.max(s/im.width,s/im.height)*z,sw=s/sc,sh=s/sc;
+  const px=c?.px??.5,py=c?.py??.35;
+  ctx.drawImage(im,(im.width-sw)*px,(im.height-sh)*py,sw,sh,x,y,s,s);
+}
+function draw(ctx,f,ui){
+  const F=FMT[f];
+  ctx.fillStyle='#0b0c2a';ctx.fillRect(0,0,F.W,F.H);
+  if(BG[f])ctx.drawImage(BG[f],0,0,F.W,F.H);
+  if(!ST)return;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  for(const k of TEXTS){const L=ST.lay[f][k],b=textBox(ctx,f,k);ctx.fillStyle=L.color;
+    b.lines.forEach((l,i)=>ctx.fillText(l,L.x,b.y+L.size/2+i*L.size*L.lh))}
+  for(const a of slots(f)){
+    const dragging=ui&&DRAG?.hit.kind==='photo'&&DRAG.moved&&!DRAG.shift&&DRAG.hit.id===a.id;
+    ctx.globalAlpha=dragging?.3:1;
+    if(IMG[a.id])cover(ctx,IMG[a.id],a.x,a.y,a.s,ST.crop[a.id]);
+    else{ctx.fillStyle='#2a2d3d';ctx.fillRect(a.x,a.y,a.s,a.s)}
+    ctx.fillStyle='#0c0c12';ctx.fillRect(a.x,a.y+a.s,a.s,a.st);
+    let fs=a.st*.66;const nm=nameOf(a.id).toUpperCase();ctx.font=`800 ${fs}px ${FONT}`;
+    while(ctx.measureText(nm).width>a.s-10&&fs>6){fs-=.5;ctx.font=`800 ${fs}px ${FONT}`}
+    ctx.fillStyle='#fff';ctx.fillText(nm,a.x+a.s/2,a.y+a.s+a.st/2+fs*.04);
+    ctx.globalAlpha=1;
+    if(ui&&DRAG?.target===a.id){ctx.strokeStyle=RED;ctx.lineWidth=6;ctx.strokeRect(a.x+3,a.y+3,a.s-6,a.s-6)}
+  }
+  if(!ui)return;
+  // editor-only marks: selection, centre guide, the photo being carried
+  ctx.setLineDash([8,6]);ctx.lineWidth=2;ctx.strokeStyle='rgba(255,255,255,.85)';
+  if(SEL&&SEL.f===f){const b=SEL.kind==='text'?textBox(ctx,f,SEL.key):SEL.kind==='grid'?gridBox(f):(()=>{const a=slots(f).find(a=>a.id===SEL.id);return a&&{x:a.x,y:a.y,x2:a.x+a.s,y2:a.y+a.s+a.st}})();
+    if(b)ctx.strokeRect(b.x-8,b.y-8,b.x2-b.x+16,b.y2-b.y+16)}
+  if(GUIDE===f){ctx.strokeStyle=RED;ctx.beginPath();ctx.moveTo(500,0);ctx.lineTo(500,F.H);ctx.stroke()}
+  ctx.setLineDash([]);
+  if(DRAG?.f===f&&DRAG.hit.kind==='photo'&&DRAG.moved&&!DRAG.shift&&IMG[DRAG.hit.id]){const a=slots(f).find(a=>a.id===DRAG.hit.id),s=a.s*.9;
+    ctx.globalAlpha=.85;cover(ctx,IMG[DRAG.hit.id],DRAG.p.x-s/2,DRAG.p.y-s/2,s,ST.crop[DRAG.hit.id]);ctx.globalAlpha=1}
+}
+const CV={sq:$('c-sq'),st:$('c-st')};
+function drawAll(){for(const f in CV){const c=CV[f],r=c.getBoundingClientRect(),dpr=devicePixelRatio||1;
+  const w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(c.width!==w||c.height!==h){c.width=w;c.height=h}
+  const ctx=c.getContext('2d');ctx.setTransform(w/FMT[f].W,0,0,h/FMT[f].H,0,0);draw(ctx,f,true)}}
+function exportPng(f){const F=FMT[f],c=document.createElement('canvas');c.width=OUT;c.height=Math.round(OUT*F.H/F.W);
+  const ctx=c.getContext('2d');ctx.setTransform(OUT/F.W,0,0,c.height/F.H,0,0);ctx.imageSmoothingQuality='high';draw(ctx,f,false);
+  c.toBlob(b=>{const a=document.createElement('a'),d=parts(EV.startDateTime,{year:'numeric',month:'2-digit',day:'2-digit'});
+    a.href=URL.createObjectURL(b);a.download=`jetpack-${d.year}-${d.month}-${d.day}-${F.name}.png`;document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000)},'image/png');}
+
+/* ---------- canvas gestures ---------- */
+function pt(f,e){const r=CV[f].getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*FMT[f].W,y:(e.clientY-r.top)/r.height*FMT[f].H}}
+const inBox=(p,b,pad=0)=>b&&p.x>=b.x-pad&&p.x<=b.x2+pad&&p.y>=b.y-pad&&p.y<=b.y2+pad;
+function hit(f,p){const ctx=CV[f].getContext('2d');
+  for(const k of TEXTS)if(inBox(p,textBox(ctx,f,k),8))return {f,kind:'text',key:k};
+  for(const a of slots(f))if(p.x>=a.x&&p.x<=a.x+a.s&&p.y>=a.y&&p.y<=a.y+a.s)return {f,kind:'photo',id:a.id};
+  if(inBox(p,gridBox(f)))return {f,kind:'grid'};
+  return null}
+const slotAt=(f,p)=>slots(f).find(a=>p.x>=a.x&&p.x<=a.x+a.s&&p.y>=a.y&&p.y<=a.y+a.s+a.st);
+const snap=x=>Math.abs(x-500)<10?500:x;
+for(const f in CV){const c=CV[f];
+  c.addEventListener('pointerdown',e=>{if(!ST)return;const p=pt(f,e),h=hit(f,p);SEL=h;paintSel();
+    if(h){c.setPointerCapture(e.pointerId);const L=ST.lay[f];
+      DRAG={f,hit:h,start:p,p,moved:false,shift:e.shiftKey||e.altKey,
+        orig:h.kind==='text'?clone(L[h.key]):h.kind==='grid'?clone(L.grid):clone(ST.crop[h.id]||{z:1,px:.5,py:.35})}}
+    drawAll()});
+  c.addEventListener('pointermove',e=>{if(!ST)return;const p=pt(f,e);
+    if(!DRAG){const h=hit(f,p);c.style.cursor=h?(h.kind==='photo'?'grab':'move'):'default';return}
+    const dx=p.x-DRAG.start.x,dy=p.y-DRAG.start.y;if(Math.hypot(dx,dy)>3)DRAG.moved=true;DRAG.p=p;GUIDE=null;
+    const h=DRAG.hit,L=ST.lay[f];
+    if(h.kind==='text'||h.kind==='grid'){const o=h.kind==='text'?L[h.key]:L.grid;o.x=snap(DRAG.orig.x+dx);o.y=DRAG.orig.y+dy;if(o.x===500)GUIDE=f}
+    else if(DRAG.shift){const a=slots(f).find(a=>a.id===h.id),im=IMG[h.id];if(a&&im){const C=Object.assign({},DRAG.orig),sc=Math.max(a.s/im.width,a.s/im.height)*(C.z||1),sw=a.s/sc;
+      const ex=im.width-sw,ey=im.height-sw;C.px=ex>0?Math.min(1,Math.max(0,DRAG.orig.px-dx/sc/ex)):.5;C.py=ey>0?Math.min(1,Math.max(0,DRAG.orig.py-dy/sc/ey)):.5;ST.crop[h.id]=C}}
+    else{const t=slotAt(f,p);DRAG.target=t&&t.id!==h.id?t.id:null;c.style.cursor='grabbing'}
+    drawAll()});
+  const end=()=>{if(!DRAG)return;const h=DRAG.hit;
+    if(h.kind==='photo'&&!DRAG.shift&&DRAG.target!=null){const o=ST.order,i=o.indexOf(h.id),j=o.indexOf(DRAG.target);[o[i],o[j]]=[o[j],o[i]];paintList()}
+    if(DRAG.moved)save();DRAG=null;GUIDE=null;paintSel();drawAll()};
+  c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);
+  c.addEventListener('wheel',e=>{if(!ST)return;const h=hit(f,pt(f,e));if(!h||h.kind!=='photo')return;e.preventDefault();
+    const C=Object.assign({z:1,px:.5,py:.35},ST.crop[h.id]);C.z=Math.min(4,Math.max(1,C.z*(1-e.deltaY*.0015)));ST.crop[h.id]=C;
+    SEL=h;save();paintSel();drawAll()},{passive:false});
+  c.addEventListener('dblclick',e=>{const h=hit(f,pt(f,e));if(h?.kind==='text'){const t=$('t-'+h.key);t.focus();t.select()}});
+  c.addEventListener('dragover',e=>e.preventDefault());
+  c.addEventListener('drop',e=>{e.preventDefault();const file=e.dataTransfer.files[0],a=slotAt(f,pt(f,e));if(file&&a&&file.type.startsWith('image/'))replacePhoto(a.id,file)});
+}
+addEventListener('keydown',e=>{if(!SEL||SEL.kind==='photo'||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
+  const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!d)return;e.preventDefault();
+  const o=SEL.kind==='text'?ST.lay[SEL.f][SEL.key]:ST.lay[SEL.f].grid,m=e.shiftKey?10:1;o.x+=d[0]*m;o.y+=d[1]*m;save();drawAll()});
+addEventListener('resize',drawAll);
+
+/* ---------- side panel ---------- */
+function paintList(){
+  $('lineup').innerHTML=ST.order.filter(perf).map(id=>{const off=ST.hidden.includes(id),src=ST.photo[id]||perf(id).image;
+    return `<li draggable="true" data-id="${id}" class="${off?'off':''}">${src?`<img src="${src.replace(/"/g,'&quot;')}" alt="">`:'<span class="ph"></span>'}
+      <input type="text" value="${nameOf(id).replace(/"/g,'&quot;')}" aria-label="Name"><button class="eye" data-eye>${off?'Show':'Hide'}</button></li>`}).join('')}
+let liDrag=null;
+$('lineup').addEventListener('dragstart',e=>{const li=e.target.closest('li');if(!li)return;liDrag=+li.dataset.id;e.dataTransfer.effectAllowed='move'});
+$('lineup').addEventListener('dragover',e=>{const li=e.target.closest('li');if(!li)return;e.preventDefault();
+  for(const x of $('lineup').children)x.classList.toggle('over',x===li)});
+$('lineup').addEventListener('drop',e=>{e.preventDefault();const li=e.target.closest('li');if(!li)return;const to=+li.dataset.id;
+  const file=e.dataTransfer.files[0];if(file&&file.type.startsWith('image/')){replacePhoto(to,file);return}
+  if(liDrag==null||liDrag===to)return;const o=ST.order;o.splice(o.indexOf(liDrag),1);o.splice(o.indexOf(to)+(e.offsetY>li.offsetHeight/2?1:0),0,liDrag);
+  liDrag=null;save();paintList();drawAll()});
+$('lineup').addEventListener('dragend',()=>{liDrag=null;for(const x of $('lineup').children)x.classList.remove('over')});
+$('lineup').addEventListener('input',e=>{const li=e.target.closest('li');if(!li||e.target.type!=='text')return;ST.names[li.dataset.id]=e.target.value;save();drawAll()});
+$('lineup').addEventListener('click',e=>{if(!e.target.matches('[data-eye]'))return;const id=+e.target.closest('li').dataset.id;
+  ST.hidden=ST.hidden.includes(id)?ST.hidden.filter(x=>x!==id):ST.hidden.concat(id);if(SEL?.id===id)SEL=null;save();paintList();paintSel();drawAll()});
+for(const k of TEXTS)$('t-'+k).addEventListener('input',e=>{ST.text[k]=e.target.value;save();drawAll()});
+
+const range=(key,label,min,max,step,val,fmt=v=>v)=>`<label class="f"><span class="rng"><span>${label}</span><span>${fmt(val)}</span></span><input type="range" data-k="${key}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`;
+function paintSel(){const el=$('sel');if(!SEL||!ST){el.innerHTML='';return}const L=ST.lay[SEL.f],fn=FMT[SEL.f].name;
+  if(SEL.kind==='text'){const o=L[SEL.key];el.innerHTML=`<h2>${TEXT_NAME[SEL.key]} · ${fn}</h2>`+
+    range('size','Size',16,220,1,o.size)+range('lh','Line height',.7,1.6,.05,o.lh)+
+    `<div class="row"><label class="f">Weight<select data-k="weight">${[400,600,700,800,900,1000].map(w=>`<option${w===o.weight?' selected':''}>${w}</option>`).join('')}</select></label>
+     <label class="f">Colour<select data-k="color">${[['#ffffff','White'],[RED,'Red']].map(([v,n])=>`<option value="${v}"${v===o.color?' selected':''}>${n}</option>`).join('')}</select></label></div>`}
+  else if(SEL.kind==='grid'){const g=L.grid;el.innerHTML=`<h2>Photos · ${fn}</h2>`+range('scale','Size',.5,1.5,.01,g.scale,v=>Math.round(v*100)+'%')+range('gx','Gap',0,140,1,g.gx)+range('gy','Row gap',0,140,1,g.gy)}
+  else{const c=ST.crop[SEL.id]||{z:1};el.innerHTML=`<h2>${nameOf(SEL.id)}</h2>`+range('z','Zoom',1,4,.01,c.z||1,v=>Math.round(v*100)+'%')+
+    `<div class="row"><button class="g" data-act="photo" style="flex:1">Replace photo</button><button class="g" data-act="crop" style="flex:1">Reset crop</button></div>`+
+    (ST.photo[SEL.id]?`<div class="row" style="margin-top:8px"><button class="g" data-act="orig" style="flex:1">Use Micdrop photo</button></div>`:'')}}
+$('sel').addEventListener('input',e=>{const k=e.target.dataset.k;if(!k||!SEL)return;const v=e.target.type==='range'||k==='weight'?+e.target.value:e.target.value;
+  if(SEL.kind==='text')ST.lay[SEL.f][SEL.key][k]=v;else if(SEL.kind==='grid')ST.lay[SEL.f].grid[k]=v;
+  else ST.crop[SEL.id]=Object.assign({z:1,px:.5,py:.35},ST.crop[SEL.id],{[k]:v});
+  const lab=e.target.closest('label')?.querySelector('.rng span:last-child');if(lab)lab.textContent=k==='scale'||k==='z'?Math.round(v*100)+'%':v;
+  save();drawAll()});
+$('sel').addEventListener('click',e=>{const a=e.target.dataset.act;if(!a||SEL?.kind!=='photo')return;const id=SEL.id;
+  if(a==='photo')$('file').click();if(a==='crop'){delete ST.crop[id];save();paintSel();drawAll()}
+  if(a==='orig'){delete ST.photo[id];delete ST.crop[id];save();loadPhoto(id);paintList();paintSel();drawAll()}});
+$('file').addEventListener('change',e=>{const f=e.target.files[0];if(f&&SEL?.kind==='photo')replacePhoto(SEL.id,f);e.target.value=''});
+$('show').addEventListener('change',e=>pickShow(+e.target.value));
+$('dl-sq').onclick=()=>EV&&exportPng('sq');
+$('dl-st').onclick=()=>EV&&exportPng('st');
+$('reset').onclick=()=>{if(!ST)return;ST.lay=clone(BASE);ST.crop={};SEL=null;save();paintSel();drawAll()};
+
+/* ---------- start ---------- */
+for(const f in FMT){const im=new Image();im.onload=()=>{BG[f]=im;drawAll()};im.src=FMT[f].bg}
+Promise.all([700,800,900].map(w=>document.fonts.load(`${w} 40px ${FONT}`))).catch(()=>{}).then(()=>{drawAll();return loadShows()})
+  .catch(e=>{$('err').textContent="Couldn't load shows from Micdrop: "+e.message});
+</script>
+</body>
+</html>
