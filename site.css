@@ -354,13 +354,14 @@ html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 /* A reload or Back puts the page straight back where it was; Chrome would otherwise glide there from the top. */
 html.j-snap { scroll-behavior: auto; }
-/* A slim dark scrollbar: a thin track in the page's ink, a muted cream handle that brightens under the pointer (Peet, 2026-10-22). */
-html::-webkit-scrollbar { width: 10px; height: 10px; background: #0e0a0b; }
-html::-webkit-scrollbar-track { background: #0e0a0b; }
-html::-webkit-scrollbar-thumb { background: rgba(245, 240, 235, .2); border-radius: 10px; border: 3px solid #0e0a0b; min-height: 48px; }
-html::-webkit-scrollbar-thumb:hover { background: rgba(245, 240, 235, .45); }
-html::-webkit-scrollbar-thumb:active { background: rgba(245, 240, 235, .6); }
-@supports not selector(::-webkit-scrollbar) { html { scrollbar-width: thin; scrollbar-color: rgba(245, 240, 235, .3) #0e0a0b; } }
+/* A slim dark scrollbar: a thin track in the page's ink, a muted cream handle that brightens under the pointer (Peet, 2026-10-22).
+   The same bar on the Micdrop widget's show page and checkout: full-window dialogs that scroll inside themselves (Peet, 2026-11-13). */
+html::-webkit-scrollbar, dialog.micdrop ::-webkit-scrollbar { width: 10px; height: 10px; background: #0e0a0b; }
+html::-webkit-scrollbar-track, dialog.micdrop ::-webkit-scrollbar-track { background: #0e0a0b; }
+html::-webkit-scrollbar-thumb, dialog.micdrop ::-webkit-scrollbar-thumb { background: rgba(245, 240, 235, .2); border-radius: 10px; border: 3px solid #0e0a0b; min-height: 48px; }
+html::-webkit-scrollbar-thumb:hover, dialog.micdrop ::-webkit-scrollbar-thumb:hover { background: rgba(245, 240, 235, .45); }
+html::-webkit-scrollbar-thumb:active, dialog.micdrop ::-webkit-scrollbar-thumb:active { background: rgba(245, 240, 235, .6); }
+@supports not selector(::-webkit-scrollbar) { html, dialog.micdrop * { scrollbar-width: thin; scrollbar-color: rgba(245, 240, 235, .3) #0e0a0b; } }
 /* Lenis's own stylesheet (1.3.11), for the gliding wheel scroll in site.js. */
 html.lenis, html.lenis body { height: auto; }
 .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
