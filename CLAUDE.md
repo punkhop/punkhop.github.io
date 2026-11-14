@@ -31,7 +31,7 @@ cd /Users/peet/dev/personal/jetpack/web
 git add -A && git commit -m "..." && git push
 ```
 
-GitHub Pages picks it up in ~30 seconds. Cloudflare caches `site.css` and `site.js` for 4 hours, so `index.html` links them as `site.css?v=…` / `site.js?v=…`: change that value whenever either file changes, or visitors keep the old one. CNAME points jetpackcomedy.com → punkhop.github.io.
+GitHub Pages picks it up in ~30 seconds. Cloudflare caches `site.css` and `site.js` for 4 hours, so `index.html` links them as `site.css?v=…` / `site.js?v=…`: change that value whenever either file changes, or visitors keep the old one. Never fetch the new `?v=` URL before GitHub's build of that commit is done (`gh api repos/punkhop/punkhop.github.io/pages/builds/latest`): Cloudflare caches whatever it gets first, so an early check caches the OLD file under the new name for 4 hours (2026-11-13, the show-page scrollbar). CNAME points jetpackcomedy.com → punkhop.github.io.
 
 ## The intro: when it plays, what loads when
 
